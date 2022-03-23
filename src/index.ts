@@ -12,7 +12,7 @@ import { TVBSNewsCrawler } from './news/tvbs';
 
 
 async function print() {
-    let news = await TVBSNewsCrawler.getNews();
+    let news = await NBATaiwanNewsCrawler.getNews();
     console.log(news);
 }
 
