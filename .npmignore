@@ -1,6 +1,5 @@
-.env
-node_modules
+.vs
+samples
 npm-debug.log.*
 package-lock.json
-/.vs
-iisnode
+tsconfig.json
