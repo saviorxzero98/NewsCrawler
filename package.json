@@ -1,10 +1,13 @@
 {
   "name": "news_crawler",
   "version": "1.0.0",
-  "description": "Hello World",
+  "description": "News Crawler",
   "main": "dist/index.js",
   "dependencies": {
-    "@types/node": "^10.17.17"
+    "@types/node": "^10.17.17",
+    "axios": "^0.26.1",
+    "cheerio": "^1.0.0-rc.10",
+    "moment": "^2.29.1"
   },
   "devDependencies": {},
   "scripts": {
