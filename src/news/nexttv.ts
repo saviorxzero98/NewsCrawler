@@ -17,12 +17,14 @@ export class NextTVNewsCrawler {
             .map((_, item) => {
                 let title = $(item).find('div.tit a').text();
                 let link = $(item).find('a.more').attr('href');
+                let image = $(item).find('div.imgbox img').attr('src');
                 let content = $(item).find('div.brief').text();
                 let pubDate = $(item).find('div.time').text();
 
                 return {
                     title,
                     link,
+                    image,
                     content,
                     pubDate,
                 };

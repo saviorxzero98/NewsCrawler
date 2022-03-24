@@ -17,7 +17,7 @@ export class NBATaiwanNewsCrawler {
             .map((_, item) => {
                 let title = $(item).find('h3').text();
                 let link = rootUrl + $(item).find('a').attr('href');
-                let image = $(item).find('span').html();
+                let image = $(item).find('img').attr('data-src');
                 let content = $(item).find('p').text();
                 let pubDate = $(item).find('b').text();
                 
