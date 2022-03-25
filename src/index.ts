@@ -1,6 +1,8 @@
 import { AppleDailyNewsCrawler } from './news/applydaily';
 import { ChinaTimesNewsCrawler } from './news/chinatimes';
 import { CTSNewsCrawler } from './news/cts';
+import { EBCNewsCrawler } from './news/ebc';
+import { EBCFncNewsCrawler } from './news/ebc_fnc';
 import { ERANewsCrawler } from './news/era';
 import { FTVNewsCrawler } from './news/ftvnews';
 import { NBATaiwanNewsCrawler } from './news/udn_nba';
@@ -12,7 +14,7 @@ import { TVBSNewsCrawler } from './news/tvbs';
 
 
 async function print() {
-    let news = await TVBSNewsCrawler.getNews();
+    let news = await ERANewsCrawler.getNews();
     console.log(news);
 }
 
