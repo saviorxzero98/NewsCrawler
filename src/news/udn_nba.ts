@@ -26,6 +26,7 @@ export class NBATaiwanNewsCrawler {
                     link,
                     image,
                     content,
+                    image,
                     pubDate,
                 };
             })
