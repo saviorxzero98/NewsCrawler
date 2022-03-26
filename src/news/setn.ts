@@ -4,13 +4,13 @@ import * as moment from 'moment';
 
 const httpClient = axios.default;
 
-const rootUrl = 'https://www.setn.com/ViewAll.aspx';
+const rootUrl = 'https://www.setn.com';
 const title = '三立新聞';
 
 export class SETNewsCrawler {
     public static async  getNews(page: string = '', count: number = 25) {
-        let url = `${rootUrl}/${page}`;
-        if (page) {
+        let url = `${rootUrl}/ViewAll.aspx`;
+        if (page && /^\d+$/.test(page)) {
             url = `${url}?PageGroupID=${page}`;
         }
         let response = await httpClient.get(url);
@@ -19,7 +19,10 @@ export class SETNewsCrawler {
             .slice(0, count)
             .map((_, item) => {
                 let title = $(item).find('a.gt').text();
-                let link = rootUrl + $(item).find('a.gt').attr('href');
+                let link = $(item).find('a.gt').attr('href');
+                if (!link.startsWith('https:')) {
+                    link = rootUrl + link;
+                }
                 let pubDate = moment($(item).find('time').text(), 'MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
 
                 return {

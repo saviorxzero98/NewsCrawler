@@ -14,7 +14,7 @@ import { TTVNewsCrawler } from './news/ttv';
 import { TVBSNewsCrawler } from './news/tvbs';
 
 async function print() {
-    let news = await CNANewsCrawler.getNews();
+    let news = await SETNewsCrawler.getNews();
     console.log(news);
 }
 
