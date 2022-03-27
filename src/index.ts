@@ -8,6 +8,7 @@ import { ERANewsCrawler } from './news/era';
 import { FTVNewsCrawler } from './news/ftvnews';
 import { NTDTVTwNewsCrawler } from './news/ntdtv_tw';
 import { NBATaiwanNewsCrawler } from './news/nba_tw';
+import { NewtalkNewsCrawler } from './news/newtalk';
 import { NextTVNewsCrawler } from './news/nexttv';
 import { NownewsNewsCrawler } from './news/nownews';
 import { SETNewsCrawler } from './news/setn';
@@ -17,7 +18,7 @@ import { RtiNewsCrawler } from './news/rti';
 
 
 async function print() {
-    let news = await NTDTVTwNewsCrawler.getNews();
+    let news = await NewtalkNewsCrawler.getNews();
     console.log(news);
 }
 
