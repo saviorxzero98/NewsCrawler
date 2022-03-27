@@ -17,7 +17,7 @@ import { RtiNewsCrawler } from './news/rti';
 
 
 async function print() {
-    let news = await RtiNewsCrawler.getNews();
+    let news = await NTDTVTwNewsCrawler.getNews();
     console.log(news);
 }
 
