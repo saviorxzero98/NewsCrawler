@@ -27,7 +27,7 @@ export class NownewsNewsCrawler {
         return {
             title: `${title}`,
             link: url,
-            item: list.slice(0, count),
+            item: list.slice(0, count)
         };
     }
 
