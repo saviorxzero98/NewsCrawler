@@ -6,15 +6,18 @@ import { EBCNewsCrawler } from './news/ebc';
 import { EBCFncNewsCrawler } from './news/ebc_fnc';
 import { ERANewsCrawler } from './news/era';
 import { FTVNewsCrawler } from './news/ftvnews';
-import { NBATaiwanNewsCrawler } from './news/udn_nba';
+import { NTDTVTwNewsCrawler } from './news/ntdtv_tw';
+import { NBATaiwanNewsCrawler } from './news/nba_tw';
 import { NextTVNewsCrawler } from './news/nexttv';
 import { NownewsNewsCrawler } from './news/nownews';
 import { SETNewsCrawler } from './news/setn';
 import { TTVNewsCrawler } from './news/ttv';
 import { TVBSNewsCrawler } from './news/tvbs';
+import { RtiNewsCrawler } from './news/rti';
+
 
 async function print() {
-    let news = await SETNewsCrawler.getNews();
+    let news = await RtiNewsCrawler.getNews();
     console.log(news);
 }
 
