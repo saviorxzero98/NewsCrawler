@@ -15,10 +15,11 @@ import { SETNewsCrawler } from './news/setn';
 import { TTVNewsCrawler } from './news/ttv';
 import { TVBSNewsCrawler } from './news/tvbs';
 import { RtiNewsCrawler } from './news/rti';
+import { WorldJournalNewsCrawler } from './news/worldjournal';
 
 
 async function print() {
-    let news = await NewtalkNewsCrawler.getNews();
+    let news = await WorldJournalNewsCrawler.getNews();
     console.log(news);
 }
 

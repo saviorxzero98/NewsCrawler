@@ -18,7 +18,7 @@ export class TVBSNewsCrawler {
                 
                 let title = $(item).find('a h2').text();
                 let link = rootUrl + $(item).find('a').attr('href');
-                let image = $(item).find('a img.lazyimage').attr('src');
+                let image = $(item).find('a img.lazyimage').attr('data-original');
                 let pubDate = $(item).find('div.time').text();
 
                 return {
