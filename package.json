@@ -7,6 +7,8 @@
     "@types/node": "^10.17.17",
     "axios": "^0.26.1",
     "cheerio": "^1.0.0-rc.10",
+    "feed": "^4.2.2",
+    "feed-reader": "^5.0.0-rc3",
     "moment": "^2.29.1"
   },
   "devDependencies": {},

@@ -5,6 +5,7 @@ import { CTSNewsCrawler } from './news/cts';
 import { EBCNewsCrawler } from './news/ebc';
 import { EBCFncNewsCrawler } from './news/ebc_fnc';
 import { ERANewsCrawler } from './news/era';
+import { ETtodayNewsCrawler } from './news/ettoday';
 import { FTVNewsCrawler } from './news/ftvnews';
 import { NTDTVTwNewsCrawler } from './news/ntdtv_tw';
 import { NBATaiwanNewsCrawler } from './news/nba_tw';
@@ -18,8 +19,9 @@ import { RtiNewsCrawler } from './news/rti';
 import { WorldJournalNewsCrawler } from './news/worldjournal';
 
 
+
 async function print() {
-    let news = await WorldJournalNewsCrawler.getNews();
+    let news = await ETtodayNewsCrawler.getNews();
     console.log(news);
 }
 
