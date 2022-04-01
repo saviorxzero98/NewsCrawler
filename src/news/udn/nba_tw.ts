@@ -20,10 +20,11 @@ export class NBATaiwanNewsCrawler {
                 let image = $(item).find('img').attr('data-src');
                 let content = $(item).find('p').text();
                 let pubDate = $(item).find('b').text();
-                
+
                 return {
                     title,
                     link,
+                    image,
                     content,
                     image,
                     pubDate,
