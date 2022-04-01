@@ -4,16 +4,19 @@
   "description": "News Crawler",
   "main": "dist/index.js",
   "dependencies": {
-    "@types/node": "^10.17.17",
+    "@types/node": "^17.0.23",
     "axios": "^0.26.1",
     "cheerio": "^1.0.0-rc.10",
+    "express": "^4.17.3",
     "feed": "^4.2.2",
     "feed-reader": "^5.0.0-rc3",
     "moment": "^2.29.1"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/express": "^4.17.13"
+  },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc --skipLibCheck",
     "start": "node dist/index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "tsc -w",
