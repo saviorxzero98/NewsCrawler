@@ -1,7 +1,15 @@
 import * as express from 'express';
+import { TTVNewsRouter } from './news/ttv/router';
+import { CTSNewsRouter } from './news/tbs/router';
 
-export const webServer = (app: express.Express, port: number) => {
+const app = express();
+
+export const startWebServer = (port: number = 1200) => {
+
+    TTVNewsRouter.router(app);
+    CTSNewsRouter.router(app);
+
     app.listen(port, () => {
-        console.log(`Example app listening on port ${port}`)
+        console.info(`My RSS Server listening on port ${port}`)
     });
 }

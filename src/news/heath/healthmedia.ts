@@ -39,7 +39,7 @@ export class HealthMediaNewsCrawler {
             .get();
             
         return {
-            title: `${title} ${$('main_title').text()}`,
+            title: `${title} ${$('div.main_title h2').text()}`,
             link: url,
             item: list,
         };

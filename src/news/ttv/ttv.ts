@@ -1,6 +1,7 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
+import { Item } from "feed";
 
 const httpClient = axios.default;
 
@@ -12,15 +13,15 @@ export enum TTVChannel {
 }
 
 export class TTVNewsCrawler {
-    public static async getNews(page: string = 'realtime', count: number = 25) {
-        let url = `${rootUrl}/${page}`;
+    public static async getNews(count: number = 25) {
+        let url = `${rootUrl}/realtime`;
         let response = await httpClient.get(url);
         let list = TTVNewsCrawler.getTTVNews(response.data, count);
 
         return {
             title: `${title}`,
             link: url,
-            item: list,
+            items: list,
         };
     }
 
@@ -32,31 +33,31 @@ export class TTVNewsCrawler {
         return {
             title: `${title} - ${category}`,
             link: url,
-            item: list,
+            items: list,
         };
     }
 
-    private static getTTVNews(data: any, count: number) {
+    private static getTTVNews(data: any, count: number): Item[] {
         let $ = cheerio.load(data);
         let list = $('article.container div.news-list ul li')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('a div.title').text();
-                let link = $(item).find('a').attr('href');
-                let image = $(item).find('a img').attr('src');
-                let description = $(item).find('div.summary').text();
-                let pubDate = $(item).find('div.time').text();
-
-                return {
+            .map((_, i) => {
+                let title = $(i).find('a div.title').text();
+                let link = $(i).find('a').attr('href');
+                let image = $(i).find('a img').attr('src');
+                let description = $(i).find('div.summary').text();
+                let pubDate = $(i).find('div.time').text();
+                let item: Item = {
                     title,
                     description,
                     link,
                     image,
-                    pubDate,
+                    date: moment(pubDate, 'YYYY.MM.DD HH:mm').toDate(),
                 };
+                return item;
             })
             .get()
-            .filter(item => item && item.title && item.link);
+            .filter(item => item && item.title && item.link)
+            .slice(0, count);
 
         return list;
     }
