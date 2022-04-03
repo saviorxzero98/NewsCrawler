@@ -2,6 +2,7 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 import { Item } from "feed";
+import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
 
@@ -13,9 +14,11 @@ export enum TTVChannel {
 }
 
 export class TTVNewsCrawler {
-    public static async getNews(count: number = 25) {
+    public static async getNews(count: number = 15) {
         let url = `${rootUrl}/realtime`;
-        let response = await httpClient.get(url);
+        console.log(`GET ${url}`);
+
+        let response = await httpClient.get(url, utils.crawlerOptions);
         let list = TTVNewsCrawler.getTTVNews(response.data, count);
 
         return {
@@ -25,9 +28,11 @@ export class TTVNewsCrawler {
         };
     }
 
-    public static async getNewsByCategory(category: string, count: number = 25) {
+    public static async getNewsByCategory(category: string, count: number = 10) {
         let url = `${rootUrl}/category/${encodeURIComponent(category)}`;
-        let response = await httpClient.get(url);
+        console.log(`GET ${url}`);
+        
+        let response = await httpClient.get(url, utils.crawlerOptions);
         let list = TTVNewsCrawler.getTTVNews(response.data, count);
         
         return {

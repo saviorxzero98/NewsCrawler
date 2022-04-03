@@ -1,3 +1,6 @@
+import NodeCache = require("node-cache");
+import { ServiceContext } from "./app";
+
 import { AppleDailyNewsCrawler } from './news/applydaily/applydaily';
 import { ChinaTimesNewsCrawler } from './news/chinatimes/chinatimes';
 import { CNANewsCrawler } from './news/roc/cna';
@@ -20,7 +23,12 @@ import { WorldJournalNewsCrawler } from './news/udn/worldjournal';
 import { HealthMediaNewsCrawler } from './news/heath/healthmedia';
 import { MirrorMediaNewsCrawler } from './news/mirrormedia/mirrormedia';
 
+const cache = new NodeCache();
+
 export const testCrawlNews = async () => {
-    let news = await TTVNewsCrawler.getNews();
+    let services = new ServiceContext().registCache(cache);
+
+    let crawler = new AppleDailyNewsCrawler(services);
+    let news = await crawler.getNews();
     console.log(news);
 }

@@ -1,43 +1,63 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
+import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
 
 const rootUrl = 'https://www.chinatimes.com';
 const title = '中時電子報';
 
-export class ChinaTimesNewsCrawler {
-    public static async  getNews(page: string = 'realtimenews', count: number = 20) {
-        let url = `${rootUrl}/${page}/?chdtv`;
-    
-        const response = await httpClient.get(url);
-    
-        const $ = cheerio.load(response.data);
+const categoryMap = {
+    realtimenews: '即時',
+    politic: '政治',
+    opinion: '言論',
+    life: '生活',
+    star: '娛樂',
+    money: '財經',
+    world: '國際',
+    chinese: '兩岸',
+    society: '社會',
+    armament: '軍事',
+    technologynews: '科技',
+    sports: '體育',
+    hottopic: '網推',
+    tube: '有影',
+    health: '健康',
+    fortune: '運勢',
+    taiwan: '寶島'
+};
 
-        const list = $('section.article-list ul div.row')
+export class ChinaTimesNewsCrawler {
+    public static async  getNews(category: string = 'realtimenews', count: number = 15) {
+        let url = `${rootUrl}/${category}/?chdtv`;
+        console.log(`GET ${url}`);
+
+        let response = await httpClient.get(url, utils.crawlerOptions);
+        let $ = cheerio.load(response.data);
+        let list = $('section.article-list ul div.row')
             .slice(0, count)
             .map((_, item) => {
-                const title = $(item).find('h3.title a').text();
-                const link = rootUrl + $(item).find('h3.title a').attr('href');
-                const content = $(item).find('p.intro').text();
-                const image = $(item).find('img.photo').attr('src');
-                const pubDate = $(item).find('time').attr('datetime');
+                let title = $(item).find('h3.title a').text();
+                let link = rootUrl + $(item).find('h3.title a').attr('href');
+                let description = $(item).find('p.intro').text();
+                let image = $(item).find('img.photo').attr('src');
+                let pubDate = $(item).find('time').attr('datetime');
 
                 return {
                     title,
                     link,
-                    content,
+                    description,
                     image,
-                    pubDate,
+                    date: moment(pubDate, 'HH:mm YYYY/MM/DD').toDate(),
                 };
             })
             .get();
             
         return {
-            title: `${title}`,
+            title: `${title} ${categoryMap[category]}`,
             link: url,
-            item: list,
+            items: list,
         };
     }
 }

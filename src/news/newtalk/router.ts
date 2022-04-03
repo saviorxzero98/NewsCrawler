@@ -1,19 +1,19 @@
 import * as express from 'express';
 import { FeedBuilder } from '../../feeds/feedBuilder';
-import { CTSNewsCrawler } from './cts';
+import { NewtalkNewsCrawler } from './newtalk';
 import { ServiceContext } from '../../app';
 
+const path = 'newtalk';
 
-const ctsPath = 'cts';
-
-export class TBSNewsRouter {
+export class NewtalkNewsRouter {
     public static router(services: ServiceContext) {
 
-        services.app.get(`/${ctsPath}/:page?`, async (req, res) => {
-            let page = req.params.page ?? 'real';
+        services.app.get(`/${path}/:category?/:topic?`, async (req, res) => {
+            let category = req.params.category ?? '';
+            let topic = req.params.topic ?? '';
             let limit = Number(req.query.limit ?? 15);
 
-            let data = await CTSNewsCrawler.getNews(page, limit);
+            let data = await NewtalkNewsCrawler.getNews(category, topic, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());

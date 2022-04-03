@@ -2,6 +2,7 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 import { Item } from 'feed';
+import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
 
@@ -24,9 +25,11 @@ const channelMap = {
 };
 
 export class CTSNewsCrawler {
-    public static async getNews(page: string = 'real', count: number = 25) {
+    public static async getNews(page: string = 'real', count: number = 15) {
         let url = `${rootUrl}/${page}/index.html`;
-        let response = await httpClient.get(url);
+        console.log(`GET ${url}`);
+        
+        let response = await httpClient.get(url, utils.crawlerOptions);
         let $ = cheerio.load(response.data);
         let list: Item[] = $('div.newslist-container a')
             .slice(0, count)
@@ -34,13 +37,13 @@ export class CTSNewsCrawler {
                 let pubDate = moment($(item).find('p.newstitle span.newstime').text(), 'yyyy/MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
                 $(item).find('p.newstitle span.newstime').remove();
                 let title = $(item).find('p.newstitle').text();
-                let image = $(item).find('div.newsimg-thumb img').attr('src');
+                //let image = $(item).find('div.newsimg-thumb img').attr('src');
                 let link = $(item).attr('href');
 
                 return {
                     title,
                     link,
-                    image,
+                    image: '',
                     description: '',
                     date: moment(pubDate, 'YYYY/MM/DD HH:mm').toDate(),
                 };
@@ -51,10 +54,15 @@ export class CTSNewsCrawler {
             list.map(async (item) => {
                 let detailResponse = await httpClient.get(item.link);
                 let content = cheerio.load(detailResponse.data);
-                content('div.artical-content div.cts-tbfs').remove();
-                content('div.artical-content p.news-src').remove();
-                let data = content('div.artical-content').html();
-                item.description += data;
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
+
+                //content('div.artical-content div.cts-tbfs').remove();
+                //content('div.artical-content p.news-src').remove();
+                //let description = content('div.artical-content').html();
+                
                 return item;
             })
         );

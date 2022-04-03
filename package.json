@@ -9,8 +9,9 @@
     "cheerio": "^1.0.0-rc.10",
     "express": "^4.17.3",
     "feed": "^4.2.2",
-    "feed-reader": "^5.0.0-rc3",
-    "moment": "^2.29.1"
+    "moment": "^2.29.1",
+    "node-cache": "^5.1.2",
+    "rss-parser": "^3.12.0"
   },
   "devDependencies": {
     "@types/express": "^4.17.13"

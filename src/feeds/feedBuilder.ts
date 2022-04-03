@@ -34,6 +34,7 @@ export class FeedBuilder {
         for (let item of items) {
             if (item.image) {
                 item.description = `<p><img src="${item.image}"></p>${item.description}`;
+                item.image = '';
             }
             this.items.push(item);
         }
