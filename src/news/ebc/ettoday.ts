@@ -4,6 +4,7 @@ import * as moment from 'moment';
 import * as parser from 'rss-parser';
 
 import { ServiceContext } from '../../service';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -40,10 +41,9 @@ const rssMap = {
     photo: '推薦圖集'
 }
 
-export class ETtodayNewsCrawler {
-    private services: ServiceContext;
+export class ETtodayNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
     
     public async getNews(rss: string = 'realtime', count: number = 15) {

@@ -3,6 +3,7 @@ import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -22,10 +23,9 @@ const categoryMap = {
     Finance: '財經'
 };
 
-export class NextTVNewsCrawler {
-    private services: ServiceContext;
+export class NextTVNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
     
     public async getNews(category: string = 'OnlineLatestNews', count: number = 15) {

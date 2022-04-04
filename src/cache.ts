@@ -8,23 +8,25 @@ export class CacheService {
         this.cache = cache;
     }
 
-    public async tryGet(key: string, callback: () => any): Promise<any> {
-        let value = this.cache.get(key);
+    public async tryGet<T>(key: string, callback: () => Promise<T>): Promise<T> {
+        let value = this.cache.get<T>(key);
         if (value) {
             return value;
         }
         else {
-            value = await callback();
-            this.cache.set(key, value);
+            if (callback) {
+                value = await callback()
+                this.cache.set(key, value);
+            }
             return value;
         }
     }
 
-    public get(key: string) {
-        this.cache.get(key);
+    public get<T>(key: string): T {
+        return this.cache.get<T>(key);
     }
 
-    public set(key: string, value: any) {
+    public set<T>(key: string, value: T) {
         this.cache.set(key, value);
     }
 

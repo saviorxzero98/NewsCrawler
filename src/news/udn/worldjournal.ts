@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -27,10 +28,9 @@ const categoryMap = {
     '121008': '運動'
 }
 
-export class WorldJournalNewsCrawler {
-    private services: ServiceContext;
+export class WorldJournalNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
     
     public async getNews(category: string = '0', language: string = 'zh-tw', count: number = 15) {

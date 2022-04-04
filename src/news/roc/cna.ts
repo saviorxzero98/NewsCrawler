@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -26,11 +27,9 @@ const categoryMap = {
     amov: '娛樂'
 };
 
-export class CNANewsCrawler {
-    
-    private services: ServiceContext;
+export class CNANewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
 
     
@@ -66,26 +65,19 @@ export class CNANewsCrawler {
             .get();
             
 
-        let items = await Promise.all(
-            list.map(async (item) => 
-                this.services
-                    .cache
-                    .tryGet(item.link, async () => {
-                        let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
-                        let content = cheerio.load(detailResponse.data);
-                        let description = content('meta[property="og:description"]').attr('content');
-                        let image = content('meta[property="og:image"]').attr('content');
-                        item.description = description;
-                        item.image = image;
+        let items = await this.getDetials(list, async (item, data) => {
+            let content = cheerio.load(data);
+            let description = content('meta[property="og:description"]').attr('content');
+            let image = content('meta[property="og:image"]').attr('content');
+            item.description = description;
+            item.image = image;
 
-                        //let topImage = content('.fullPic').html();
-                        //item.description = (topImage === null ? '' : topImage) + content('.paragraph').eq(0).html();
-                        //let description = content('div.artical-content').html();
+            //let topImage = content('.fullPic').html();
+            //item.description = (topImage === null ? '' : topImage) + content('.paragraph').eq(0).html();
+            //let description = content('div.artical-content').html();
 
-                        return item;
-                    })
-            )
-        );
+            return item;
+        }, utils.crawlerOptions); 
 
         return {
             title: `${title}${categoryName}`,

@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -27,10 +28,9 @@ const categoryMap = {
     sports: '運動'
 }
 
-export class TVBSNewsCrawler {
-    private services: ServiceContext;
+export class TVBSNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
     
     public async getNews(category: string = '', count: number = 15) {
@@ -66,24 +66,17 @@ export class TVBSNewsCrawler {
             .get()
             .filter(item => item && item.title && item.link);
 
-        let items = await Promise.all(
-            list.map(async (item) => 
-                this.services
-                    .cache
-                    .tryGet(item.link, async () => {
-                        let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
-                        let content = cheerio.load(detailResponse.data);
-                        let description = content('meta[property="og:description"]').attr('content');
-                        let pubDate = content('meta[property="article:published_time"]').attr('content');
-                        item.description = description;
-                        item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate();
+        let items = await this.getDetials(list, async (item, data) => {
+            let content = cheerio.load(data);
+            let description = content('meta[property="og:description"]').attr('content');
+            let pubDate = content('meta[property="article:published_time"]').attr('content');
+            item.description = description;
+            item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate();
 
-                        //let description = content('div#news_detail_div').html();
+            //let description = content('div#news_detail_div').html();
 
-                        return item;
-                    })
-            )
-        );
+            return item;
+        }, utils.crawlerOptions);
 
         return {
             title: `${title} ${categoryName}`,

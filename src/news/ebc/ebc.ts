@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../newsCrawler';
 
 
 const httpClient = axios.default;
@@ -32,10 +33,9 @@ const categoryMap = {
     travel: '旅遊'
 }
 
-export class EBCNewsCrawler {
-    private services: ServiceContext;
+export class EBCNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
 
     public async getNews(category: string = 'realtime', count: number = 15) {

@@ -2,8 +2,10 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
+import { NewsCrawler } from '../newsCrawler';
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+
 
 const httpClient = axios.default;
 
@@ -28,10 +30,9 @@ const categoryMap = {
     micromovie: '微視蘋',
 };
 
-export class AppleDailyNewsCrawler {
-    private services: ServiceContext;
+export class AppleDailyNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
 
     public async getNews(category: string = 'new', count: number = 15) {
@@ -56,23 +57,15 @@ export class AppleDailyNewsCrawler {
             })
             .get();
 
-        let items = await Promise.all(
-            list.map(async (item) => 
-                this.services
-                    .cache
-                    .tryGet(item.link, async () => {
-                        console.log(item.link);
-                        let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
-                        let content = cheerio.load(detailResponse.data);
-                        let description = content('meta[property="og:description"]').attr('content');
-                        let image = content('meta[property="og:image"]').attr('content');
-                        item.description = description;
-                        item.image = image;
-                        return item;
-                    })
-            )
-        );
-        
+        let items = await this.getDetials(list, async (item, data) => {
+            let content = cheerio.load(data);
+            let description = content('meta[property="og:description"]').attr('content');
+            let image = content('meta[property="og:image"]').attr('content');
+            item.description = description;
+            item.image = image;
+            return item;
+        }, utils.crawlerOptions);
+         
         return {
             title: `${title} - ${categoryMap[category]}`,
             link: url,

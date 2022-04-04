@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -15,12 +16,10 @@ const categoryMap = {
     popular: '熱門'
 }
 
-export class FTVNewsCrawler {
-    private services: ServiceContext;
+export class FTVNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
-
     public async getNews(tag: string = 'realtime', count: number = 15) {
         if (tag !== 'realtime' && tag !== 'popular') {
             return this.getNewsByTag(tag, count);

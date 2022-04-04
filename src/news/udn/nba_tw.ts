@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -15,10 +16,9 @@ const categoryMap = {
     hottest: '熱門'
 };
 
-export class NBATaiwanNewsCrawler {
-    private services: ServiceContext;
+export class NBATaiwanNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
     
     public async getNews(category: string = 'newest', count: number = 15) {
@@ -46,23 +46,16 @@ export class NBATaiwanNewsCrawler {
             })
             .get();
             
-        let items = await Promise.all(
-            list.map(async (item) => 
-                this.services
-                    .cache
-                    .tryGet(item.link, async () => {
-                        let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
-                        let content = cheerio.load(detailResponse.data);
-                        let description = content('meta[property="og:description"]').attr('content');
-                        let image = content('meta[property="og:image"]').attr('content');
-                        let pubDate = content('meta[name="date.available"]').attr('content');
-                        item.description = description;
-                        item.image = image;
-                        item.date = moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate();
-                        return item;
-                    })
-            )
-        );
+        let items = await this.getDetials(list, async (item, data) => {
+            let content = cheerio.load(data);
+            let description = content('meta[property="og:description"]').attr('content');
+            let image = content('meta[property="og:image"]').attr('content');
+            let pubDate = content('meta[name="date.available"]').attr('content');
+            item.description = description;
+            item.image = image;
+            item.date = moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate();
+            return item;
+        }, utils.crawlerOptions);
 
         return {
             title: `${title} ${categoryMap[category]}`,

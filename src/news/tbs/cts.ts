@@ -4,6 +4,7 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -25,10 +26,9 @@ const channelMap = {
     entertain: '娛樂'
 };
 
-export class CTSNewsCrawler {
-    private services: ServiceContext;
+export class CTSNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
 
     public async getNews(page: string = 'real', count: number = 15) {
@@ -57,26 +57,19 @@ export class CTSNewsCrawler {
             .get();
             
 
-        let items = await Promise.all(
-            list.map(async (item) => 
-                this.services
-                    .cache
-                    .tryGet(item.link, async () => {
-                        let detailResponse = await httpClient.get(item.link);
-                        let content = cheerio.load(detailResponse.data);
-                        let description = content('meta[property="og:description"]').attr('content');
-                        let image = content('meta[property="og:image"]').attr('content');
-                        item.description = description;
-                        item.image = image;
+        let items = await this.getDetials(list, async (item, data) => {
+            let content = cheerio.load(data);
+            let description = content('meta[property="og:description"]').attr('content');
+            let image = content('meta[property="og:image"]').attr('content');
+            item.description = description;
+            item.image = image;
 
-                        //content('div.artical-content div.cts-tbfs').remove();
-                        //content('div.artical-content p.news-src').remove();
-                        //let description = content('div.artical-content').html();
-                        
-                        return item;
-                    })
-            )
-        );
+            //content('div.artical-content div.cts-tbfs').remove();
+            //content('div.artical-content p.news-src').remove();
+            //let description = content('div.artical-content').html();
+            
+            return item;
+        }, utils.crawlerOptions);
         
         return {
             title: `${title} ${channelMap[page]}`,

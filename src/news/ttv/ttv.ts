@@ -5,6 +5,7 @@ import { Item } from "feed";
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../newsCrawler';
 
 const httpClient = axios.default;
 
@@ -15,10 +16,9 @@ export enum TTVChannel {
     realtime = '即時'
 }
 
-export class TTVNewsCrawler {
-    private services: ServiceContext;
+export class TTVNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
-        this.services = services;
+        super(services);
     }
     
     public async getNews(count: number = 15) {
