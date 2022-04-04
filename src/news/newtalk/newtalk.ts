@@ -1,6 +1,8 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
+
+import { ServiceContext } from '../../app';
 import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
@@ -35,7 +37,12 @@ const categoryMap = {
 }
 
 export class NewtalkNewsCrawler {
-    public static async getNews(category: string = '', topic: string = '', count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+    
+    public async getNews(category: string = '', topic: string = '', count: number = 15) {
         let url = `${rootUrl}/news/summary/today`;
         let categoryName = '總覽';
         if (category) {
@@ -56,11 +63,11 @@ export class NewtalkNewsCrawler {
         let response = await httpClient.get(url, utils.crawlerOptions);
         let content = cheerio.load(response.data);
         
-        let topNewsList = await NewtalkNewsCrawler.getTopNews(content);
+        let topNewsList = await this.getTopNews(content);
         let list = topNewsList;
 
         if (count > 2) {
-            let nextNewsList = await NewtalkNewsCrawler.getNextNews(content, count - 2);
+            let nextNewsList = await this.getNextNews(content, count - 2);
             list.push(...nextNewsList);
         }
             
@@ -71,7 +78,7 @@ export class NewtalkNewsCrawler {
         };
     }
 
-    private static async getTopNews(content: cheerio.CheerioAPI, count: number = 2) {
+    private async getTopNews(content: cheerio.CheerioAPI, count: number = 2) {
         let list = content('div.news-top2 div.newsArea')
             .slice(0, count)
             .map((_, item) => {
@@ -90,31 +97,35 @@ export class NewtalkNewsCrawler {
             .get();
     
         let items = await Promise.all(
-            list.map(async (item) => {
-                let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
-                let content = cheerio.load(detailResponse.data);
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                let pubDate = content('meta[property="article:published_time"]').attr('content');
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
+            list.map(async (item) => 
+                this.services
+                    .cache
+                    .tryGet(item.link, async () => {
+                        let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
+                        let content = cheerio.load(detailResponse.data);
+                        let description = content('meta[property="og:description"]').attr('content');
+                        let image = content('meta[property="og:image"]').attr('content');
+                        let pubDate = content('meta[property="article:published_time"]').attr('content');
+                        item.description = description;
+                        item.image = image;
+                        item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
 
-                //let description = content('div.news-content').html();
-                //let pubDate = content('div.content_date').text();
-                //pubDate = pubDate.replace('發布', '')
-                //                 .replace('|', '')
-                //                 .trim();
-                //pubDate = moment(pubDate, 'YYYY.MM.DD HH:mm').toDate();
+                        //let description = content('div.news-content').html();
+                        //let pubDate = content('div.content_date').text();
+                        //pubDate = pubDate.replace('發布', '')
+                        //                 .replace('|', '')
+                        //                 .trim();
+                        //pubDate = moment(pubDate, 'YYYY.MM.DD HH:mm').toDate();
 
-                return item;
-            })
+                        return item;
+                    })
+            )
         );
 
         return items;
     }
 
-    private static async getNextNews(content: cheerio.CheerioAPI, count: number = 13) {
+    private async getNextNews(content: cheerio.CheerioAPI, count: number = 13) {
         let list = content('div.news-list div.news-list-item')
             .slice(0, count)
             .map((_, item) => {
@@ -140,25 +151,29 @@ export class NewtalkNewsCrawler {
             .get();
 
         let items = await Promise.all(
-            list.map(async (item) => {
-                let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
-                let content = cheerio.load(detailResponse.data);
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                let pubDate = content('meta[property="article:published_time"]').attr('content');
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
+            list.map(async (item) => 
+                this.services
+                    .cache
+                    .tryGet(item.link, async () => {
+                        let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
+                        let content = cheerio.load(detailResponse.data);
+                        let description = content('meta[property="og:description"]').attr('content');
+                        let image = content('meta[property="og:image"]').attr('content');
+                        let pubDate = content('meta[property="article:published_time"]').attr('content');
+                        item.description = description;
+                        item.image = image;
+                        item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
 
-                //let description = content('div.news-content').html();
-                //let pubDate = content('div.content_date').text();
-                //pubDate = pubDate.replace('發布', '')
-                //                 .replace('|', '')
-                //                 .trim();
-                //pubDate = moment(pubDate, 'YYYY.MM.DD HH:mm').toDate();
+                        //let description = content('div.news-content').html();
+                        //let pubDate = content('div.content_date').text();
+                        //pubDate = pubDate.replace('發布', '')
+                        //                 .replace('|', '')
+                        //                 .trim();
+                        //pubDate = moment(pubDate, 'YYYY.MM.DD HH:mm').toDate();
 
-                return item;
-            })
+                        return item;
+                    })
+            )
         );
 
         return items;

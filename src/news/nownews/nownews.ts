@@ -1,6 +1,8 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
+
+import { ServiceContext } from '../../app';
 import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
@@ -27,7 +29,12 @@ const categoryMap = {
 }
 
 export class NownewsNewsCrawler {
-    public static async getNews(category: string = 'breaking', subCategory: string = '', count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+
+    public async getNews(category: string = 'breaking', subCategory: string = '', count: number = 15) {
         let url = `${rootUrl}/cat/${category}`;
         if (subCategory) {
             url = `${url}/${subCategory}`;
@@ -37,11 +44,11 @@ export class NownewsNewsCrawler {
         let response = await httpClient.get(url, utils.crawlerOptions);
         let content = cheerio.load(response.data);
 
-        let topNewsList = await NownewsNewsCrawler.getTop5News(content);
+        let topNewsList = await this.getTop5News(content);
 
         let list = topNewsList;
         if (count > 5) {
-            let nextNewsList = await NownewsNewsCrawler.getNextNews(content, count - 5);
+            let nextNewsList = await this.getNextNews(content, count - 5);
             list.push(...nextNewsList);
         }
     
@@ -52,7 +59,7 @@ export class NownewsNewsCrawler {
         };
     }
 
-    private static async getTop5News(content: cheerio.CheerioAPI, count: number = 5) {
+    private async getTop5News(content: cheerio.CheerioAPI, count: number = 5) {
         let list = content('div.sliderBlk div.swiper-slide')
             .slice(0, count)
             .map((_, item) => {
@@ -71,26 +78,30 @@ export class NownewsNewsCrawler {
             .get();
 
         let items = await Promise.all(
-            list.map(async (item) => {
-                let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
-                let content = cheerio.load(detailResponse.data);
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                let pubDate = content('meta[property="article:published_time"]').attr('content');
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
+            list.map(async (item) => 
+                this.services
+                    .cache
+                    .tryGet(item.link, async () => {
+                        let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
+                        let content = cheerio.load(detailResponse.data);
+                        let description = content('meta[property="og:description"]').attr('content');
+                        let image = content('meta[property="og:image"]').attr('content');
+                        let pubDate = content('meta[property="article:published_time"]').attr('content');
+                        item.description = description;
+                        item.image = image;
+                        item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
 
-                //let date = content('div.titleBlk p.time a').text();
-                //let description = content('article').html();
+                        //let date = content('div.titleBlk p.time a').text();
+                        //let description = content('article').html();
 
-                return item;
-            })
+                        return item;
+                    })
+            )
         );
 
         return items;
     }
-    private static async getNextNews(content: cheerio.CheerioAPI, count: number = 10) {
+    private async getNextNews(content: cheerio.CheerioAPI, count: number = 10) {
         let list = content('div.listBlk ul li')
             .slice(0, count)
             .map((_, item) => {
@@ -111,21 +122,25 @@ export class NownewsNewsCrawler {
             .get();
     
         let items = await Promise.all(
-            list.map(async (item) => {
-                let detailResponse = await httpClient.get(item.link);
-                let content = cheerio.load(detailResponse.data);
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                let pubDate = content('meta[property="article:published_time"]').attr('content');
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
+            list.map(async (item) => 
+                this.services
+                    .cache
+                    .tryGet(item.link, async () => {
+                        let detailResponse = await httpClient.get(item.link);
+                        let content = cheerio.load(detailResponse.data);
+                        let description = content('meta[property="og:description"]').attr('content');
+                        let image = content('meta[property="og:image"]').attr('content');
+                        let pubDate = content('meta[property="article:published_time"]').attr('content');
+                        item.description = description;
+                        item.image = image;
+                        item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
 
-                //let description = content('article').html();
-                //item.description = description;
+                        //let description = content('article').html();
+                        //item.description = description;
 
-                return item;
-            })
+                        return item;
+                    })
+            )
         );
 
         return items;

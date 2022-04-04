@@ -3,6 +3,8 @@ import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 import * as parser from 'rss-parser';
 
+import { ServiceContext } from '../../app';
+
 const httpClient = axios.default;
 
 const rootUrl = 'https://www.ettoday.net/';
@@ -39,7 +41,12 @@ const rssMap = {
 }
 
 export class ETtodayNewsCrawler {
-    public static async  getNews(rss: string = 'realtime', count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+    
+    public async getNews(rss: string = 'realtime', count: number = 15) {
         let list = [];
 
         if (rssMap[rss]) {

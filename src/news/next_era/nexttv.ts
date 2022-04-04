@@ -1,7 +1,8 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
-import * as utils from '../../feeds/utils';
+
+import { ServiceContext } from '../../app';
 
 const httpClient = axios.default;
 
@@ -22,7 +23,12 @@ const categoryMap = {
 };
 
 export class NextTVNewsCrawler {
-    public static async  getNews(category: string = 'OnlineLatestNews', count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+    
+    public async getNews(category: string = 'OnlineLatestNews', count: number = 15) {
         let url = `${rootUrl}/NextTV/News/Home/${category}`;
         console.log(`GET ${url}`);
 

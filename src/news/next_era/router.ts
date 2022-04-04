@@ -1,4 +1,3 @@
-import * as express from 'express';
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { ERANewsCrawler } from './era';
 import { NextTVNewsCrawler } from './nexttv';
@@ -15,7 +14,8 @@ export class NextEraNewsRouter {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? 15);
 
-            let data = await ERANewsCrawler.getNews(category, limit);
+            let crawler = new ERANewsCrawler(services);
+            let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
@@ -25,7 +25,8 @@ export class NextEraNewsRouter {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? 15);
 
-            let data = await NextTVNewsCrawler.getNews(category, limit);
+            let crawler = new NextTVNewsCrawler(services);
+            let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());

@@ -13,7 +13,8 @@ export class SETNewsRouter {
             let page = req.params.page ?? '';
             let limit = Number(req.query.limit ?? 15);
 
-            let data = await SETNewsCrawler.getNews(page, limit);
+            let crawler = new SETNewsCrawler(services);
+            let data = await crawler.getNews(page, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());

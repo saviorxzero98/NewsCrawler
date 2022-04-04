@@ -1,4 +1,3 @@
-import * as express from 'express';
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { CTSNewsCrawler } from './cts';
 import { ServiceContext } from '../../app';
@@ -13,7 +12,8 @@ export class TBSNewsRouter {
             let page = req.params.page ?? 'real';
             let limit = Number(req.query.limit ?? 15);
 
-            let data = await CTSNewsCrawler.getNews(page, limit);
+            let crawler = new CTSNewsCrawler(services);
+            let data = await crawler.getNews(page, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());

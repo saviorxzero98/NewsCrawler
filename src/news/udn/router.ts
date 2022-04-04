@@ -1,4 +1,3 @@
-import * as express from 'express';
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { NBATaiwanNewsCrawler } from './nba_tw';
 import { WorldJournalNewsCrawler } from './worldjournal';
@@ -16,7 +15,8 @@ export class UDNNewsRouter {
             let category = req.params.category ?? 'newest';
             let limit = Number(req.query.limit ?? 15);
 
-            let data = await NBATaiwanNewsCrawler.getNews(category, limit);
+            let crawler = new NBATaiwanNewsCrawler(services);
+            let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
@@ -27,7 +27,8 @@ export class UDNNewsRouter {
             let language = req.params.language ?? '';
             let limit = Number(req.query.limit ?? 15);
 
-            let data = await WorldJournalNewsCrawler.getNews(category, language, limit);
+            let crawler = new WorldJournalNewsCrawler(services);
+            let data = await crawler.getNews(category, language, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());

@@ -1,4 +1,3 @@
-import * as express from 'express';
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { NewtalkNewsCrawler } from './newtalk';
 import { ServiceContext } from '../../app';
@@ -13,7 +12,8 @@ export class NewtalkNewsRouter {
             let topic = req.params.topic ?? '';
             let limit = Number(req.query.limit ?? 15);
 
-            let data = await NewtalkNewsCrawler.getNews(category, topic, limit);
+            let crawler = new NewtalkNewsCrawler(services);
+            let data = await crawler.getNews(category, topic, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());

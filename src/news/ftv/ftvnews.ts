@@ -1,6 +1,8 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
+
+import { ServiceContext } from '../../app';
 import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
@@ -14,9 +16,14 @@ const categoryMap = {
 }
 
 export class FTVNewsCrawler {
-    public static async getNews(tag: string = 'realtime', count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+
+    public async getNews(tag: string = 'realtime', count: number = 15) {
         if (tag !== 'realtime' && tag !== 'popular') {
-            return FTVNewsCrawler.getNewsByTag(tag, count);
+            return this.getNewsByTag(tag, count);
         }
         let url = `${rootUrl}/${tag}`;
         console.log(`GET ${url}`);
@@ -49,7 +56,7 @@ export class FTVNewsCrawler {
         };
     }
 
-    public static async getNewsByTag(tag: string, count: number = 15) {
+    public async getNewsByTag(tag: string, count: number = 15) {
         let url = `${rootUrl}/tag/${encodeURIComponent(tag)}`;
         console.log(`GET ${url}`);
         

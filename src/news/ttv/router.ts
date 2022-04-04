@@ -1,4 +1,3 @@
-import * as express from 'express';
 import { TTVNewsCrawler } from './ttv';
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { ServiceContext } from '../../app';

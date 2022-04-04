@@ -1,7 +1,10 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
+
+import { ServiceContext } from '../../app';
 import * as utils from '../../feeds/utils';
+
 
 const httpClient = axios.default;
 
@@ -30,7 +33,12 @@ const categoryMap = {
 }
 
 export class EBCNewsCrawler {
-    public static async getNews(category: string = 'realtime', count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+
+    public async getNews(category: string = 'realtime', count: number = 15) {
         let url = '';
         if (category === 'realtime' || category === 'hot') {
             url = `${rootUrl}/${category}`;

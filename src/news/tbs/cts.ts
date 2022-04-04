@@ -1,7 +1,8 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
-import { Item } from 'feed';
+
+import { ServiceContext } from '../../app';
 import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
@@ -25,13 +26,18 @@ const channelMap = {
 };
 
 export class CTSNewsCrawler {
-    public static async getNews(page: string = 'real', count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+
+    public async getNews(page: string = 'real', count: number = 15) {
         let url = `${rootUrl}/${page}/index.html`;
         console.log(`GET ${url}`);
         
         let response = await httpClient.get(url, utils.crawlerOptions);
         let $ = cheerio.load(response.data);
-        let list: Item[] = $('div.newslist-container a')
+        let list = $('div.newslist-container a')
             .slice(0, count)
             .map((_, item) => {
                 let pubDate = moment($(item).find('p.newstitle span.newstime').text(), 'yyyy/MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
@@ -50,21 +56,26 @@ export class CTSNewsCrawler {
             })
             .get();
             
-        let items = await Promise.all(
-            list.map(async (item) => {
-                let detailResponse = await httpClient.get(item.link);
-                let content = cheerio.load(detailResponse.data);
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                item.description = description;
-                item.image = image;
 
-                //content('div.artical-content div.cts-tbfs').remove();
-                //content('div.artical-content p.news-src').remove();
-                //let description = content('div.artical-content').html();
-                
-                return item;
-            })
+        let items = await Promise.all(
+            list.map(async (item) => 
+                this.services
+                    .cache
+                    .tryGet(item.link, async () => {
+                        let detailResponse = await httpClient.get(item.link);
+                        let content = cheerio.load(detailResponse.data);
+                        let description = content('meta[property="og:description"]').attr('content');
+                        let image = content('meta[property="og:image"]').attr('content');
+                        item.description = description;
+                        item.image = image;
+
+                        //content('div.artical-content div.cts-tbfs').remove();
+                        //content('div.artical-content p.news-src').remove();
+                        //let description = content('div.artical-content').html();
+                        
+                        return item;
+                    })
+            )
         );
         
         return {

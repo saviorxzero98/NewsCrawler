@@ -1,6 +1,8 @@
 import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
+
+import { ServiceContext } from '../../app';
 import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
@@ -18,7 +20,12 @@ const categoryMap = {
 };
 
 export class RtiNewsCrawler {
-    public static async  getNews(category: string = '', count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+
+    public async getNews(category: string = '', count: number = 15) {
         let url = `${rootUrl}/news/list`;
         let categoryName = '總覽'
         if (category && /^\d$/.test(category) && categoryMap[category]) {
@@ -45,22 +52,26 @@ export class RtiNewsCrawler {
             .get();
             
         let items = await Promise.all(
-            list.map(async (item) => {
-                let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
-                let content = cheerio.load(detailResponse.data);
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                item.description = description;
-                item.image = image;
+            list.map(async (item) => 
+                this.services
+                    .cache
+                    .tryGet(item.link, async () => {
+                        let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
+                        let content = cheerio.load(detailResponse.data);
+                        let description = content('meta[property="og:description"]').attr('content');
+                        let image = content('meta[property="og:image"]').attr('content');
+                        item.description = description;
+                        item.image = image;
 
-                let pubDate = content('section.news-detail-box li.date').text();
-                pubDate = pubDate.replace('\n', '').replace('時間：', '').trim();
-                item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                        let pubDate = content('section.news-detail-box li.date').text();
+                        pubDate = pubDate.replace('\n', '').replace('時間：', '').trim();
+                        item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
 
-                //let description = content('article').html();
+                        //let description = content('article').html();
 
-                return item;
-            })
+                        return item;
+                    })
+            )
         );
 
         return {

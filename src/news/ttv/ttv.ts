@@ -2,6 +2,8 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 import { Item } from "feed";
+
+import { ServiceContext } from '../../app';
 import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
@@ -14,12 +16,17 @@ export enum TTVChannel {
 }
 
 export class TTVNewsCrawler {
-    public static async getNews(count: number = 15) {
+    private services: ServiceContext;
+    constructor(services: ServiceContext) {
+        this.services = services;
+    }
+    
+    public async getNews(count: number = 15) {
         let url = `${rootUrl}/realtime`;
         console.log(`GET ${url}`);
 
         let response = await httpClient.get(url, utils.crawlerOptions);
-        let list = TTVNewsCrawler.getTTVNews(response.data, count);
+        let list = this.getTTVNews(response.data, count);
 
         return {
             title: `${title}`,
@@ -28,12 +35,12 @@ export class TTVNewsCrawler {
         };
     }
 
-    public static async getNewsByCategory(category: string, count: number = 10) {
+    public async getNewsByCategory(category: string, count: number = 10) {
         let url = `${rootUrl}/category/${encodeURIComponent(category)}`;
         console.log(`GET ${url}`);
         
         let response = await httpClient.get(url, utils.crawlerOptions);
-        let list = TTVNewsCrawler.getTTVNews(response.data, count);
+        let list = this.getTTVNews(response.data, count);
         
         return {
             title: `${title} - ${category}`,
@@ -42,7 +49,7 @@ export class TTVNewsCrawler {
         };
     }
 
-    private static getTTVNews(data: any, count: number): Item[] {
+    private getTTVNews(data: any, count: number): Item[] {
         let $ = cheerio.load(data);
         let list = $('article.container div.news-list ul li')
             .map((_, i) => {

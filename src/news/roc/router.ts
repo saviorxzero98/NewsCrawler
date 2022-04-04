@@ -1,4 +1,3 @@
-import * as express from 'express';
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { CNANewsCrawler } from './cna';
 import { RtiNewsCrawler } from './rti';
@@ -14,7 +13,8 @@ export class RocGovNewsRouter {
             let category = req.params.category ?? 'aall';
             let limit = Number(req.query.limit ?? 15);
             
-            let data = await CNANewsCrawler.getNews(category, limit);
+            let crawler = new CNANewsCrawler(services);
+            let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
@@ -25,7 +25,8 @@ export class RocGovNewsRouter {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? 15);
             
-            let data = await RtiNewsCrawler.getNews(category, limit);
+            let crawler = new RtiNewsCrawler(services);
+            let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
