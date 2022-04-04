@@ -1,6 +1,6 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { CTSNewsCrawler } from './cts';
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 
 
 const ctsPath = 'cts';
@@ -10,7 +10,7 @@ export class TBSNewsRouter {
 
         services.app.get(`/${ctsPath}/:page?`, async (req, res) => {
             let page = req.params.page ?? 'real';
-            let limit = Number(req.query.limit ?? 15);
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
 
             let crawler = new CTSNewsCrawler(services);
             let data = await crawler.getNews(page, limit);

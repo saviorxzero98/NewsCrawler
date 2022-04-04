@@ -1,7 +1,6 @@
-import * as express from 'express';
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { SETNewsCrawler } from './setn';
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 
 
 const path = 'setn';
@@ -11,7 +10,7 @@ export class SETNewsRouter {
 
         services.app.get(`/${path}/:page?`, async (req, res) => {
             let page = req.params.page ?? '';
-            let limit = Number(req.query.limit ?? 15);
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
 
             let crawler = new SETNewsCrawler(services);
             let data = await crawler.getNews(page, limit);

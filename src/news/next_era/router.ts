@@ -1,7 +1,7 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { ERANewsCrawler } from './era';
 import { NextTVNewsCrawler } from './nexttv';
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 
 
 const eraPath = 'era';
@@ -12,7 +12,7 @@ export class NextEraNewsRouter {
 
         services.app.get(`/${eraPath}/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
-            let limit = Number(req.query.limit ?? 15);
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
 
             let crawler = new ERANewsCrawler(services);
             let data = await crawler.getNews(category, limit);
@@ -23,7 +23,7 @@ export class NextEraNewsRouter {
 
         services.app.get(`/${nexttvPath}/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
-            let limit = Number(req.query.limit ?? 15);
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
 
             let crawler = new NextTVNewsCrawler(services);
             let data = await crawler.getNews(category, limit);

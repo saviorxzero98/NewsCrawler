@@ -1,6 +1,6 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { NownewsNewsCrawler } from './nownews';
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 
 
 const path = 'nownews';
@@ -11,7 +11,7 @@ export class NownewsNewsRouter {
         services.app.get(`/${path}/:category?/:subCategory?`, async (req, res) => {
             let category = req.params.category ?? 'breaking';
             let subCategory = req.params.subCategory ?? '';
-            let limit = Number(req.query.limit ?? 15);
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
 
             let crawler = new NownewsNewsCrawler(services);
             let data = await crawler.getNews(category, subCategory, limit);

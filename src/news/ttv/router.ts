@@ -1,6 +1,6 @@
 import { TTVNewsCrawler } from './ttv';
 import { FeedBuilder } from '../../feeds/feedBuilder';
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 
 
 const path = 'ttv';
@@ -10,16 +10,17 @@ export class TTVNewsRouter {
 
         services.app.get(`/${path}/:category?`, async (req, res) => {
             let category = req.params.category;
-            let limit = Number(req.query.limit ?? 15);
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
 
+            let crawler = new TTVNewsCrawler(services);
             if (category) {
-                let data = await TTVNewsCrawler.getNewsByCategory(category, limit);
+                let data = await crawler.getNewsByCategory(category, limit);
                 let feedBuilder = new FeedBuilder(data.title, data.link);
                 feedBuilder = feedBuilder.addItems(data.items);
                 res.send(feedBuilder.create());
             }
             else {
-                let data = await TTVNewsCrawler.getNews(limit);
+                let data = await crawler.getNews(limit);
                 let feedBuilder = new FeedBuilder(data.title, data.link);
                 feedBuilder = feedBuilder.addItems(data.items);
                 res.send(feedBuilder.create());

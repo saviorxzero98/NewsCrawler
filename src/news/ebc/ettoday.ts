@@ -3,7 +3,7 @@ import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 import * as parser from 'rss-parser';
 
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 
 const httpClient = axios.default;
 

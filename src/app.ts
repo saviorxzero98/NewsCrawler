@@ -1,7 +1,9 @@
 import * as express from 'express';
 import * as rssRouters from './apiRouters';
 import NodeCache = require("node-cache");
-import { CacheService } from './cache';
+
+import { ServiceContext } from './service';
+
 
 const app = express();
 const cache = new NodeCache();
@@ -17,18 +19,3 @@ export const startWebServer = (port: number = 1200) => {
     });
 }
 
-export class ServiceContext {
-    public app: express.Express;
-
-    public cache: CacheService;
-
-    public registExpress(app: express.Express) {
-        this.app = app;
-        return this;
-    }
-
-    public registCache(cache: NodeCache) {
-        this.cache = new CacheService(cache);
-        return this;
-    }
-}

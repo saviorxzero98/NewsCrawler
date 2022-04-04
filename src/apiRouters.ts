@@ -11,7 +11,7 @@ import { NextEraNewsRouter } from './news/next_era/router';
 import { NownewsNewsRouter } from './news/nownews/router';
 import { NewtalkNewsRouter } from './news/newtalk/router';
 import { UDNNewsRouter } from './news/udn/router';
-import { ServiceContext } from './app';
+import { ServiceContext } from "./service";
 
 export const addRouters = (services: ServiceContext) => {
     // 蘋果日報

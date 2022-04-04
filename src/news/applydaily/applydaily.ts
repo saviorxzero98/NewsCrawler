@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
 
 const httpClient = axios.default;
@@ -61,6 +61,7 @@ export class AppleDailyNewsCrawler {
                 this.services
                     .cache
                     .tryGet(item.link, async () => {
+                        console.log(item.link);
                         let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
                         let content = cheerio.load(detailResponse.data);
                         let description = content('meta[property="og:description"]').attr('content');

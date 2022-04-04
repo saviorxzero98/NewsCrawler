@@ -1,5 +1,5 @@
 import NodeCache = require("node-cache");
-import { ServiceContext } from "./app";
+import { ServiceContext } from "./service";
 
 import { AppleDailyNewsCrawler } from './news/applydaily/applydaily';
 import { ChinaTimesNewsCrawler } from './news/chinatimes/chinatimes';

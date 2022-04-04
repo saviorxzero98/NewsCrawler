@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 
 const httpClient = axios.default;
 

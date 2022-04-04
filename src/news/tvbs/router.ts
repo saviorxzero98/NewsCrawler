@@ -1,6 +1,6 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { TVBSNewsCrawler } from './tvbs';
-import { ServiceContext } from '../../app';
+import { ServiceContext } from '../../service';
 
 
 const path = 'tvbs';
@@ -10,7 +10,7 @@ export class TVBSNewsRouter {
 
         services.app.get(`/${path}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'realtime';
-            let limit = Number(req.query.limit ?? 15);
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
 
             let crawler = new TVBSNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
