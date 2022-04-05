@@ -1,12 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
 
 const rootUrl = 'https://www.rti.org.tw';
 const title = 'Rti 中央廣播電台';
@@ -34,13 +30,15 @@ export class RtiNewsCrawler extends NewsCrawler {
         }
         console.log(`GET ${url}`);
 
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let $ = cheerio.load(response.data);
-        let list = $('section.newslist-box ul li')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('span.title').text();
-                let link = rootUrl + $(item).find('a').attr('href');
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'section.newslist-box ul li',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('span.title').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+
                 return {
                     title,
                     link,
@@ -48,24 +46,27 @@ export class RtiNewsCrawler extends NewsCrawler {
                     description: '',
                     date: new Date()
                 };
-            })
-            .get();
-            
-        let items = await this.getDetials(list, async (item, data) => {
-            let content = cheerio.load(data);
-            let description = content('meta[property="og:description"]').attr('content');
-            let image = content('meta[property="og:image"]').attr('content');
-            item.description = description;
-            item.image = image;
+            }
+        });
 
-            let pubDate = content('section.news-detail-box li.date').text();
-            pubDate = pubDate.replace('\n', '').replace('時間：', '').trim();
-            item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
 
-            //let description = content('article').html();
+                let pubDate = content('section.news-detail-box li.date').text();
+                pubDate = pubDate.replace('\n', '').replace('時間：', '').trim();
+                item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
 
-            return item;
-        }, utils.crawlerOptions);
+                //let description = content('article').html();
+
+                return item;
+            }
+        });
 
         return {
             title: `${title} ${categoryName}`,

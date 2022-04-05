@@ -1,12 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
 
 const rootUrl = 'https://news.cts.com.tw';
 const title = '華視新聞';
@@ -33,18 +29,18 @@ export class CTSNewsCrawler extends NewsCrawler {
 
     public async getNews(page: string = 'real', count: number = 15) {
         let url = `${rootUrl}/${page}/index.html`;
-        console.log(`GET ${url}`);
         
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let $ = cheerio.load(response.data);
-        let list = $('div.newslist-container a')
-            .slice(0, count)
-            .map((_, item) => {
-                let pubDate = moment($(item).find('p.newstitle span.newstime').text(), 'yyyy/MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
-                $(item).find('p.newstitle span.newstime').remove();
-                let title = $(item).find('p.newstitle').text();
-                //let image = $(item).find('div.newsimg-thumb img').attr('src');
-                let link = $(item).attr('href');
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'div.newslist-container a',
+            count,
+            callback: ($, i) => {
+                let pubDate = moment($(i).find('p.newstitle span.newstime').text(), 'yyyy/MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
+                $(i).find('p.newstitle span.newstime').remove();
+                let title = $(i).find('p.newstitle').text();
+                //let image = $(i).find('div.newsimg-thumb img').attr('src');
+                let link = $(i).attr('href');
 
                 return {
                     title,
@@ -53,23 +49,25 @@ export class CTSNewsCrawler extends NewsCrawler {
                     description: '',
                     date: moment(pubDate, 'YYYY/MM/DD HH:mm').toDate(),
                 };
-            })
-            .get();
-            
+            }
+        });
 
-        let items = await this.getDetials(list, async (item, data) => {
-            let content = cheerio.load(data);
-            let description = content('meta[property="og:description"]').attr('content');
-            let image = content('meta[property="og:image"]').attr('content');
-            item.description = description;
-            item.image = image;
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
 
-            //content('div.artical-content div.cts-tbfs').remove();
-            //content('div.artical-content p.news-src').remove();
-            //let description = content('div.artical-content').html();
-            
-            return item;
-        }, utils.crawlerOptions);
+                //content('div.artical-content div.cts-tbfs').remove();
+                //content('div.artical-content p.news-src').remove();
+                //let description = content('div.artical-content').html();
+                
+                return item;
+            }
+        });
         
         return {
             title: `${title} ${channelMap[page]}`,

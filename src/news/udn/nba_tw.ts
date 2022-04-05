@@ -1,12 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
 
 const rootUrl = 'https://nba.udn.com';
 const title = 'NBA 台灣';
@@ -23,18 +19,18 @@ export class NBATaiwanNewsCrawler extends NewsCrawler {
     
     public async getNews(category: string = 'newest', count: number = 15) {
         let url = `${rootUrl}/nba/cate/6754/-1/${category}`;
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        console.log(`GET ${url}`);
 
-        let $ = cheerio.load(response.data);
-        let list = $('div#news_list_body dt')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('h3').text();
-                let link = rootUrl + $(item).find('a').attr('href');
-                //let image = $(item).find('img').attr('data-src');
-                //let description = $(item).find('p').text();
-                //let pubDate = $(item).find('b').text();
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'div#news_list_body dt',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('h3').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                //let image = $(i).find('img').attr('data-src');
+                //let description = $(i).find('p').text();
+                //let pubDate = $(i).find('b').text();
 
                 return {
                     title,
@@ -43,19 +39,22 @@ export class NBATaiwanNewsCrawler extends NewsCrawler {
                     description: '',
                     date: new Date(),
                 };
-            })
-            .get();
-            
-        let items = await this.getDetials(list, async (item, data) => {
-            let content = cheerio.load(data);
-            let description = content('meta[property="og:description"]').attr('content');
-            let image = content('meta[property="og:image"]').attr('content');
-            let pubDate = content('meta[name="date.available"]').attr('content');
-            item.description = description;
-            item.image = image;
-            item.date = moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate();
-            return item;
-        }, utils.crawlerOptions);
+            }
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                let pubDate = content('meta[name="date.available"]').attr('content');
+                item.description = description;
+                item.image = image;
+                item.date = moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate();
+                return item;
+            }
+        });
 
         return {
             title: `${title} ${categoryMap[category]}`,

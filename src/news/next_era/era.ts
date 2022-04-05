@@ -1,11 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
+import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://www.eracom.com.tw';
 const title = '年代新聞'
@@ -29,20 +26,19 @@ export class ERANewsCrawler extends NewsCrawler {
         super(services);
     }
 
-    public async  getNews(category: string = 'political', count: number = 15) {
+    public async getNews(category: string = 'political', count: number = 15) {
         let url = `${rootUrl}/EraNews/Home/${category}`;
-        console.log(`GET ${url}`);
-
-        let response = await httpClient.get(url);
-        let $ = cheerio.load(response.data);
-        let list = $('div.newslist ul.clearfix li')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('div.tib-desc p.tib-title').text();
-                let link = $(item).find('div.tib-txt a').attr('href');
-                let image = $(item).find('div.tib-txt img').attr('src');
-                let description = $(item).find('div.tib-desc a.detail-link').text();
-                let pubDate = $(item).find('div.tib-desc p.date').text();
+        
+        let list = await this.getNewsList({
+            url,
+            selector: 'div.newslist ul.clearfix li',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('div.tib-desc p.tib-title').text();
+                let link = $(i).find('div.tib-txt a').attr('href');
+                let image = $(i).find('div.tib-txt img').attr('src');
+                let description = $(i).find('div.tib-desc a.detail-link').text();
+                let pubDate = $(i).find('div.tib-desc p.date').text();
 
                 return {
                     title,
@@ -51,9 +47,9 @@ export class ERANewsCrawler extends NewsCrawler {
                     description,
                     date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
                 };
-            })
-            .get();
-            
+            }
+        });
+
         return {
             title: `${title} ${categoryMap[category]}`,
             link: url,

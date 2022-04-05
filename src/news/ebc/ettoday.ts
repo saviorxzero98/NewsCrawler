@@ -1,12 +1,6 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
-import * as moment from 'moment';
-import * as parser from 'rss-parser';
-
 import { ServiceContext } from '../../service';
 import { NewsCrawler } from '../newsCrawler';
 
-const httpClient = axios.default;
 
 const rootUrl = 'https://www.ettoday.net/';
 const rssRootUrl = 'https://feeds.feedburner.com/ettoday';
@@ -46,24 +40,16 @@ export class ETtodayNewsCrawler extends NewsCrawler {
         super(services);
     }
     
-    public async getNews(rss: string = 'realtime', count: number = 15) {
+    public async getNews(rss: string = 'realtime', count: number = 15) {      
         let list = [];
 
         if (rssMap[rss]) {
             let url = `${rssRootUrl}/${rss}`;
-            console.log(`GET ${url}`);
 
-            let feedParser = new parser();
-            let data = await feedParser.parseURL(url);
-            
-            for (let item of data.items) {
-                list.push({
-                    title: item.title,
-                    link: item.link,
-                    description: item.content,
-                    date: moment(item.isoDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
-                })
-            }
+            let list = await this.getRSSNewsList({
+                url,
+                count
+            });
 
             return {
                 title: `${title} ${rssMap[rss]}`,

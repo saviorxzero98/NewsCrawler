@@ -1,12 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
-import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
+import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://www.worldjournal.com';
 const title = '世界新聞網';
@@ -39,19 +35,18 @@ export class WorldJournalNewsCrawler extends NewsCrawler {
         if (language === 'zh-cn') {
             url = `${url}?zh-cn`;
         }
-        console.log(`GET ${url}`);
-    
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let $ = cheerio.load(response.data);
 
-        let list = $('div#breaknews div.subcate-list__link')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('h3.subcate-list__link__title').text();
-                let link = $(item).find('a').attr('href');
-                let image = $(item).find('img').attr('data-src');
-                let description = $(item).find('p.subcate-list__link__content').text();
-                let pubDate = $(item).find('span.subcate-list__time--roc').text();
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'div#breaknews div.subcate-list__link',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('h3.subcate-list__link__title').text();
+                let link = $(i).find('a').attr('href');
+                let image = $(i).find('img').attr('data-src');
+                let description = $(i).find('p.subcate-list__link__content').text();
+                let pubDate = $(i).find('span.subcate-list__time--roc').text();
                 
                 return {
                     title,
@@ -60,8 +55,8 @@ export class WorldJournalNewsCrawler extends NewsCrawler {
                     image,
                     date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
                 };
-            })
-            .get();
+            }
+        });
             
         return {
             title: `${title} ${categoryMap[category]}`,

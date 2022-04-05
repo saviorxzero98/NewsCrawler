@@ -12,6 +12,9 @@ import { NownewsNewsRouter } from './news/nownews/router';
 import { NewtalkNewsRouter } from './news/newtalk/router';
 import { UDNNewsRouter } from './news/udn/router';
 import { ServiceContext } from "./service";
+import { MirrorMediaNewsNewsRouter } from './news/mirrormedia/router';
+import { NTDTVNewsRouter } from './news/ntdtv/router';
+import { HeathNewsRouter } from './news/heath/router';
 
 export const addRouters = (services: ServiceContext) => {
     // 蘋果日報
@@ -26,6 +29,12 @@ export const addRouters = (services: ServiceContext) => {
     // 東森電視 (東森新聞、東森財經新聞、ETtoday)
     EBCNewsRouter.router(services);
 
+    // 健康相關新聞 (NOW健康)
+    HeathNewsRouter.router(services);
+
+    // 鏡周刊
+    MirrorMediaNewsNewsRouter.router(services);
+
     // 新頭殼
     NewtalkNewsRouter.router(services);
 
@@ -34,6 +43,9 @@ export const addRouters = (services: ServiceContext) => {
 
     // Nownews 今日新聞
     NownewsNewsRouter.router(services);
+
+    // 新唐人電視台
+    NTDTVNewsRouter.router(services);
 
     // 中華民國官方媒體 (中央通訊社CNA、Rti中央廣播電台)
     RocGovNewsRouter.router(services);

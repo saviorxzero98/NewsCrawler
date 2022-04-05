@@ -1,12 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
 
 const rootUrl = 'https://www.cna.com.tw';
 const title = '中央社 CNA';
@@ -43,16 +39,16 @@ export class CNANewsCrawler extends NewsCrawler {
             categoryName = ` ${categoryMap[category]}`;
             url = `${rootUrl}/list/${category}.aspx`;
         }
-        console.log(`GET ${url}`);
 
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let $ = cheerio.load(response.data);
-        let list = $('#jsMainList li')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('h2').text();
-                let link = $(item).find('a').attr('href');
-                let pubDate = $(item).find('div.date').text();
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: '#jsMainList li',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('h2').text();
+                let link = $(i).find('a').attr('href');
+                let pubDate = $(i).find('div.date').text();
 
                 return {
                     title,
@@ -61,23 +57,25 @@ export class CNANewsCrawler extends NewsCrawler {
                     description: '',
                     date:  moment(pubDate, 'yyyy/MM/DD HH:mm').toDate(),
                 };
-            })
-            .get();
+            }
+        });
             
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
 
-        let items = await this.getDetials(list, async (item, data) => {
-            let content = cheerio.load(data);
-            let description = content('meta[property="og:description"]').attr('content');
-            let image = content('meta[property="og:image"]').attr('content');
-            item.description = description;
-            item.image = image;
+                //let topImage = content('.fullPic').html();
+                //item.description = (topImage === null ? '' : topImage) + content('.paragraph').eq(0).html();
+                //let description = content('div.artical-content').html();
 
-            //let topImage = content('.fullPic').html();
-            //item.description = (topImage === null ? '' : topImage) + content('.paragraph').eq(0).html();
-            //let description = content('div.artical-content').html();
-
-            return item;
-        }, utils.crawlerOptions); 
+                return item;
+            }
+        });
 
         return {
             title: `${title}${categoryName}`,

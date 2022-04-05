@@ -1,13 +1,9 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
 
-
-const httpClient = axios.default;
 
 const rootUrl = 'https://news.ebc.net.tw';
 const title = '東森新聞';
@@ -46,17 +42,18 @@ export class EBCNewsCrawler extends NewsCrawler {
         else {
             url = `${rootUrl}/news/${category}`;
         }
-        console.log(`GET ${url}`);
 
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let $ = cheerio.load(response.data);
-        let list = $('div.news-list-box div.white-box')
-            .map((_, item) => {
-                let title = $(item).find('div.text span.title').text();
-                let link = rootUrl + $(item).find('a').attr('href');
-                let image = $(item).find('div.pic div.target-img img').attr('src');
-                let description = $(item).find('div.text span.summary').text();
-                let pubDate = $(item).find('div.text span.small-gray-text').text();
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'div.news-list-box div.white-box',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('div.text span.title').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                let image = $(i).find('div.pic div.target-img img').attr('src');
+                let description = $(i).find('div.text span.summary').text();
+                let pubDate = $(i).find('div.text span.small-gray-text').text();
                 
                 return {
                     title,
@@ -65,10 +62,8 @@ export class EBCNewsCrawler extends NewsCrawler {
                     description: description,
                     date: moment(pubDate, 'MM/DD HH:mm').toDate()
                 };
-            })
-            .get()
-            .filter(i => i.title && i.link)
-            .slice(0, count);
+            }
+        });
             
         return {
             title: `${title} ${categoryMap[category]}`,

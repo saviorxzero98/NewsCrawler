@@ -1,47 +1,53 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-const httpClient = axios.default;
+import { ServiceContext } from '../../service';
+import { NewsCrawler } from '../newsCrawler';
+import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://healthmedia.com.tw';
 const title = 'NOW健康';
 
-export class HealthMediaNewsCrawler {
-    public static async  getNews(page: string = '1', id: string = '', count: number = 25) {
+export class HealthMediaNewsCrawler extends NewsCrawler {
+    constructor(services: ServiceContext) {
+        super(services);
+    }
+    public async getNews(category: string = '1', id: string = '', count: number = 25) {
         let url = '';
         if (id) {
             url = `${rootUrl}/main.php?nm_id=${id}`;
         }
         else {
-            url = `${rootUrl}/main.php?nm_class=${page}`;
+            url = `${rootUrl}/main.php?nm_class=${category}`;
         }
 
-        let response = await httpClient.get(url);
-        let $ = cheerio.load(response.data);
-        let list = $('div.main_news_list li')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('div.main_news_txt h2').text();
-                let link = rootUrl + '/' + $(item).find('a').attr('href');
-                let image = rootUrl + '/' + $(item).find('a img').attr('src');
-                let content = $(item).find('div.main_news_content').text();
-                let pubDate = $(item).find('div.ti_left time').text();
+        let categoryName = '';
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'div.main_news_list li',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('div.main_news_txt h2').text();
+                let link = rootUrl + '/' + $(i).find('a').attr('href');
+                let image = rootUrl + '/' + $(i).find('a img').attr('src');
+                let description = $(i).find('div.main_news_content').text();
+                let pubDate = $(i).find('div.ti_left time').text();
+                categoryName = $('div.main_title h2').text();
 
                 return {
                     title,
                     link,
+                    description,
                     image,
-                    content,
-                    pubDate,
+                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
                 };
-            })
-            .get();
+            }
+        })
             
         return {
-            title: `${title} ${$('div.main_title h2').text()}`,
+            title: `${title} ${categoryName}`,
             link: url,
-            item: list,
+            items: list,
         };
     }
 }

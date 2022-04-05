@@ -1,13 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { NewsCrawler } from '../newsCrawler';
 import { ServiceContext } from '../../service';
 import * as utils from '../../feeds/utils';
-
-
-const httpClient = axios.default;
 
 const rootUrl = 'https://tw.appledaily.com';
 const title = '蘋果日報';
@@ -37,15 +32,16 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
 
     public async getNews(category: string = 'new', count: number = 15) {
         let url = `${rootUrl}/realtime/${category}`;
-        console.log(`GET ${url}`);
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let $ = cheerio.load(response.data);
-        let list = $('div.flex-feature')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('span.headline').text();
-                let link = rootUrl + $(item).find('a').attr('href');
-                let pubDate = $(item).find('div.timestamp').text();
+
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'div.flex-feature',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('span.headline').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                let pubDate = $(i).find('div.timestamp').text();
 
                 return {
                     title,
@@ -54,20 +50,23 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
                     description: '',
                     date: moment(pubDate, 'YYYY/MM/DD HH:mm').toDate()
                 };
-            })
-            .get();
+            }
+        });
 
-        let items = await this.getDetials(list, async (item, data) => {
-            let content = cheerio.load(data);
-            let description = content('meta[property="og:description"]').attr('content');
-            let image = content('meta[property="og:image"]').attr('content');
-            item.description = description;
-            item.image = image;
-            return item;
-        }, utils.crawlerOptions);
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
+                return item;
+            }
+        });
          
         return {
-            title: `${title} - ${categoryMap[category]}`,
+            title: `${title} ${categoryMap[category]}`,
             link: url,
             items: items
         };

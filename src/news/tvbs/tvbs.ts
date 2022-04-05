@@ -1,12 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
-import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
+import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://news.tvbs.com.tw';
 const title = 'TVBS新聞';
@@ -44,16 +40,16 @@ export class TVBSNewsCrawler extends NewsCrawler {
             url = `${rootUrl}/realtime/`;
             categoryName = categoryMap['realtime'];
         }
-        console.log(`GET ${url}`);
 
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let $ = cheerio.load(response.data);
-        let list = $('div.news_list div.list ul li')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('a h2').text();
-                let link = rootUrl + $(item).find('a').attr('href');
-                let image = $(item).find('a img.lazyimage').attr('data-original');
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'div.news_list div.list ul li',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('a h2').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                let image = $(i).find('a img.lazyimage').attr('data-original');
 
                 return {
                     title,
@@ -62,21 +58,23 @@ export class TVBSNewsCrawler extends NewsCrawler {
                     description: '',
                     date: new Date()
                 };
-            })
-            .get()
-            .filter(item => item && item.title && item.link);
+            }
+        });
 
-        let items = await this.getDetials(list, async (item, data) => {
-            let content = cheerio.load(data);
-            let description = content('meta[property="og:description"]').attr('content');
-            let pubDate = content('meta[property="article:published_time"]').attr('content');
-            item.description = description;
-            item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate();
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let pubDate = content('meta[property="article:published_time"]').attr('content');
+                item.description = description;
+                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate();
 
-            //let description = content('div#news_detail_div').html();
+                //let description = content('div#news_detail_div').html();
 
-            return item;
-        }, utils.crawlerOptions);
+                return item;
+            }
+        });
 
         return {
             title: `${title} ${categoryName}`,

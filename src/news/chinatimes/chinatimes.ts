@@ -1,12 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../service';
-import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
+import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://www.chinatimes.com';
 const title = '中時電子報';
@@ -38,18 +34,18 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
     
     public async getNews(category: string = 'realtimenews', count: number = 15) {
         let url = `${rootUrl}/${category}/?chdtv`;
-        console.log(`GET ${url}`);
-
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let $ = cheerio.load(response.data);
-        let list = $('section.article-list ul div.row')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('h3.title a').text();
-                let link = rootUrl + $(item).find('h3.title a').attr('href');
-                let description = $(item).find('p.intro').text();
-                let image = $(item).find('img.photo').attr('src');
-                let pubDate = $(item).find('time').attr('datetime');
+        
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            selector: 'section.article-list ul div.row',
+            count,
+            callback: ($, i) => {
+                let title = $(i).find('h3.title a').text();
+                let link = rootUrl + $(i).find('h3.title a').attr('href');
+                let description = $(i).find('p.intro').text();
+                let image = $(i).find('img.photo').attr('src');
+                let pubDate = $(i).find('time').attr('datetime');
 
                 return {
                     title,
@@ -58,9 +54,9 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
                     image,
                     date: moment(pubDate, 'HH:mm YYYY/MM/DD').toDate(),
                 };
-            })
-            .get();
-            
+            }
+        })
+     
         return {
             title: `${title} ${categoryMap[category]}`,
             link: url,

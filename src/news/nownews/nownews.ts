@@ -77,21 +77,24 @@ export class NownewsNewsCrawler extends NewsCrawler {
             })
             .get();
 
-        let items = await this.getDetials(list, async (item, data) => {
-            let content = cheerio.load(data);
-            let description = content('meta[property="og:description"]').attr('content');
-            let image = content('meta[property="og:image"]').attr('content');
-            let pubDate = content('meta[property="article:published_time"]').attr('content');
-            item.description = description;
-            item.image = image;
-            item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                let pubDate = content('meta[property="article:published_time"]').attr('content');
+                item.description = description;
+                item.image = image;
+                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
 
-            //let date = content('div.titleBlk p.time a').text();
-            //let description = content('article').html();
+                //let date = content('div.titleBlk p.time a').text();
+                //let description = content('article').html();
 
-            return item;
-        }, utils.crawlerOptions);
-
+                return item;
+            }
+        });
+ 
         return items;
     }
     private async getNextNews(content: cheerio.CheerioAPI, count: number = 10) {
@@ -114,21 +117,24 @@ export class NownewsNewsCrawler extends NewsCrawler {
             })
             .get();
     
-        let items = await this.getDetials(list, async (item, data) => {
-            let content = cheerio.load(data);
-            let description = content('meta[property="og:description"]').attr('content');
-            let image = content('meta[property="og:image"]').attr('content');
-            let pubDate = content('meta[property="article:published_time"]').attr('content');
-            item.description = description;
-            item.image = image;
-            item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                let pubDate = content('meta[property="article:published_time"]').attr('content');
+                item.description = description;
+                item.image = image;
+                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
 
-            //let description = content('article').html();
-            //item.description = description;
+                //let description = content('article').html();
+                //item.description = description;
 
-            return item;
-        }, utils.crawlerOptions);
-        
+                return item;
+            }
+        });
+ 
         return items;
     }
 }
