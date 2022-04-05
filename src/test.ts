@@ -22,13 +22,14 @@ import { RtiNewsCrawler } from './news/roc/rti';
 import { WorldJournalNewsCrawler } from './news/udn/worldjournal';
 import { HealthMediaNewsCrawler } from './news/heath/healthmedia';
 import { MirrorMediaNewsCrawler } from './news/mirrormedia/mirrormedia';
+import { CtwantNewsCrawler } from "./news/chinatimes/ctwant";
 
 const cache = new NodeCache();
 
 export const testCrawlNews = async () => {
     let services = new ServiceContext().registCache(cache);
 
-    let crawler = new AppleDailyNewsCrawler(services);
+    let crawler = new CtwantNewsCrawler(services);
     let news = await crawler.getNews();
     console.log(news);
 }
