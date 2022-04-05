@@ -15,6 +15,7 @@ import { ServiceContext } from "./service";
 import { MirrorMediaNewsNewsRouter } from './news/mirrormedia/router';
 import { NTDTVNewsRouter } from './news/ntdtv/router';
 import { HeathNewsRouter } from './news/heath/router';
+import { LTNNewsRouter } from './news/ltn/router';
 
 export const addRouters = (services: ServiceContext) => {
     // 蘋果日報
@@ -31,6 +32,9 @@ export const addRouters = (services: ServiceContext) => {
 
     // 健康相關新聞 (NOW健康)
     HeathNewsRouter.router(services);
+
+    // 自由時報
+    LTNNewsRouter.router(services);
 
     // 鏡周刊
     MirrorMediaNewsNewsRouter.router(services);
