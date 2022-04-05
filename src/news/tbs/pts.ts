@@ -99,7 +99,7 @@ export class PTSNewsCrawler extends NewsCrawler {
     }
 
     private getOtherNews(content: cheerio.CheerioAPI, count: number = 14) {
-        let list = content('ul.news-list li')
+        let list = content('ul.news-list li.d-flex')
             .map((_, item) => {
                 let title = content(item).find('h2 a').text();
                 let link = content(item).find('h2 a').attr('href');
