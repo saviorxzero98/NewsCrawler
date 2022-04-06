@@ -12,9 +12,13 @@ const httpClient = axios.default;
 export type NewsListOptions = {
     url: string,
     options?: any,
-    selector: string,
     count?: number,
-    callback: ($: cheerio.CheerioAPI, i: any) => Item,
+    crawlers?: NewsItemCrawler[]
+}
+
+export type NewsItemCrawler = {
+    selector: string,
+    callback: ($: cheerio.CheerioAPI, i: any) => Item
 }
 
 export type RSSNewsListOptions = {
@@ -40,12 +44,18 @@ export abstract class NewsCrawler {
         
         let response = await httpClient.get(options.url, options.options);
         let content = cheerio.load(response.data);
-        let list = content(options.selector)
-            .map((_, item) => options.callback(content, item))
-            .get()
-            .filter(i => i.title && i.link)
-            .slice(0, options.count);
-        return list;
+
+        let list = [];
+
+        for (let crawler of options.crawlers) {
+            let partList = content(crawler.selector)
+                               .map((_, item) => crawler.callback(content, item))
+                               .get()
+            list.push(...partList);
+        }
+
+        return list.filter(i => i.title && i.link)
+                   .slice(0, options.count);
     }
 
     public async getNewsDetials(options: NewsDetialOptions): Promise<Item[]> {

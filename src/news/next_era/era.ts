@@ -29,10 +29,8 @@ export class ERANewsCrawler extends NewsCrawler {
     public async getNews(category: string = 'political', count: number = 15) {
         let url = `${rootUrl}/EraNews/Home/${category}`;
         
-        let list = await this.getNewsList({
-            url,
+        let crawler = {
             selector: 'div.newslist ul.clearfix li',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.tib-desc p.tib-title').text();
                 let link = $(i).find('div.tib-txt a').attr('href');
@@ -48,6 +46,11 @@ export class ERANewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            count,
+            crawlers: [ crawler ]
         });
 
         return {

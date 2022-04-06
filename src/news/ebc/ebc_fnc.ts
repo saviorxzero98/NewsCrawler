@@ -34,11 +34,8 @@ export class EBCFncNewsCrawler extends NewsCrawler {
         let url = `${rootUrl}/fncnews/${category}`;
         let categoryName = categoryMap[category] ?? '最新';
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.fncnews-list-box div.white-box',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.text p').text();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -53,6 +50,12 @@ export class EBCFncNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, '(yyyy/MM/DD HH:mm)').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

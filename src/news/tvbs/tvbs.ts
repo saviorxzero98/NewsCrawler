@@ -41,11 +41,8 @@ export class TVBSNewsCrawler extends NewsCrawler {
             categoryName = categoryMap['realtime'];
         }
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.news_list div.list ul li',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('a h2').text();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -59,6 +56,12 @@ export class TVBSNewsCrawler extends NewsCrawler {
                     date: new Date()
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

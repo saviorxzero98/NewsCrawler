@@ -30,11 +30,8 @@ export class CTSNewsCrawler extends NewsCrawler {
     public async getNews(page: string = 'real', count: number = 15) {
         let url = `${rootUrl}/${page}/index.html`;
         
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.newslist-container a',
-            count,
             callback: ($, i) => {
                 let pubDate = moment($(i).find('p.newstitle span.newstime').text(), 'yyyy/MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
                 $(i).find('p.newstitle span.newstime').remove();
@@ -50,6 +47,12 @@ export class CTSNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY/MM/DD HH:mm').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

@@ -20,12 +20,15 @@ export class TTVNewsCrawler extends NewsCrawler {
     public async getNews(count: number = 15) {
         let url = `${rootUrl}/realtime`;
 
+        let crawler = {
+            selector: 'article.container div.news-list ul li',
+            callback: ($, i) => this.getTTVNews($, i)
+        };
         let list = await this.getNewsList({
             url,
             options: utils.crawlerOptions,
-            selector: 'article.container div.news-list ul li',
             count,
-            callback: ($, i) => this.getTTVNews($, i)
+            crawlers: [ crawler ]
         });
 
         return {
@@ -38,12 +41,15 @@ export class TTVNewsCrawler extends NewsCrawler {
     public async getNewsByCategory(category: string, count: number = 10) {
         let url = `${rootUrl}/category/${encodeURIComponent(category)}`;
         
+        let crawler = {
+            selector: 'article.container div.news-list ul li',
+            callback: ($, i) => this.getTTVNews($, i)
+        };
         let list = await this.getNewsList({
             url,
             options: utils.crawlerOptions,
-            selector: 'article.container div.news-list ul li',
             count,
-            callback: ($, i) => this.getTTVNews($, i)
+            crawlers: [ crawler ]
         });
         
         return {

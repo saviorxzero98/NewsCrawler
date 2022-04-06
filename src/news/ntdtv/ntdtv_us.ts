@@ -69,11 +69,8 @@ export class NTDTVUsNewsCrawler extends NewsCrawler {
             url = `${rootUrl}/${language}/${category}`;
         }
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.list_wrapper > div',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.title').text();
                 let link = $(i).find('div.title > a').attr('href');
@@ -88,6 +85,12 @@ export class NTDTVUsNewsCrawler extends NewsCrawler {
                     date: new Date()
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

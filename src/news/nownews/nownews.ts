@@ -39,43 +39,17 @@ export class NownewsNewsCrawler extends NewsCrawler {
         if (subCategory) {
             url = `${url}/${subCategory}`;
         }
-        this.services.logger.logGetUrl(url);
 
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let content = cheerio.load(response.data);
-
-        let topNewsList = await this.getTop5News(content);
-
-        let list = topNewsList;
-        if (count > 5) {
-            let nextNewsList = await this.getNextNews(content, count - 5);
-            list.push(...nextNewsList);
-        }
-    
-        return {
-            title: `${title} ${categoryMap[category]}`,
-            link: url,
-            items: list
-        };
-    }
-
-    private async getTop5News(content: cheerio.CheerioAPI, count: number = 5) {
-        let list = content('div.sliderBlk div.swiper-slide')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = content(item).find('a.trace-click img').attr('alt');
-                let link = content(item).find('a.trace-click').attr('href');
-                //let image = content(item).find('a.trace-click img').attr('src');
-
-                return {
-                    title,
-                    link,
-                    image: '',
-                    description: '',
-                    date: new Date(),
-                };
-            })
-            .get();
+        let crawlers = [
+            this.getTopNewsCrawler(),
+            this.getNextNewsCrawler()
+        ]
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: crawlers
+        });
 
         let items = await this.getNewsDetials({
             list,
@@ -94,18 +68,21 @@ export class NownewsNewsCrawler extends NewsCrawler {
                 return item;
             }
         });
- 
-        return items;
+    
+        return {
+            title: `${title} ${categoryMap[category]}`,
+            link: url,
+            items: items
+        };
     }
-    private async getNextNews(content: cheerio.CheerioAPI, count: number = 10) {
-        let list = content('div.listBlk ul li')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = content(item).find('div.txt h2').text() ||
-                            content(item).find('div.txt h3').text();
-                let link = content(item).find('a').attr('href');
-                //let image = content(item).find('img.resize').attr('src');
-                //let pubDate = content(item).find('div.txt p.time').text();
+
+    private getTopNewsCrawler() {
+        let crawler = {
+            selector: 'div.sliderBlk div.swiper-slide',
+            callback: ($, i) => {
+                let title = $(i).find('a.trace-click img').attr('alt');
+                let link = $(i).find('a.trace-click').attr('href');
+                //let image = $(i).find('a.trace-click img').attr('src');
 
                 return {
                     title,
@@ -114,27 +91,30 @@ export class NownewsNewsCrawler extends NewsCrawler {
                     description: '',
                     date: new Date(),
                 };
-            })
-            .get();
-    
-        let items = await this.getNewsDetials({
-            list,
-            options: utils.crawlerOptions,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                let pubDate = content('meta[property="article:published_time"]').attr('content');
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate()
-
-                //let description = content('article').html();
-                //item.description = description;
-
-                return item;
             }
-        });
- 
-        return items;
+        };
+        return crawler;
+    }
+
+    private getNextNewsCrawler() {
+        let crawler = {
+            selector: 'div.listBlk ul li',
+            callback: ($, i) => {
+                let title = $(i).find('div.txt h2').text() ??
+                            $(i).find('div.txt h3').text();
+                let link = $(i).find('a').attr('href');
+                //let image = $(i).find('img.resize').attr('src');
+                //let pubDate = $(i).find('div.txt p.time').text();
+
+                return {
+                    title,
+                    link,
+                    image: '',
+                    description: '',
+                    date: new Date(),
+                };
+            }
+        };
+        return crawler;
     }
 }

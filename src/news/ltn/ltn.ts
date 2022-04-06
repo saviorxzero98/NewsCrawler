@@ -69,11 +69,8 @@ export class LTNNewsCrawler extends NewsCrawler {
     public async getHealthNews(count: number = 15) {
         let url = 'https://health.ltn.com.tw/breakingNewslist';
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.whitecon ul.list li',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('h3.tit').text().trim();
                 let link = $(i).find('a').attr('href');
@@ -85,6 +82,12 @@ export class LTNNewsCrawler extends NewsCrawler {
                     date: new Date()
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

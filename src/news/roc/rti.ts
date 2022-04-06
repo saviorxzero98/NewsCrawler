@@ -29,11 +29,8 @@ export class RtiNewsCrawler extends NewsCrawler {
             categoryName = categoryMap[category];
         }
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'section.newslist-box ul li',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('span.title').text();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -46,6 +43,12 @@ export class RtiNewsCrawler extends NewsCrawler {
                     date: new Date()
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

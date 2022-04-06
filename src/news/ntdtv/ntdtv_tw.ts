@@ -19,18 +19,16 @@ export class NTDTVTwNewsCrawler extends NewsCrawler {
     public async getNews(category: string = '要聞', count: number = 15) {
         let url = `${rootUrl}/news/${encodeURIComponent(category)}`;
         
-        this.services.logger.logGetUrl(url);
-        
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let content = cheerio.load(response.data);
-
-        let list = [];
-        let topItem = this.getTopNews(content);
-        list.push(topItem);
-        if (count > 1) {
-            let otherItems = this.getOtherNews(content, count - 1);
-            list.push(...otherItems);
-        }
+        let crawlers = [
+            this.getTopNewsCrawler(),
+            this.getNextNewsCrawler()
+        ];
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: crawlers
+        });
             
         return {
             title: `${title} ${category}`,
@@ -39,32 +37,15 @@ export class NTDTVTwNewsCrawler extends NewsCrawler {
         };
     }
 
-    private getTopNews(content: cheerio.CheerioAPI) {
-        let item = content('div.Headlines_photo');
-
-        let title = item.find('h3').text();
-        let link = rootUrl + item.find('a').attr('href');
-        let image = 'https:' + item.find('img').attr('data-src-small');
-        let description = item.find('p').text();
-        let pubDate = item.find('div.article_time').text();
-
-        return {
-            title,
-            link,
-            image,
-            description,
-            date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate()
-        };
-    }
-
-    private getOtherNews(content: cheerio.CheerioAPI, count: number = 14) {
-        let list = content('div.pane_list ul li')
-            .map((_, item) => {
-                let title = content(item).find('h3').text();
-                let link = rootUrl + content(item).find('a').attr('href');
-                let image = 'https:' + content(item).find('img').attr('data-src-small');
-                let description = content(item).find('p').text();
-                let pubDate = content(item).find('div.article_time').text();
+    private getTopNewsCrawler() {
+        let crawler = {
+            selector: 'div.Headlines_photo',
+            callback: ($, i) => {
+                let title = $(i).find('h3').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                let image = 'https:' + $(i).find('img').attr('data-src-small');
+                let description = $(i).find('p').text();
+                let pubDate = $(i).find('div.article_time').text();
 
                 return {
                     title,
@@ -73,10 +54,30 @@ export class NTDTVTwNewsCrawler extends NewsCrawler {
                     description,
                     date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate()
                 };
-            })
-            .get()
-            .filter(n => n.title && n.link)
-            .slice(0, count);
-        return list;
+            }
+        };
+        return crawler;
+    }
+
+    private getNextNewsCrawler() {
+        let crawler = {
+            selector: 'div.pane_list ul li',
+            callback: ($, i) => {
+                let title = $(i).find('h3').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                let image = 'https:' + $(i).find('img').attr('data-src-small');
+                let description = $(i).find('p').text();
+                let pubDate = $(i).find('div.article_time').text();
+
+                return {
+                    title,
+                    link,
+                    image,
+                    description,
+                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate()
+                };
+            }
+        };
+        return crawler;
     }
 }

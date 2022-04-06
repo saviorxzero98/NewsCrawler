@@ -23,11 +23,9 @@ export class FTVNewsCrawler extends NewsCrawler {
         }
         let url = `${rootUrl}/${tag}`;
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+
+        let crawler = {
             selector: 'div.news-block',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.news-block div.content a h2').text();
                 let link = rootUrl + $(i).find('div.content a').attr('href');
@@ -43,6 +41,12 @@ export class FTVNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate()
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         return {
@@ -55,11 +59,8 @@ export class FTVNewsCrawler extends NewsCrawler {
     public async getNewsByTag(tag: string, count: number = 15) {
         let url = `${rootUrl}/tag/${encodeURIComponent(tag)}`;
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'section.news-list ul li',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('a div.content h2').text();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -74,6 +75,12 @@ export class FTVNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate()
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         return {

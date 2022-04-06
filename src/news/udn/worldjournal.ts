@@ -36,11 +36,8 @@ export class WorldJournalNewsCrawler extends NewsCrawler {
             url = `${url}?zh-cn`;
         }
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div#breaknews div.subcate-list__link',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('h3.subcate-list__link__title').text();
                 let link = $(i).find('a').attr('href');
@@ -56,6 +53,12 @@ export class WorldJournalNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
             
         return {

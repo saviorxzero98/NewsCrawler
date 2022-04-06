@@ -33,11 +33,8 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
     public async getNews(category: string = 'new', count: number = 15) {
         let url = `${rootUrl}/realtime/${category}`;
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.flex-feature',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('span.headline').text();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -51,6 +48,12 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY/MM/DD HH:mm').toDate()
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

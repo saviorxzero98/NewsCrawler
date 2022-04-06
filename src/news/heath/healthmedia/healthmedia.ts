@@ -19,13 +19,10 @@ export class HealthMediaNewsCrawler extends NewsCrawler {
         else {
             url = `${rootUrl}/main.php?nm_class=${category}`;
         }
-
         let categoryName = '';
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+
+        let crawler = {
             selector: 'div.main_news_list li',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.main_news_txt h2').text();
                 let link = rootUrl + '/' + $(i).find('a').attr('href');
@@ -42,8 +39,14 @@ export class HealthMediaNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
                 };
             }
-        })
-            
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
+        });
+    
         return {
             title: `${title} ${categoryName}`,
             link: url,

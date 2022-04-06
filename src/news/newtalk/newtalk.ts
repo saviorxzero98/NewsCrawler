@@ -59,45 +59,17 @@ export class NewtalkNewsCrawler extends NewsCrawler {
             }
         }
         
-        this.services.logger.logGetUrl(url);
+        let crawlers = [
+            this.getTopNewsCrawler(),
+            this.getNextNewsCrawler()
+        ]
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: crawlers
+        });
 
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let content = cheerio.load(response.data);
-        
-        let topNewsList = await this.getTopNews(content);
-        let list = topNewsList;
-
-        if (count > 2) {
-            let nextNewsList = await this.getNextNews(content, count - 2);
-            list.push(...nextNewsList);
-        }
-            
-        return {
-            title: `${title} ${categoryName}`,
-            link: url,
-            items: list
-        };
-    }
-
-    private async getTopNews(content: cheerio.CheerioAPI, count: number = 2) {
-        let list = content('div.news-top2 div.newsArea')
-            .map((_, item) => {
-                let title = content(item).find('div.news-title a').text();
-                let link = content(item).find('a').attr('href');
-                //let image = content(item).find('div.news-img img').attr('src');
-
-                return {
-                    title,
-                    link,
-                    image: '',
-                    description: '',
-                    date: new Date(),
-                };
-            })
-            .get()
-            .filter(i => i.title && i.link)
-            .slice(0, count);
-    
         let items = await this.getNewsDetials({
             list,
             options: utils.crawlerOptions,
@@ -119,18 +91,45 @@ export class NewtalkNewsCrawler extends NewsCrawler {
                 return item;
             }
         });
-        return items;
+            
+        return {
+            title: `${title} ${categoryName}`,
+            link: url,
+            items: items
+        };
     }
 
-    private async getNextNews(content: cheerio.CheerioAPI, count: number = 13) {
-        let list = content('div.news-list div.news-list-item')
-            .map((_, item) => {
-                let title = content(item).find('div.news_title').text();
+
+    private getTopNewsCrawler() {
+        let crawler = {
+            selector: 'div.news-top2 div.newsArea',
+            callback: ($, i) => {
+                let title = $(i).find('div.news-title a').text();
+                let link = $(i).find('a').attr('href');
+                //let image = $(i).find('div.news-img img').attr('src');
+
+                return {
+                    title,
+                    link,
+                    image: '',
+                    description: '',
+                    date: new Date(),
+                };
+            }
+        };
+        return crawler;
+    }
+
+    private getNextNewsCrawler() {
+        let crawler = {
+            selector: 'div.news-list div.news-list-item',
+            callback: ($, i) => {
+                let title = $(i).find('div.news_title').text();
                 title = title.replace('\n', '').trim();
-                let link = content(item).find('a').attr('href');
-                //let image = content(item).find('div.news_img img').attr('src');
-                //let description = content(item).find('div.news_text a').text();
-                //let pubDate = content(item).find('div.news_date').text();
+                let link = $(i).find('a').attr('href');
+                //let image = $(i).find('div.news_img img').attr('src');
+                //let description = $(i).find('div.news_text a').text();
+                //let pubDate = $(i).find('div.news_date').text();
                 //pubDate = pubDate.replace('發布', '')
                 //                 .replace('|', '')
                 //                 .trim();
@@ -143,33 +142,8 @@ export class NewtalkNewsCrawler extends NewsCrawler {
                     description: '',
                     date: new Date(),
                 };
-            })
-            .get()
-            .filter(i => i.title && i.link)
-            .slice(0, count);
-
-        let items = await this.getNewsDetials({
-            list,
-            options: utils.crawlerOptions,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                let pubDate = content('meta[property="article:published_time"]').attr('content');
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
-
-                //let description = content('div.news-content').html();
-                //let pubDate = content('div.content_date').text();
-                //pubDate = pubDate.replace('發布', '')
-                //                 .replace('|', '')
-                //                 .trim();
-                //pubDate = moment(pubDate, 'YYYY.MM.DD HH:mm').toDate();
-
-                return item;
             }
-        });
-
-        return items;
+        };
+        return crawler;
     }
 }

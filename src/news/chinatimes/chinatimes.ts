@@ -35,11 +35,8 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
     public async getNews(category: string = 'realtimenews', count: number = 15) {
         let url = `${rootUrl}/${category}/?chdtv`;
         
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'section.article-list ul div.row',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('h3.title a').text();
                 let link = rootUrl + $(i).find('h3.title a').attr('href');
@@ -55,6 +52,12 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'HH:mm YYYY/MM/DD').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         })
      
         return {

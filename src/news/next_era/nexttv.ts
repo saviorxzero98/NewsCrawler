@@ -2,6 +2,7 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
+import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://www.nexttv.com.tw';
 const title = '壹電視新聞';
@@ -27,10 +28,8 @@ export class NextTVNewsCrawler extends NewsCrawler {
     public async getNews(category: string = 'OnlineLatestNews', count: number = 15) {
         let url = `${rootUrl}/NextTV/News/Home/${category}`;
         
-        let list = await this.getNewsList({
-            url,
+        let crawler = {
             selector: 'ul.yxw_list li',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.tit a').text();
                 let link = $(i).find('a.more').attr('href');
@@ -46,6 +45,11 @@ export class NextTVNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY-MM-DD HH:mms').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            count,
+            crawlers: [ crawler ]
         });
             
         return {

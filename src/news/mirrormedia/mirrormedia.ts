@@ -73,11 +73,8 @@ export class MirrorMediaNewsCrawler  extends NewsCrawler {
             pageName = sectionMap[section];
         }
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'section.article-list li.list__list-item',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.article__bottom-wrapper h1').text();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -93,6 +90,12 @@ export class MirrorMediaNewsCrawler  extends NewsCrawler {
                     date: new Date(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

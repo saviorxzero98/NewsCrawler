@@ -49,18 +49,16 @@ export class PTSNewsCrawler extends NewsCrawler {
             }
         }
 
-        this.services.logger.logGetUrl(url);
-        
-        let response = await httpClient.get(url, utils.crawlerOptions);
-        let content = cheerio.load(response.data);
-
-        let list = [];
-        let topItem = this.getTopNews(content);
-        list.push(topItem);
-        if (count > 1) {
-            let otherItems = this.getOtherNews(content, count - 1);
-            list.push(...otherItems);
-        }
+        let crawlers = [
+            this.getTopNewsCrawler(),
+            this.getNextNewsCrawler()
+        ];
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: crawlers
+        });
 
         let items = await this.getNewsDetials({
             list,
@@ -81,30 +79,14 @@ export class PTSNewsCrawler extends NewsCrawler {
         };
     }
 
-    private getTopNews(content: cheerio.CheerioAPI) {
-        let item = content('div.breakingnews');
-
-        let title = content(item).find('h2 a').text();
-        let link = content(item).find('h2 a').attr('href');
-        let image = content(item).find('img').attr('src');
-        let pubDate = content(item).find('div.news-info time').attr('datetime');
-
-        return {
-            title,
-            link,
-            image: image,
-            description: '',
-            date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
-        };
-    }
-
-    private getOtherNews(content: cheerio.CheerioAPI, count: number = 14) {
-        let list = content('ul.news-list li.d-flex')
-            .map((_, item) => {
-                let title = content(item).find('h2 a').text();
-                let link = content(item).find('h2 a').attr('href');
-                let image = content(item).find('img').attr('src');
-                let pubDate = content(item).find('div.news-info time').attr('datetime');
+    private getTopNewsCrawler() {
+        let crawler = {
+            selector: 'div.breakingnews',
+            callback: ($, i) => {
+                let title = $(i).find('h2 a').text();
+                let link = $(i).find('h2 a').attr('href');
+                let image = $(i).find('img').attr('src');
+                let pubDate = $(i).find('div.news-info time').attr('datetime');
 
                 return {
                     title,
@@ -113,10 +95,29 @@ export class PTSNewsCrawler extends NewsCrawler {
                     description: '',
                     date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
                 };
-            })
-            .get()
-            .filter(n => n.title && n.link)
-            .slice(0, count);
-        return list;
+            }
+        };
+        return crawler;
+    }
+
+    private getNextNewsCrawler() {
+        let crawler = {
+            selector: 'ul.news-list li.d-flex',
+            callback: ($, i) => {
+                let title = $(i).find('h2 a').text();
+                let link = $(i).find('h2 a').attr('href');
+                let image = $(i).find('img').attr('src');
+                let pubDate = $(i).find('div.news-info time').attr('datetime');
+
+                return {
+                    title,
+                    link,
+                    image: image,
+                    description: '',
+                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
+                };
+            }
+        };
+        return crawler;
     }
 }

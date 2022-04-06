@@ -43,11 +43,8 @@ export class EBCNewsCrawler extends NewsCrawler {
             url = `${rootUrl}/news/${category}`;
         }
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.news-list-box div.white-box',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.text span.title').text();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -63,8 +60,14 @@ export class EBCNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'MM/DD HH:mm').toDate()
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
-            
+ 
         return {
             title: `${title} ${categoryMap[category]}`,
             link: url,

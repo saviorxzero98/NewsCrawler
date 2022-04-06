@@ -38,11 +38,8 @@ export class SETNewsCrawler extends NewsCrawler {
             pageName = pageMap[page];
         }
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.newsItems',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('a.gt').text();
                 let link = $(i).find('a.gt').attr('href');
@@ -59,6 +56,12 @@ export class SETNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'MM/DD HH:mm').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
         
         let items = await this.getNewsDetials({

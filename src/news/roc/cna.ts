@@ -40,11 +40,8 @@ export class CNANewsCrawler extends NewsCrawler {
             url = `${rootUrl}/list/${category}.aspx`;
         }
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: '#jsMainList li',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('h2').text();
                 let link = $(i).find('a').attr('href');
@@ -58,8 +55,14 @@ export class CNANewsCrawler extends NewsCrawler {
                     date:  moment(pubDate, 'yyyy/MM/DD HH:mm').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
-            
+
         let items = await this.getNewsDetials({
             list,
             options: utils.crawlerOptions,

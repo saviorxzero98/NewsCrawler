@@ -20,11 +20,8 @@ export class NBATaiwanNewsCrawler extends NewsCrawler {
     public async getNews(category: string = 'newest', count: number = 15) {
         let url = `${rootUrl}/nba/cate/6754/-1/${category}`;
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div#news_list_body dt',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('h3').text();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -40,6 +37,12 @@ export class NBATaiwanNewsCrawler extends NewsCrawler {
                     date: new Date(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({

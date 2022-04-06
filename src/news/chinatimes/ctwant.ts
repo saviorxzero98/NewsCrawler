@@ -19,11 +19,8 @@ export class CtwantNewsCrawler extends NewsCrawler {
     private async getRealtimeNews(count: number = 15) {
         let url = `${rootUrl}/category/${encodeURIComponent('最新')}`;
 
-        let list = await this.getNewsList({
-            url,
-            options: utils.crawlerOptions,
+        let crawler = {
             selector: 'div.p-realtime__list div.p-realtime__item',
-            count,
             callback: ($, i) => {
                 let title = $(i).find('div.p-realtime__item-content h3').text().trim();
                 let link = rootUrl + $(i).find('a').attr('href');
@@ -37,6 +34,12 @@ export class CtwantNewsCrawler extends NewsCrawler {
                     date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
                 };
             }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({
