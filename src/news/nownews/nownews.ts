@@ -100,7 +100,7 @@ export class NownewsNewsCrawler extends NewsCrawler {
         let crawler = {
             selector: 'div.listBlk ul li',
             callback: ($, i) => {
-                let title = $(i).find('div.txt h2').text() ??
+                let title = $(i).find('div.txt h2').text() ||
                             $(i).find('div.txt h3').text();
                 let link = $(i).find('a').attr('href');
                 //let image = $(i).find('img.resize').attr('src');
