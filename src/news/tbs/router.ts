@@ -14,10 +14,11 @@ export class TBSNewsRouter {
         services.app.get(`/${path.cts}/:page?`, async (req, res) => {
             let page = req.params.page ?? 'real';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
 
             let crawler = new CTSNewsCrawler(services);
             let data = await crawler.getNews(page, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });
@@ -25,10 +26,11 @@ export class TBSNewsRouter {
         services.app.get(`/${path.pts}/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
              let limit = Number(req.query.limit ?? services.config.maxRssCount);
+             let opencc = String(req.query.opencc ?? '');
 
             let crawler = new PTSNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });

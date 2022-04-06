@@ -16,6 +16,7 @@ export class ServiceContext {
 
     constructor() {
         this.config = new AppConfig();
+        this.logger = new Logger();
     }
 
     public registExpress(app: express.Express) {

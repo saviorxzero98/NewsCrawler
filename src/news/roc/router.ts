@@ -14,10 +14,11 @@ export class RocGovNewsRouter {
         services.app.get(`/${path.cna}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'aall';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
             
             let crawler = new CNANewsCrawler(services);
             let data = await crawler.getNews(category, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });
@@ -26,10 +27,11 @@ export class RocGovNewsRouter {
         services.app.get(`/${path.rti}/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
             
             let crawler = new RtiNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });

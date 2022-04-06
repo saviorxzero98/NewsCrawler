@@ -16,10 +16,11 @@ export class UDNNewsRouter {
         services.app.get(`/${path.nba}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'newest';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
 
             let crawler = new NBATaiwanNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });
@@ -28,10 +29,11 @@ export class UDNNewsRouter {
             let category = req.params.category ?? 'newest';
             let language = req.params.language ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
 
             let crawler = new WorldJournalNewsCrawler(services);
             let data = await crawler.getNews(category, language, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });

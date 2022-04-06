@@ -12,10 +12,11 @@ export class ChinaTimesNewsRouter {
         services.app.get(`/${path.chinatimes}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'realtimenews';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
             
             let crawler = new ChinaTimesNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });
@@ -24,10 +25,11 @@ export class ChinaTimesNewsRouter {
             let category = req.params.category ?? '最新';
             let subcategory = req.params.subcategory ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
             
             let crawler = new CtwantNewsCrawler(services);
             let data = await crawler.getNews(category, subcategory, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });

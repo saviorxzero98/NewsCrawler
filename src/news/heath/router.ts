@@ -12,10 +12,11 @@ export class HeathNewsRouter {
             let category = req.params.category ?? '1';
             let id = req.params.id ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
             
             let crawler = new HealthMediaNewsCrawler(services);
             let data = await crawler.getNews(category, id, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });

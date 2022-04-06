@@ -16,9 +16,11 @@ export class EBCNewsRouter {
         services.app.get(`/${path.ebc}/news/:category?`, async (req, res) => {
             let category = req.params.category ?? 'realtime';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
             let crawler = new EBCNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });
@@ -27,9 +29,11 @@ export class EBCNewsRouter {
         services.app.get(`/${path.ebc}/fncnews/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
             let crawler = new EBCFncNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });
@@ -38,9 +42,11 @@ export class EBCNewsRouter {
         services.app.get(`/${path.ettoday}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'realtime';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
             let crawler = new ETtodayNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });

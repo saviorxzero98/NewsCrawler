@@ -3,6 +3,7 @@ import * as rssRouters from './apiRouters';
 import NodeCache = require("node-cache");
 
 import { ServiceContext } from './services/service';
+import { Logger } from './services/logger';
 
 
 const app = express();
