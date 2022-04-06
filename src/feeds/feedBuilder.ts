@@ -1,5 +1,5 @@
 import { Feed, FeedOptions, Item } from "feed";
-import { OpenCC } from 'opencc';
+import { simplecc } from "simplecc-wasm";
 
 const copyright: string = '';
 
@@ -13,11 +13,9 @@ export enum OpenCCType {
     s2t = 's2t',
     t2s = 't2s',
     s2tw = 's2tw',
-    tw2s = 'tw2s',
     s2hk = 's2hk',
-    hk2s = 'hk2s',
     s2twp = 's2twp',
-    tw2sp = 'tw2sp'
+    hk2s = 'hk2s',
 }
 
 export class FeedBuilder {
@@ -98,8 +96,7 @@ export class FeedBuilder {
     }
 
     private convertCC(text: string, type: string): string {
-        let converter = new OpenCC(`${type}.json`);
-        let outText = converter.convertSync(text);
+        let outText = simplecc(text, type);
         return outText;
     }
 }
