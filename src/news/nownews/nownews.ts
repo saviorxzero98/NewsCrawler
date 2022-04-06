@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
 
@@ -39,7 +39,7 @@ export class NownewsNewsCrawler extends NewsCrawler {
         if (subCategory) {
             url = `${url}/${subCategory}`;
         }
-        console.log(`GET ${url}`);
+        this.services.logger.logGetUrl(url);
 
         let response = await httpClient.get(url, utils.crawlerOptions);
         let content = cheerio.load(response.data);

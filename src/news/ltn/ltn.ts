@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 
 import { NewsCrawler } from '../newsCrawler';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://news.ltn.com.tw';

@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
 import * as utils from '../../feeds/utils';
 
@@ -19,7 +19,7 @@ export class NTDTVTwNewsCrawler extends NewsCrawler {
     public async getNews(category: string = '要聞', count: number = 15) {
         let url = `${rootUrl}/news/${encodeURIComponent(category)}`;
         
-        console.log(`GET ${url}`);
+        this.services.logger.logGetUrl(url);
         
         let response = await httpClient.get(url, utils.crawlerOptions);
         let content = cheerio.load(response.data);

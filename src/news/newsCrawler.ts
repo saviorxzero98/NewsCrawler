@@ -4,7 +4,7 @@ import * as moment from 'moment';
 import { Item } from 'feed';
 import * as parser from 'rss-parser';
 
-import { ServiceContext } from "../service";
+import { ServiceContext } from "../services/service";
 
 
 const httpClient = axios.default;
@@ -36,9 +36,8 @@ export abstract class NewsCrawler {
     }
 
     public async getNewsList(options: NewsListOptions): Promise<Item[]> {
+        this.services.logger.logGetUrl(options.url);
         
-        console.log(`GET ${options.url}`);
-
         let response = await httpClient.get(options.url, options.options);
         let content = cheerio.load(response.data);
         let list = content(options.selector)
@@ -65,7 +64,7 @@ export abstract class NewsCrawler {
     }
 
     public async getRSSNewsList(options: RSSNewsListOptions): Promise<Item[]> {
-        console.log(`GET RSS ${options.url}`);
+        this.services.logger.logGetRssUrl(options.url);
 
         let feedParser = new parser();
         let data = await feedParser.parseURL(options.url);

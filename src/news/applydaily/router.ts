@@ -1,6 +1,6 @@
 import { AppleDailyNewsCrawler } from './applydaily';
 import { FeedBuilder } from '../../feeds/feedBuilder';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 
 
 const path = 'appledaily';

@@ -1,12 +1,14 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
-import { ServiceContext } from '../../service';
-import { HealthMediaNewsCrawler } from './healthmedia';
+import { ServiceContext } from '../../services/service';
+import { HealthMediaNewsCrawler } from './healthmedia/healthmedia';
 
-const heathMediaPath = 'healthmedia';
+const path = {
+    healthMedia: 'healthmedia'
+}
 
 export class HeathNewsRouter {
     public static router(services: ServiceContext) {
-        services.app.get(`/${heathMediaPath}/:category?/:id?`, async (req, res) => {
+        services.app.get(`/${path.healthMedia}/:category?/:id?`, async (req, res) => {
             let category = req.params.category ?? '1';
             let id = req.params.id ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);

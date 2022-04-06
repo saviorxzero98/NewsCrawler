@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
 
@@ -28,7 +28,6 @@ export class RtiNewsCrawler extends NewsCrawler {
             url = `${rootUrl}/news/list/categoryId/${category}`;
             categoryName = categoryMap[category];
         }
-        console.log(`GET ${url}`);
 
         let list = await this.getNewsList({
             url,

@@ -1,6 +1,6 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { NewtalkNewsCrawler } from './newtalk';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 
 const path = 'newtalk';
 

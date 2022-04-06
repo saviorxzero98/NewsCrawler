@@ -11,13 +11,18 @@ import { NextEraNewsRouter } from './news/next_era/router';
 import { NownewsNewsRouter } from './news/nownews/router';
 import { NewtalkNewsRouter } from './news/newtalk/router';
 import { UDNNewsRouter } from './news/udn/router';
-import { ServiceContext } from "./service";
+import { ServiceContext } from "./services/service";
 import { MirrorMediaNewsNewsRouter } from './news/mirrormedia/router';
 import { NTDTVNewsRouter } from './news/ntdtv/router';
 import { HeathNewsRouter } from './news/heath/router';
 import { LTNNewsRouter } from './news/ltn/router';
+import { ACGNewsRouter } from './news/acg/router';
 
 export const addRouters = (services: ServiceContext) => {
+
+    // ACG 新聞 (巴哈姆特、4Gammer、QooApp)
+    ACGNewsRouter.router(services);
+
     // 蘋果日報
     AppleDailyNewsRouter.router(services);
     

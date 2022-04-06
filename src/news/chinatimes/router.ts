@@ -1,6 +1,6 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { ChinaTimesNewsCrawler } from './chinatimes';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import { CtwantNewsCrawler } from './ctwant';
 
 const path = {

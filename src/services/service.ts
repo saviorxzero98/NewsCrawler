@@ -1,7 +1,9 @@
 import * as express from 'express';
 import { CacheService } from './cache';
 import { AppConfig } from './config';
+import { Logger } from './logger';
 import NodeCache = require("node-cache");
+
 
 export class ServiceContext {
     public app: express.Express;
@@ -9,6 +11,8 @@ export class ServiceContext {
     public cache: CacheService;
 
     public config: AppConfig;
+
+    public logger: Logger;
 
     constructor() {
         this.config = new AppConfig();
@@ -26,6 +30,11 @@ export class ServiceContext {
 
     public registConfig(config: AppConfig) {
         this.config = config ?? new AppConfig();
+        return this;
+    }
+
+    public registLogger(logger: Logger) {
+        this.logger = logger ?? new Logger();
         return this;
     }
 }

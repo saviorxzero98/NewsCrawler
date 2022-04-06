@@ -1,17 +1,19 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { NBATaiwanNewsCrawler } from './nba_tw';
 import { WorldJournalNewsCrawler } from './worldjournal';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 
 
-const udnPath = 'udn';
-const nbaPath = 'nba-tw';
-const wjPath = 'worldjournal';
+const path = {
+    udn: 'udn',
+    nba: 'nba-tw',
+    worldjournal: 'worldjournal'
+}
 
 export class UDNNewsRouter {
     public static router(services: ServiceContext) {
 
-        services.app.get(`/${nbaPath}/:category?`, async (req, res) => {
+        services.app.get(`/${path.nba}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'newest';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
 
@@ -22,7 +24,7 @@ export class UDNNewsRouter {
             res.send(feedBuilder.create());
         });
 
-        services.app.get(`/${wjPath}/:category?/:language?`, async (req, res) => {
+        services.app.get(`/${path.worldjournal}/:category?/:language?`, async (req, res) => {
             let category = req.params.category ?? 'newest';
             let language = req.params.language ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);

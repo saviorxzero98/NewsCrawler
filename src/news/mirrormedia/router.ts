@@ -1,5 +1,5 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import { MirrorMediaNewsCrawler } from './mirrormedia';
 
 const path = 'mirrormedia';

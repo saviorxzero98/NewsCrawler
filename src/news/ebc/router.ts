@@ -2,16 +2,18 @@ import { FeedBuilder } from '../../feeds/feedBuilder';
 import { EBCNewsCrawler } from './ebc';
 import { EBCFncNewsCrawler } from './ebc_fnc';
 import { ETtodayNewsCrawler } from './ettoday';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 
 
-const ebcPath = 'ebc';
-const ettodayPath = 'ettoday';
+const path = {
+    ebc: 'ebc',
+    ettoday: 'ettoday'
+}
 
 export class EBCNewsRouter {
     public static router(services: ServiceContext) {
         // 東森新聞
-        services.app.get(`/${ebcPath}/news/:category?`, async (req, res) => {
+        services.app.get(`/${path.ebc}/news/:category?`, async (req, res) => {
             let category = req.params.category ?? 'realtime';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let crawler = new EBCNewsCrawler(services);
@@ -22,7 +24,7 @@ export class EBCNewsRouter {
         });
 
         // 東森財經新聞
-        services.app.get(`/${ebcPath}/fncnews/:category?`, async (req, res) => {
+        services.app.get(`/${path.ebc}/fncnews/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let crawler = new EBCFncNewsCrawler(services);
@@ -33,7 +35,7 @@ export class EBCNewsRouter {
         });
 
         // ETToday
-        services.app.get(`/${ettodayPath}/:category?`, async (req, res) => {
+        services.app.get(`/${path.ettoday}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'realtime';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let crawler = new ETtodayNewsCrawler(services);

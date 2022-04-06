@@ -1,6 +1,6 @@
 import * as moment from 'moment';
 
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
 
 const rootUrl = 'https://www.nexttv.com.tw';

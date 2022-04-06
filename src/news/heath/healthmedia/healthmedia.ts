@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
-import { ServiceContext } from '../../service';
-import { NewsCrawler } from '../newsCrawler';
-import * as utils from '../../feeds/utils';
+import { ServiceContext } from '../../../services/service';
+import { NewsCrawler } from '../../newsCrawler';
+import * as utils from '../../../feeds/utils';
 
 const rootUrl = 'https://healthmedia.com.tw';
 const title = 'NOW健康';

@@ -1,6 +1,6 @@
 import { FTVNewsCrawler } from './ftvnews';
 import { FeedBuilder } from '../../feeds/feedBuilder';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 
 const path = 'ftv';
 

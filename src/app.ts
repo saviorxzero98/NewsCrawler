@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as rssRouters from './apiRouters';
 import NodeCache = require("node-cache");
 
-import { ServiceContext } from './service';
+import { ServiceContext } from './services/service';
 
 
 const app = express();

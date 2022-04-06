@@ -1,15 +1,17 @@
 import { FeedBuilder } from '../../feeds/feedBuilder';
 import { CNANewsCrawler } from './cna';
 import { RtiNewsCrawler } from './rti';
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 
-const cnaPath = 'cna';
-const rtiPath = 'rti';
+const path = {
+    cna: 'cna',
+    rti: 'rti'
+}
 
 export class RocGovNewsRouter {
     public static router(services: ServiceContext) {
         // 中央通訊社 CNA
-        services.app.get(`/${cnaPath}/:category?`, async (req, res) => {
+        services.app.get(`/${path.cna}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'aall';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             
@@ -21,7 +23,7 @@ export class RocGovNewsRouter {
         });
 
         // Rti 中央廣播電台
-        services.app.get(`/${rtiPath}/:category?`, async (req, res) => {
+        services.app.get(`/${path.rti}/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             

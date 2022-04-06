@@ -1,4 +1,4 @@
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
 
 

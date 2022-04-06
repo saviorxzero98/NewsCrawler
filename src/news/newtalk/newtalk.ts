@@ -2,7 +2,7 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-import { ServiceContext } from '../../service';
+import { ServiceContext } from '../../services/service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
 
@@ -59,7 +59,7 @@ export class NewtalkNewsCrawler extends NewsCrawler {
             }
         }
         
-        console.log(`GET ${url}`);
+        this.services.logger.logGetUrl(url);
 
         let response = await httpClient.get(url, utils.crawlerOptions);
         let content = cheerio.load(response.data);
