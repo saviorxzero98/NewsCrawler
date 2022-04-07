@@ -2,9 +2,9 @@ import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-import { NewsCrawler } from '../newsCrawler';
-import { ServiceContext } from '../../services/service';
-import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../../newsCrawler';
+import { ServiceContext } from '../../../services/service';
+import * as utils from '../../../feeds/utils';
 import { Item } from 'feed';
 
 const httpClient = axios.default;

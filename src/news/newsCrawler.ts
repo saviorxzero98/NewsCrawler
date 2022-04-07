@@ -88,6 +88,6 @@ export abstract class NewsCrawler {
                 date: moment(item.isoDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
             })
         }
-        return list;
+        return list.slice(0, options.count);
     }
 }

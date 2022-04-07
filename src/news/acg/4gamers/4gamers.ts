@@ -1,9 +1,9 @@
 import * as axios from 'axios';
 import * as moment from 'moment';
 
-import { NewsCrawler } from '../newsCrawler';
-import { ServiceContext } from '../../services/service';
-import * as utils from '../../feeds/utils';
+import { NewsCrawler } from '../../newsCrawler';
+import { ServiceContext } from '../../../services/service';
+import * as utils from '../../../feeds/utils';
 
 const rootUrl = 'https://www.4gamers.com.tw';
 const title = '4Gamers';
@@ -28,6 +28,31 @@ const categoryMap = {
 export class FourGamersNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
         super(services);
+    }
+
+    public async getNews(count: number = 15) {
+        let url = `${rootUrl}/rss/latest-news`;
+
+        let list = await this.getRSSNewsList({
+            url,
+            count
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let image = content('meta[property="og:image"]').attr('content');
+                item.image = image;
+                return item;
+            }
+        });
+
+        return {
+            title: `${title} 最新`,
+            link: rootUrl,
+            items: items
+        };
     }
 
     public async getNewsByCategory(category: string = '352', count: number = 15) {
