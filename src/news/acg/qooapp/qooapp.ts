@@ -11,11 +11,11 @@ export class QooAppNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(category: string = '', count: number = 15) {
-        let url = 'https://news.qoo-app.com/feed';
-
+        let url = rootUrl;
         if (category) {
-            url = `https://news.qoo-app.com/category/news-zh/${encodeURIComponent(category)}/feed`;
+            url = `${url}/category/news-zh/${encodeURIComponent(category)}/feed`;
         }
+        url = `${url}/feed`;
 
         let items = await this.getDetialNews(url);
 
@@ -26,18 +26,51 @@ export class QooAppNewsCrawler extends NewsCrawler {
         };  
     }
 
-    public async getNewsByCategory(category: string = '', subCategory: string = '', count: number = 15){
+    public async getNewsByCategory(category: string = '', subCategory: string = '', 
+                                   count: number = 15){
         let url = rootUrl;
-
         if (category) {
-            url = `${url}/${encodeURIComponent(category)}`;
-        }
-        if (subCategory) {
-            url = `${url}/${encodeURIComponent(subCategory)}`;
+            url = `${url}/category/${encodeURIComponent(category)}`;
+
+            if (subCategory) {
+                url = `${url}/${encodeURIComponent(subCategory)}`;
+            }
         }
         url = `${url}/feed`;
 
-        let items = await this.getDetialNews(url);
+        let items = await this.getDetialNews(url, count);
+
+        return {
+            title: `${title}`,
+            link: rootUrl,
+            items: items
+        };  
+    }
+
+    public async getNewsByTag(tag: string = '', count: number = 15) {
+        let url = rootUrl;
+        if (tag) {
+            url = `${url}/tag/${encodeURIComponent(tag)}`;
+        }
+        url = `${url}/feed`;
+
+        let items = await this.getDetialNews(url, count);
+
+        return {
+            title: `${title}`,
+            link: rootUrl,
+            items: items
+        };  
+    }
+
+    public async getNewsByTopic(topic: string = '', count: number = 15) {
+        let url = rootUrl;
+        if (topic) {
+            url = `${url}/category/original/collections/qoo_topic/${encodeURIComponent(topic)}`;
+        }
+        url = `${url}/feed`;
+
+        let items = await this.getDetialNews(url, count);
 
         return {
             title: `${title}`,
@@ -57,12 +90,7 @@ export class QooAppNewsCrawler extends NewsCrawler {
             options: utils.crawlerOptions,
             callback: (item, content) => {
                 let description = content('meta[property="og:description"]').attr('content');
-                let section = content('meta[property="article:section"]').attr('content');
                 let image = content('meta[property="og:image"]').attr('content');
-
-                if (section ) {
-                    item.title = `[${section}] ${item.title}`;
-                }
 
                 item.description = description;
                 item.image = image;
