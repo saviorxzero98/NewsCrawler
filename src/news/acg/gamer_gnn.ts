@@ -99,21 +99,23 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
 
                 let isBlog = await this.getNewsDetialFromBlog(item, response);
                 if (!isBlog) {
-                    let report = content('span.GN-lbox3C').text() || content('span.GN-lbox3CA').text();
-                    if (report.length > 1) {
-                        pubDate = report.split('）')[1];
-                        item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                    if (content('span.GN-lbox3C').text() || content('span.GN-lbox3CA').text()) {
+                        let report = content('span.GN-lbox3C').text() || content('span.GN-lbox3CA').text();
+                        if (report.length > 1) {
+                            pubDate = report.split('）')[1];
+                            item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                        }
                     }
                 }
 
-                item.description = description || item.description;
+                item.description = (description || item.description).replace('繼續閱讀', '');
                 item.image = image || item.image;
                 return item;
             }
         });
 
         return {
-            title: `${title} ${categoryMap[category]}`,
+            title: `${title} ${categoryName}`,
             link: url,
             items: items
         };
@@ -166,22 +168,30 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
         }
        
         let newUrl = response.data.match(urlReg)[0].split('(')[1].replace(/'/g, '');
-        let newResponse = await  httpClient.get(newUrl, utils.crawlerOptions);
-        
-        const content = cheerio.load(newResponse.data);
-        if (content('div.MSG-list8C').length > 0) {
-            let blogA = content('div.BH-lbox span.ST1').text();
-            let pubInfo = blogA.replace(/\n/g, '').split('│');
-            let pubDate = pubInfo[content('span.ST1').find('a').length > 0 ? 2 : 1];
-            item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
-        }
-        else {
-            let pubInfo = content('div.article-intro').text().replace(/\n/g, '').split('│');
-            if (pubInfo.length > 1) {
-                let pubDate = pubInfo[1];
-                item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
-            }
-        }
+
+        item = await this.services
+                         .cache
+                         .tryGet<Item>(newUrl, async () => {
+                                let newResponse = await  httpClient.get(newUrl, utils.crawlerOptions);
+                
+                                const content = cheerio.load(newResponse.data);
+                                if (content('div.MSG-list8C').length > 0) {
+                                    let blogA = content('div.BH-lbox span.ST1').text();
+                                    let pubInfo = blogA.replace(/\n/g, '').split('│');
+                                    let pubDate = pubInfo[content('span.ST1').find('a').length > 0 ? 2 : 1];
+                                    item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                                    item.link = newUrl;
+                                }
+                                else {
+                                    let pubInfo = content('div.article-intro').text().replace(/\n/g, '').split('│');
+                                    if (pubInfo.length > 1) {
+                                        let pubDate = pubInfo[1];
+                                        item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                                        item.link = newUrl;
+                                    }
+                                }
+                                return item;
+                            });
 
         return true;
     }
