@@ -18,7 +18,7 @@ export type NewsListOptions = {
 
 export type NewsItemCrawler = {
     selector: string,
-    callback: ($: cheerio.CheerioAPI, i: any) => Item
+    callback: ($: cheerio.CheerioAPI, i: any) => any
 }
 
 export type RSSNewsListOptions = {
@@ -29,7 +29,7 @@ export type RSSNewsListOptions = {
 export type NewsDetialOptions = {
     options?: any,
     list: Item[],
-    callback: (item: Item, content: cheerio.CheerioAPI) => Item
+    callback: (item: Item, content: cheerio.CheerioAPI, res: any) => any
 }
 
 
@@ -66,7 +66,7 @@ export abstract class NewsCrawler {
                     .tryGet<Item>(item.link, async () => {
                         let detailResponse = await httpClient.get(item.link, options.options);
                         let content = cheerio.load(detailResponse.data);
-                        return options.callback(item, content);
+                        return options.callback(item, content, detailResponse);
                     })
             )
         );
