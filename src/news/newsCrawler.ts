@@ -44,7 +44,7 @@ export abstract class NewsCrawler {
         
         let response = await httpClient.get(options.url, options.options);
         let content = cheerio.load(response.data);
-        console.log(response.data);
+
         let list = [];
 
         for (let crawler of options.crawlers) {

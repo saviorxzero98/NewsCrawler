@@ -13,7 +13,7 @@ export class QooAppNewsCrawler extends NewsCrawler {
     public async getNews(category: string = '', count: number = 15) {
         let url = rootUrl;
         if (category) {
-            url = `${url}/category/news-zh/${encodeURIComponent(category)}/feed`;
+            url = `${url}/category/news-zh/${encodeURIComponent(category)}`;
         }
         url = `${url}/feed`;
 
