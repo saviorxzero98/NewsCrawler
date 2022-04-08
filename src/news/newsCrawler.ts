@@ -39,7 +39,7 @@ export abstract class NewsCrawler {
         this.services = services;
     }
 
-    public async getNewsList(options: NewsListOptions): Promise<Item[]> {
+    protected async getNewsList(options: NewsListOptions): Promise<Item[]> {
         this.services.logger.logGetUrl(options.url);
         
         let response = await httpClient.get(options.url, options.options);
@@ -58,7 +58,7 @@ export abstract class NewsCrawler {
                    .slice(0, options.count);
     }
 
-    public async getNewsDetials(options: NewsDetialOptions): Promise<Item[]> {
+    protected async getNewsDetials(options: NewsDetialOptions): Promise<Item[]> {
         let items = await Promise.all(
             options.list.map(async (item) => 
                 this.services
@@ -73,12 +73,9 @@ export abstract class NewsCrawler {
         return items;
     }
 
-    public async getRSSNewsList(options: RSSNewsListOptions): Promise<Item[]> {
-        this.services.logger.logGetRssUrl(options.url);
+    protected async getRSSNewsList(options: RSSNewsListOptions): Promise<Item[]> {
+        let data = await this.getRSSNewsData(options.url);
 
-        let feedParser = new parser();
-        let data = await feedParser.parseURL(options.url);
-        
         let list = [];
         for (let item of data.items) {
             list.push({
@@ -89,5 +86,21 @@ export abstract class NewsCrawler {
             })
         }
         return list.slice(0, options.count);
+    }
+
+    protected async getNewsWeb(url: string, options ?: any) {
+        this.services.logger.logGetUrl(options.url);
+        
+        let response = await httpClient.get(options.url, options.options);
+        return response;
+    }
+
+    protected async getRSSNewsData(url: string) {
+        this.services.logger.logGetRssUrl(url);
+
+        let feedParser = new parser();
+        let data = await feedParser.parseURL(url);
+
+        return data;
     }
 }

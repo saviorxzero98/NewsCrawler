@@ -15,12 +15,26 @@ export class CTVNewsCrawler extends NewsCrawler {
     public async getNews( count: number = 15) {
         let url = `${rootUrl}/rss`;
 
-        let list = await this.getRSSNewsList({
-            url,
-            count
-        });
+        let rssData = await this.getRSSNewsData(url);
 
-        /*let items = await this.getNewsDetials({
+        let list = [];
+        for (let item of rssData.items) {
+            let link: string = item.id;
+            link = link.replace(`${rootUrl}/Article`, '');
+            link = encodeURIComponent(link);
+            
+            let title = item.title.split('│')[0];
+
+            list.push({
+                title: title,
+                link: `${rootUrl}/Article/${link}` ,
+                description: item.summary,
+                date: moment(item.isoDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
+            })
+        }
+        list = list.slice(0, count);
+
+        let items = await this.getNewsDetials({
             list,
             options: utils.crawlerOptions,
             callback: (item, content) => {
@@ -30,12 +44,12 @@ export class CTVNewsCrawler extends NewsCrawler {
                 item.image = image;
                 return item;
             }
-        });*/
+        });
 
         return {
             title: `${title}`,
             link: url,
-            items: list
+            items: items
         };
     }
 }
