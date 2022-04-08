@@ -19,6 +19,7 @@ import { LTNNewsRouter } from './news/ltn/router';
 import { ACGNewsRouter } from './news/acg/router';
 import { BCCNewsRouter } from './news/bccnews/router';
 import { StormNewsRouter } from './news/storm/router';
+import { GVMNewsRouter } from './news/gvm/router';
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -39,6 +40,9 @@ export const addRouters = (services: ServiceContext) => {
 
     // 民視新聞
     FTVNewsNewsRouter.router(services);
+
+    // 遠見雜誌
+    GVMNewsRouter.router(services);
 
     // 健康相關新聞 (NOW健康)
     HeathNewsRouter.router(services);

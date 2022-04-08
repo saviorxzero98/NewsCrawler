@@ -69,7 +69,7 @@ export class StormNewsCrawler extends NewsCrawler {
                 let pubDate = content('meta[itemprop="datePublished"]').attr('content');
                 item.description = description;
                 item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
+                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
                 return item;
             }
         });
