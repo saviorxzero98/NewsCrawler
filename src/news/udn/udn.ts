@@ -9,6 +9,7 @@ const healthRootUrl = 'https://health.udn.com';
 const globalRootUrl = 'https://global.udn.com';
 const gameRootUrl = 'https://game.udn.com';
 const opinionRootUrl = 'https://opinion.udn.com/';
+const moneyRootUrl = 'https://money.udn.com'
 
 const title = '聯合新聞網';
 const starTitle = 'UDN 噓！星聞';
@@ -16,6 +17,7 @@ const healthTitle = 'UDN 元氣網';
 const globalTitle = 'UDN 轉角國際';
 const gameTitle = 'UDN 遊戲角落';
 const opinionTitle = 'UDN 名人堂';
+const moneyTitle = '經濟日報';
 
 const newsRssMap = {
     'latest': '最新',
@@ -51,7 +53,7 @@ const starNewsRssMap = {
     '10093': '娛樂有評',
 }
 
-const healthNewRssMap = {
+const healthNewsRssMap = {
     '5681': '最新',
     '120949': '新冠肺炎',
     '5680': '該看哪科',
@@ -64,6 +66,24 @@ const healthNewRssMap = {
     '122318': '圖表看健康',
     '122416': '醫聲'
 }
+
+const moneyNewsRssMap = {
+    '0': '總覽',
+    '5588': '國際',
+    '5589': '兩岸',
+    '5590': '股市',
+    '5591': '產業',
+    '5592': '理財',
+    '5593': '房地產',
+    '5595': '觀點',
+    '5596': '品味',
+    '5597': '商情',
+    '10846': '要聞',
+    '11111': '期貨',
+    '12017': '金融',
+    '122327': 'OFF學'
+}
+
 
 export class UDNNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
@@ -131,7 +151,7 @@ export class UDNNewsCrawler extends NewsCrawler {
         let categoryName = '';
         if (category && /^\d+$/.test(category)) {
             url =  `${healthRootUrl}/rss/news/1005/${category}`;
-                categoryName = healthNewRssMap[category] || '';
+                categoryName = healthNewsRssMap[category] || '';
 
                 if (subCategory && /^\d+$/.test(subCategory)) {
                     url = `${url}/${subCategory}`;
@@ -205,6 +225,28 @@ export class UDNNewsCrawler extends NewsCrawler {
 
         return {
             title: `${opinionTitle}`,
+            link: url,
+            items: list
+        };
+    }
+
+    public async getMoneyNews(category: string = '0', count: number = 15) {
+        let url = `${moneyRootUrl}/rssfeed/news/1001/0`;
+        let categoryName = '';
+        if (category) {
+            if (/^\d+$/.test(category)) {
+                url =  `${moneyRootUrl}/rssfeed/news/1001/${category}`;
+                categoryName = moneyNewsRssMap[category];
+            }
+        }
+
+        let list = await this.getRSSNewsList({
+            url,
+            count
+        });
+
+        return {
+            title: `${moneyTitle} ${categoryName}`,
             link: url,
             items: list
         };

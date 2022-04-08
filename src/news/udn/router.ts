@@ -12,6 +12,7 @@ const path = {
     udnGlobal: 'udn/global',
     udnGame: 'udn/game',
     udnOpinion: 'udn/opinion',
+    udnMoney: 'udn/money',
     nba: 'nba-tw',
     worldjournal: 'worldjournal'
 }
@@ -32,6 +33,20 @@ export class UDNNewsRouter {
             res.send(feedBuilder.create());
         });
 
+        // 經濟日報
+        services.app.get(`/${path.udnMoney}/:category?`, async (req, res) => {
+            let category = req.params.category ?? '0';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new UDNNewsCrawler(services);
+            let data = await crawler.getMoneyNews(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        // 噓！星聞
         services.app.get(`/${path.udnStar}/:category?`, async (req, res) => {
             let category = req.params.category ?? '10088';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
@@ -44,6 +59,7 @@ export class UDNNewsRouter {
             res.send(feedBuilder.create());
         });
 
+        // 元氣網
         services.app.get(`/${path.udnHealth}/:category?/:subcategory?`, async (req, res) => {
             let category = req.params.category ?? '5681';
             let subcategory = req.params.subcategory ?? '';
@@ -57,6 +73,7 @@ export class UDNNewsRouter {
             res.send(feedBuilder.create());
         });
 
+        // 轉角國際
         services.app.get(`/${path.udnGlobal}/:category?`, async (req, res) => {
             let category = req.params.category ?? '8662';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
@@ -69,6 +86,7 @@ export class UDNNewsRouter {
             res.send(feedBuilder.create());
         });
 
+        // 遊戲角落
         services.app.get(`/${path.udnGame}/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
@@ -81,6 +99,7 @@ export class UDNNewsRouter {
             res.send(feedBuilder.create());
         });
 
+        // 名人堂
         services.app.get(`/${path.udnOpinion}/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
