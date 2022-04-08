@@ -8,7 +8,7 @@ const cache = new NodeCache();
 export const testCrawlNews = async () => {
     let services = new ServiceContext().registCache(cache);
 
-    //let crawler = new NewsCrawler(services);
+    //let crawler = new GamebaseNewsCrawler(services);
     //let news = await crawler.getNews();
     //console.log(news);
 }

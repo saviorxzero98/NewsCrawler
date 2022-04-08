@@ -59,6 +59,8 @@ export class FourGamersNewsCrawler extends NewsCrawler {
         if (category && categoryMap[category]) {
             let url = `${rootUrl}/site/api/news/by-category/${category}?pageSize=${count}`;
 
+            this.services.logger.logGetUrl(url);
+
             let response = await httpClient.get(url);
             let results = response.data.data.results;
             let list = results.map((item) => ({
@@ -67,7 +69,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
                 description: '',
                 pubDate: new Date(item.createPublishedAt * 1),
                 link: item.canonicalUrl,
-            }))
+            }));
 
             let items = await this.getNewsDetials({
                 list,

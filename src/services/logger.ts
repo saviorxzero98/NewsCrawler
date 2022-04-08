@@ -7,4 +7,8 @@ export class Logger {
     public logGetRssUrl(url: string) {
         console.log(`GET RSS ${url}`);
     }
+
+    public logPostUrl(url: string) {
+        console.log(`POST ${url}`);
+    }
 }

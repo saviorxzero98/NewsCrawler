@@ -57,7 +57,7 @@ export class QooAppNewsCrawler extends NewsCrawler {
         let items = await this.getDetialNews(url, count);
 
         return {
-            title: `${title}`,
+            title: `${title} ${tag}`,
             link: rootUrl,
             items: items
         };  
