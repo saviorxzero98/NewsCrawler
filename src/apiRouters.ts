@@ -18,6 +18,7 @@ import { HeathNewsRouter } from './news/heath/router';
 import { LTNNewsRouter } from './news/ltn/router';
 import { ACGNewsRouter } from './news/acg/router';
 import { BCCNewsRouter } from './news/bccnews/router';
+import { StormNewsRouter } from './news/storm/router';
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -65,6 +66,9 @@ export const addRouters = (services: ServiceContext) => {
 
     // 三立新聞
     SETNewsRouter.router(services);
+
+    // 風傳媒
+    StormNewsRouter.router(services);
 
     // 公廣集團 (華視新聞、公視新聞)
     TBSNewsRouter.router(services);
