@@ -17,6 +17,7 @@ import { NTDTVNewsRouter } from './news/ntdtv/router';
 import { HeathNewsRouter } from './news/heath/router';
 import { LTNNewsRouter } from './news/ltn/router';
 import { ACGNewsRouter } from './news/acg/router';
+import { BCCNewsRouter } from './news/bccnews/router';
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -26,14 +27,17 @@ export const addRouters = (services: ServiceContext) => {
     // 蘋果日報
     AppleDailyNewsRouter.router(services);
     
+    // 中國廣播電台 (中廣新聞網)
+    BCCNewsRouter.router(services);
+
     // 中國時報 (中時電子報、工商時報、CTWANT)
     ChinaTimesNewsRouter.router(services);
 
-    // 民視新聞
-    FTVNewsNewsRouter.router(services);
-
     // 東森電視 (東森新聞、東森財經新聞、ETtoday)
     EBCNewsRouter.router(services);
+
+    // 民視新聞
+    FTVNewsNewsRouter.router(services);
 
     // 健康相關新聞 (NOW健康)
     HeathNewsRouter.router(services);
