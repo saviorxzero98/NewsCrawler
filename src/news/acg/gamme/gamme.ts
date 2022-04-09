@@ -70,9 +70,45 @@ export class GammeNewsCrawler extends NewsCrawler {
         };  
     }
 
+    public async getNewsByTag(tag: string = '', count: number = 15) {
+        let url = `${newsRootUrl}/tag/${encodeURIComponent(tag)}`;
+
+        let items = await this.getNewsItems(url, count);
+                  
+        return {
+            title: `${newsTitle} ${tag}`,
+            link: url,
+            items: items
+        };
+    }
+
     public async getSexNews(category: string = 'all', count: number = 15) {
         let url = `${sexyNewsRootUrl}/category/${category}`;
         let categoryName = newsCategoryMap[category] ?? '';
+        
+        let items = await this.getNewsItems(url, count);
+                  
+        return {
+            title: `${sexyNewsTitle} ${categoryName}`,
+            link: url,
+            items: items
+        };
+    }
+
+    public async getSexNewsByTag(tag: string = '', count: number = 15) {
+        let url = `${sexyNewsRootUrl}/tag/${encodeURIComponent(tag)}`;
+
+        let items = await this.getNewsItems(url, count);
+                  
+        return {
+            title: `${sexyNewsTitle} ${tag}`,
+            link: url,
+            items: items
+        };
+    }
+
+    private async getNewsItems(url: string, count: number = 15) {
+
         let crawlers = [
             {
                 selector: 'div#category_new ul li',
@@ -127,11 +163,7 @@ export class GammeNewsCrawler extends NewsCrawler {
             }
         });
                   
-        return {
-            title: `${sexyNewsTitle} ${categoryName}`,
-            link: url,
-            items: items
-        };
+        return items;
     }
 }
 

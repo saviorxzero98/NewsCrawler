@@ -49,12 +49,12 @@ export class NewtalkNewsCrawler extends NewsCrawler {
             if (category === 'topics' &&
                 topic &&
                 /^\d+$/.test(topic)) {
-                categoryName = categoryMap['topics'];
+                categoryName = categoryMap['topics'] || '';
                 url = `${rootUrl}/news/topics/view/${topic}`;
             }
             else if (/^\d+$/.test(category) &&
-                    categoryMap[category]) {
-                categoryName = categoryMap['category'];
+                     categoryMap[category]) {
+                categoryName = categoryMap['category'] || '';
                 url = `${rootUrl}/news/subcategory/${category}`;
             }
         }

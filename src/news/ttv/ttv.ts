@@ -38,7 +38,7 @@ export class TTVNewsCrawler extends NewsCrawler {
         };
     }
 
-    public async getNewsByCategory(category: string, count: number = 10) {
+    public async getNewsByCategory(category: string, count: number = 15) {
         let url = `${rootUrl}/category/${encodeURIComponent(category)}`;
         
         let crawler = {
@@ -54,6 +54,27 @@ export class TTVNewsCrawler extends NewsCrawler {
         
         return {
             title: `${title} ${category}`,
+            link: url,
+            items: list,
+        };
+    }
+
+    public async getNewsByTag(tag: string, count: number = 15) {
+        let url = `${rootUrl}/tag/${encodeURIComponent(tag)}`;
+        
+        let crawler = {
+            selector: 'article.container div.news-list ul li',
+            callback: ($, i) => this.getTTVNews($, i)
+        };
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: [ crawler ]
+        });
+        
+        return {
+            title: `${title} ${tag}`,
             link: url,
             items: list,
         };

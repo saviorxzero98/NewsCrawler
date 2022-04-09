@@ -1,12 +1,8 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../services/service';
 import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
-
-const httpClient = axios.default;
 
 const rootUrl = 'https://www.nownews.com';
 const title = 'Nownews今日新聞';
@@ -70,7 +66,7 @@ export class NownewsNewsCrawler extends NewsCrawler {
         });
     
         return {
-            title: `${title} ${categoryMap[category]}`,
+            title: `${title} ${categoryMap[category] ?? ''}`,
             link: url,
             items: items
         };

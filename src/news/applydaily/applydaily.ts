@@ -34,7 +34,7 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
         let url = `${rootUrl}/realtime/${category}`;
 
         let crawler = {
-            selector: 'div.flex-feature',
+            selector: 'div#section-body div.flex-feature',
             callback: ($, i) => {
                 let title = $(i).find('span.headline').text();
                 let link = rootUrl + $(i).find('a').attr('href');

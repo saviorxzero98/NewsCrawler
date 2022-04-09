@@ -61,18 +61,31 @@ export class MirrorMediaNewsCrawler  extends NewsCrawler {
         super(services);
     }
 
-    public async getNews(section: string = 'news', category: string = '', count: number = 25) {
-        let url = '';
-        let pageName = '';
-        if (category) {
-            url = `${rootUrl}/category/${category}`;
-            pageName = categoryMap[category];
-        }
-        else {
+    public async getNewsBySection(section: string = 'news', count: number = 15) {
+        let url = `${rootUrl}/section/news`;
+        let sectionName = sectionMap['news'];
+
+        if (section && sectionMap[section]) {
             url = `${rootUrl}/section/${section}`;
-            pageName = sectionMap[section];
+            sectionName = sectionMap[section];
         }
 
+        return await this.getNews(url, sectionName, count);
+    }
+
+    public async getNewsByCategory(category: string = 'news', count: number = 15) {
+        let url = `${rootUrl}/category/news`;
+        let categoryName = categoryMap['news'];
+
+        if (category && categoryMap[category]) {
+            url = `${rootUrl}/category/${category}`;
+            categoryName = categoryMap[category];
+        }
+
+        return await this.getNews(url, categoryName, count);
+    }
+
+    private async getNews(url: string, pageName: string, count: number = 15) {
         let crawler = {
             selector: 'section.article-list li.list__list-item',
             callback: ($, i) => {

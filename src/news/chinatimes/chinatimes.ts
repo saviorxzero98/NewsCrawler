@@ -41,7 +41,7 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
                 let title = $(i).find('h3.title a').text();
                 let link = rootUrl + $(i).find('h3.title a').attr('href');
                 let description = $(i).find('p.intro').text();
-                let image = $(i).find('img.photo').attr('src');
+                let image = $(i).find('img.photo').attr('src') || '';
                 let pubDate = $(i).find('time').attr('datetime');
 
                 return {

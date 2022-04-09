@@ -49,10 +49,20 @@ export class FTVNewsCrawler extends NewsCrawler {
             crawlers: [ crawler ]
         });
 
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                item.description = description;
+                return item;
+            }
+        });
+
         return {
             title: `${title} ${categoryMap[tag]}`,
             link: url,
-            items: list,
+            items: items,
         };
     }
 
@@ -83,10 +93,20 @@ export class FTVNewsCrawler extends NewsCrawler {
             crawlers: [ crawler ]
         });
 
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                item.description = description;
+                return item;
+            }
+        });
+
         return {
             title: `${title} ${tag}`,
             link: url,
-            items: list,
+            items: items,
         };
     }
 }
