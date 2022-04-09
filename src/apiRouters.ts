@@ -20,6 +20,7 @@ import { ACGNewsRouter } from './news/acg/router';
 import { BCCNewsRouter } from './news/bccnews/router';
 import { StormNewsRouter } from './news/storm/router';
 import { GVMNewsRouter } from './news/gvm/router';
+import { SportNewsRouter } from './news/sport/router';
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -70,6 +71,9 @@ export const addRouters = (services: ServiceContext) => {
 
     // 三立新聞
     SETNewsRouter.router(services);
+
+    // 體育新聞 (運動視界)
+    SportNewsRouter.router(services);
 
     // 風傳媒
     StormNewsRouter.router(services);
