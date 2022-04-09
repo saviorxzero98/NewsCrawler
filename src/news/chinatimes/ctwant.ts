@@ -13,6 +13,10 @@ export class CtwantNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(category: string = '最新', subCategory: string = '', count: number = 15) {
+        if (category !== '最新') {
+            return await this.getNewsByCategory(category, subCategory, count);
+        }
+        
         return await this.getRealtimeNews(count);
     }
 
@@ -58,6 +62,89 @@ export class CtwantNewsCrawler extends NewsCrawler {
      
         return {
             title: `${title} 最新`,
+            link: url,
+            items: items,
+        };
+    }
+
+    private async getNewsByCategory(category: string, subCategory: string = '', count: number = 15) {
+        let url = `${rootUrl}/category/${encodeURIComponent(category)}`;
+
+        if (subCategory) {
+            url = `${url}/${encodeURIComponent(subCategory)}`;
+        }
+
+        let crawlers = [
+            {
+                selector: 'a.p-category__hot-main, a.m-card-s--hot',
+                callback: ($, i) => {
+                    let title = $(i).find('h2').text() || $(i).find('h4').text();
+                    let link = rootUrl + $(i).attr('href');
+                    let pubDate = $(i).find('p.e-time img').text().trim();
+                    
+                    return {
+                        title,
+                        link,
+                        description: '',
+                        image: '',
+                        date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
+                    };
+                }
+            },
+            {
+                selector: 'div.m-realtime div.row a',
+                callback: ($, i) => {
+                    let title = $(i).find('p.m-realtime__content').text();
+                    let link = rootUrl + $(i).attr('href');
+                    let pubDate = $(i).find('p.e-time img').text().trim();
+                    
+                    return {
+                        title,
+                        link,
+                        description: '',
+                        image: '',
+                        date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
+                    };
+                }
+            },
+            {
+                selector: 'div.l-section__content a.m-card',
+                callback: ($, i) => {
+                    let title = $(i).find('h3').text();
+                    let link = rootUrl + $(i).attr('href');
+                    let pubDate = $(i).find('p.e-time img').text().trim();
+                    
+                    return {
+                        title,
+                        link,
+                        description: '',
+                        image: '',
+                        date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
+                    };
+                }
+            }
+        ];
+        let list = await this.getNewsList({
+            url,
+            options: utils.crawlerOptions,
+            count,
+            crawlers: crawlers
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            options: utils.crawlerOptions,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
+                return item;
+            }
+        });
+     
+        return {
+            title: `${title} ${subCategory || category}`,
             link: url,
             items: items,
         };
