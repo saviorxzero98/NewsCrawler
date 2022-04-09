@@ -22,7 +22,8 @@ const categoryMap = {
     'show': '節目',
     'local': '地方',
     'health-life': '健康',
-    'gama': '校園'
+    'gama': '校園',
+    '4wayvoice': '四方報'
 }
 
 export class NownewsNewsCrawler extends NewsCrawler {
