@@ -13,7 +13,7 @@ import { NewtalkNewsRouter } from './news/newtalk/router';
 import { UDNNewsRouter } from './news/udn/router';
 import { ServiceContext } from "./services/service";
 import { MirrorMediaNewsNewsRouter } from './news/mirrormedia/router';
-import { NTDTVNewsRouter } from './news/ntdtv/router';
+import { NTDTVNewsRouter } from './news/world/usa/ntdtv/router';
 import { HeathNewsRouter } from './news/heath/router';
 import { LTNNewsRouter } from './news/ltn/router';
 import { ACGNewsRouter } from './news/acg/router';
@@ -63,9 +63,6 @@ export const addRouters = (services: ServiceContext) => {
 
     // Nownews 今日新聞
     NownewsNewsRouter.router(services);
-
-    // 新唐人電視台
-    NTDTVNewsRouter.router(services);
 
     // 中華民國官方媒體 (中央通訊社CNA、Rti中央廣播電台)
     RocGovNewsRouter.router(services);

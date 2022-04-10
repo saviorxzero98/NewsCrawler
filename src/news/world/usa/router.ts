@@ -1,70 +1,25 @@
 import { ServiceContext } from "../../../services/service";
-import { FeedBuilder } from "../../../feeds/feedBuilder";
-import { VOANewsCrawler } from "./voa";
-import { WSJNewsCrawler } from "./wsj";
-import { NYTimesNewsCrawler } from "./nytimes";
-
-
-const path = {
-    voa: 'voa',
-    wsj: 'wsj',
-    nytimes: 'nytimes'
-}
+import { NTDTVNewsRouter } from "./ntdtv/router";
+import { VOANewsRouter } from "./voa/router";
+import { NYTimesNewsRouter } from "./nytimes/router";
+import { WSJNewsRouter } from "./wsj/router";
+import { EpochTimesNewsRouter } from "./epochtimes/router";
 
 export class USANewsRouter {
     public static router(services: ServiceContext) {
-        // 美國之音
-        services.app.get(`/${path.voa}/:language/category/:category?`, async (req, res) => {
-            let category = req.params.category ?? '';
-            let language = req.params.language ?? 'zh-hant';
-            let limit = Number(req.query.limit ?? services.config.maxRssCount);
-            let opencc = String(req.query.opencc ?? '');
+        // 大紀元
+        EpochTimesNewsRouter.router(services);
 
-            let crawler = new VOANewsCrawler(services);
-            let data = await crawler.getNews(category, language, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
-            feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
-        });
-        services.app.get(`/${path.voa}/:language/rss/:rss?`, async (req, res) => {
-            let rss = req.params.rss ?? '';
-            let language = req.params.language ?? 'zh-hant';
-            let limit = Number(req.query.limit ?? services.config.maxRssCount);
-            let opencc = String(req.query.opencc ?? '');
-
-            let crawler = new VOANewsCrawler(services);
-            let data = await crawler.getNewsByRss(rss, language, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
-            feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
-        });
-
-        // 華爾街日報
-        services.app.get(`/${path.wsj}/:language/:category?`, async (req, res) => {
-            let category = req.params.category ?? '';
-            let language = req.params.language ?? 'zh-hant';
-            let limit = Number(req.query.limit ?? services.config.maxRssCount);
-            let opencc = String(req.query.opencc ?? '');
-
-            let crawler = new WSJNewsCrawler(services);
-            let data = await crawler.getNews(category, language, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
-            feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
-        });
+        // 新唐人電視台
+        NTDTVNewsRouter.router(services);
 
         // 紐約時報
-        services.app.get(`/${path.nytimes}/:language/:category?`, async (req, res) => {
-            let category = req.params.category ?? '';
-            let language = req.params.language ?? 'zh-hant';
-            let limit = Number(req.query.limit ?? services.config.maxRssCount);
-            let opencc = String(req.query.opencc ?? '');
+        NYTimesNewsRouter.router(services);
 
-            let crawler = new NYTimesNewsCrawler(services);
-            let data = await crawler.getNews(category, language, limit);
-            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
-            feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
-        });
+        // 美國之音
+        VOANewsRouter.router(services);
+
+        // 華爾街日報
+        WSJNewsRouter.router(services);
     }
 }

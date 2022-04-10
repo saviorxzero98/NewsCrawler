@@ -1,5 +1,5 @@
-import { FeedBuilder } from '../../feeds/feedBuilder';
-import { ServiceContext } from '../../services/service';
+import { FeedBuilder } from '../../../../feeds/feedBuilder';
+import { ServiceContext } from '../../../../services/service';
 import { NTDTVTwNewsCrawler } from './ntdtv_tw';
 import { NTDTVUsNewsCrawler } from './ntdtv_us';
 
