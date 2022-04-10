@@ -2,11 +2,13 @@ import { ServiceContext } from "../../../services/service";
 import { FeedBuilder } from "../../../feeds/feedBuilder";
 import { VOANewsCrawler } from "./voa";
 import { WSJNewsCrawler } from "./wsj";
+import { NYTimesNewsCrawler } from "./nytimes";
 
 
 const path = {
     voa: 'voa',
-    wsj: 'wsj'
+    wsj: 'wsj',
+    nytimes: 'nytimes'
 }
 
 export class USANewsRouter {
@@ -45,6 +47,20 @@ export class USANewsRouter {
             let opencc = String(req.query.opencc ?? '');
 
             let crawler = new WSJNewsCrawler(services);
+            let data = await crawler.getNews(category, language, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        // 紐約時報
+        services.app.get(`/${path.nytimes}/:language/:category?`, async (req, res) => {
+            let category = req.params.category ?? '';
+            let language = req.params.language ?? 'zh-hant';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new NYTimesNewsCrawler(services);
             let data = await crawler.getNews(category, language, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
