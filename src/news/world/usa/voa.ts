@@ -5,7 +5,7 @@ import { NewsCrawler } from '../../newsCrawler';
 import * as utils from '../../../feeds/utils';
 
 const languageMap = {
-    english: {
+    'en-us': {
         rootUrl: 'https://www.voanews.com',
         title: 'VOA',
         rssMap: {
@@ -24,7 +24,7 @@ const languageMap = {
             'Arts & Culture': 'https://www.voanews.com/api/zp$ove-vir'
         }
     },
-    chinese: {
+    'zh-hans': {
         rootUrl: 'https://www.voachinese.com',
         title: '美国之音',
         rssMap: {
@@ -43,7 +43,7 @@ const languageMap = {
             '生态环境': 'https://www.voachinese.com/api/zoyy_egrvv'
         }
     },
-    cantonese: {
+    'zh-hant': {
         rootUrl: 'https://www.voacantonese.com',
         title: '美國之音',
         rssMap: {
@@ -65,7 +65,8 @@ export class VOANewsCrawler extends NewsCrawler {
         super(services);
     }
 
-    public async getNews(category: string,  language: string = 'cantonese', count: number = 15) {
+    public async getNews(category: string,  language: string = 'zh-hant', count: number = 15) {
+        language = this.getLanguage(language);
         let mapInfo = languageMap[language];
         let title = mapInfo.title;
         let url = mapInfo.rssMap[category] ?? Object.values(mapInfo.rssMap)[0];       
@@ -94,7 +95,8 @@ export class VOANewsCrawler extends NewsCrawler {
         };
     }
 
-    public async getNewsByRss(rss: string = '', language: string = 'cantonese', count: number = 15) {
+    public async getNewsByRss(rss: string = '', language: string = 'zh-hant', count: number = 15) {
+        language = this.getLanguage(language);
         let rootUrl = languageMap[language].rootUrl;
         let title =  languageMap[language].title;
         let url = `${rootUrl}/api/${rss}`;
@@ -121,5 +123,31 @@ export class VOANewsCrawler extends NewsCrawler {
             link: url,
             items: items,
         };
+    }
+
+    private getLanguage(language: string = 'zh-hant') {
+        if (language) {
+            language = language.toLowerCase();
+            
+            if (language.startsWith('en')) {
+                return 'en-us';
+            }
+            
+            switch (language) {
+                case 'zh':
+                case 'zh-cn':
+                case 'zh-sg':
+                case 'zh-my':
+                case 'zh-hans':
+                    return 'zh-hans';
+
+                case 'zh-tw':
+                case 'zh-hk':
+                case 'zh-mo':
+                case 'zh-hant':
+                    return 'zh-hant';
+            }
+        }
+        return 'zh-hant';
     }
 }
