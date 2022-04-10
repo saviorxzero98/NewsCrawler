@@ -1,13 +1,10 @@
-import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 import { Item } from 'feed';
 import * as parser from 'rss-parser';
 
 import { ServiceContext } from "../services/service";
-
-
-const httpClient = axios.default;
+import { HttpClient } from '../services/httpclient';
 
 export type NewsListOptions = {
     url: string,
@@ -42,6 +39,7 @@ export abstract class NewsCrawler {
     protected async getNewsList(options: NewsListOptions): Promise<Item[]> {
         this.services.logger.logGetUrl(options.url);
         
+        let httpClient = new HttpClient();
         let response = await httpClient.get(options.url, options.options);
         let content = cheerio.load(response.data);
 
@@ -49,13 +47,13 @@ export abstract class NewsCrawler {
 
         for (let crawler of options.crawlers) {
             let partList = content(crawler.selector)
-                               .map((_, item) => crawler.callback(content, item))
-                               .get()
+                            .map((_, item) => crawler.callback(content, item))
+                            .get()
             list.push(...partList);
         }
 
         return list.filter(i => i.title && i.link)
-                   .slice(0, options.count);
+                .slice(0, options.count);
     }
 
     protected async getNewsDetials(options: NewsDetialOptions): Promise<Item[]> {
@@ -65,11 +63,13 @@ export abstract class NewsCrawler {
                     .cache
                     .tryGet<Item>(item.link, async () => {
                         try {
+                            let httpClient = new HttpClient();
                             let detailResponse = await httpClient.get(item.link, options.options);
                             let content = cheerio.load(detailResponse.data);
                             return options.callback(item, content, detailResponse);
                         }
-                        catch {
+                        catch (e) {
+                            this.services.logger.logError('Get News Detial Error.');
                             return item;
                         }
                     })
@@ -96,6 +96,7 @@ export abstract class NewsCrawler {
     protected async getNewsWeb(url: string, options ?: any) {
         this.services.logger.logGetUrl(options.url);
         
+        let httpClient = new HttpClient();
         let response = await httpClient.get(options.url, options.options);
         return response;
     }

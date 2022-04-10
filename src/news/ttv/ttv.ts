@@ -1,9 +1,9 @@
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../services/httpclient';
 import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
-import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://news.ttv.com.tw';
 const title = '台視新聞';
@@ -26,7 +26,7 @@ export class TTVNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });
@@ -47,7 +47,7 @@ export class TTVNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });
@@ -68,7 +68,7 @@ export class TTVNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });

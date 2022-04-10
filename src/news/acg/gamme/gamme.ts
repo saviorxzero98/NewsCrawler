@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
-import * as utils from '../../../feeds/utils';
 
 const newsRootUrl = 'https://news.gamme.com.tw';
 const sexyNewsRootUrl = 'https://sexynews.gamme.com.tw';
@@ -52,7 +52,7 @@ export class GammeNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: (item, content) => {
                 let description = content('meta[property="og:description"]').attr('content');
                 let image = content('meta[property="og:image"]').attr('content');
@@ -148,14 +148,14 @@ export class GammeNewsCrawler extends NewsCrawler {
         ];
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: crawlers
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: (item, content) => {
                 let pubDate = content('span.postDate').text();
                 item.date = moment(pubDate, 'YYYY-MM-DD').toDate();

@@ -11,6 +11,7 @@
     "feed": "^4.2.2",
     "moment": "^2.29.1",
     "node-cache": "^5.1.2",
+    "retry-axios": "^2.6.0",
     "rss-parser": "^3.12.0",
     "simplecc-wasm": "^0.1.4"
   },

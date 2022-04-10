@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../services/httpclient';
 import { ServiceContext } from '../../services/service';
-import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
 
 const rootUrl = 'https://www.nownews.com';
@@ -43,14 +43,14 @@ export class NownewsNewsCrawler extends NewsCrawler {
         ]
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: crawlers
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: (item, content) => {
                 let description = content('meta[property="og:description"]').attr('content');
                 let image = content('meta[property="og:image"]').attr('content');

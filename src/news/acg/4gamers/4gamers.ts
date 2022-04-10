@@ -1,14 +1,11 @@
-import * as axios from 'axios';
-import * as moment from 'moment';
 
+import { HttpClient, crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
-import * as utils from '../../../feeds/utils';
+
 
 const rootUrl = 'https://www.4gamers.com.tw';
 const title = '4Gamers';
-
-const httpClient = axios.default;
 
 const categoryMap = {
     '352': '遊戲資訊',
@@ -40,7 +37,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: (item, content) => {
                 let image = content('meta[property="og:image"]').attr('content');
                 item.image = image;
@@ -61,6 +58,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
 
             this.services.logger.logGetUrl(url);
 
+            let httpClient = new HttpClient();
             let response = await httpClient.get(url);
             let results = response.data.data.results;
             let list = results.map((item) => ({
@@ -73,7 +71,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
 
             let items = await this.getNewsDetials({
                 list,
-                options: utils.crawlerOptions,
+                options: crawlerHeaders,
                 callback: (item, content) => {
                     let description = content('meta[name="description"]').attr('content');
                     let image = content('meta[property="og:image"]').attr('content');
@@ -101,6 +99,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
         if (tag) {
             let url = `${rootUrl}/site/api/news/by-tag?tag=${encodeURIComponent(tag)}&pageSize=${count}`;
 
+            let httpClient = new HttpClient();
             let response = await httpClient.get(url);
             let results = response.data.data.results;
             let list = results.map((item) => ({
@@ -113,7 +112,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
 
             let items = await this.getNewsDetials({
                 list,
-                options: utils.crawlerOptions,
+                options: crawlerHeaders,
                 callback: (item, content) => {
                     let description = content('meta[name="description"]').attr('content');
                     let image = content('meta[property="og:image"]').attr('content');
@@ -141,6 +140,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
         if (topic) {
             let url = `${rootUrl}/site/api/news/option-cfg/${topic}?pageSize=${count}`;
 
+            let httpClient = new HttpClient();
             let response = await httpClient.get(url);
             let results = response.data.data.results;
             let list = results.map((item) => ({
@@ -153,7 +153,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
 
             let items = await this.getNewsDetials({
                 list,
-                options: utils.crawlerOptions,
+                options: crawlerHeaders,
                 callback: (item, content) => {
                     let description = content('meta[name="description"]').attr('content');
                     let image = content('meta[property="og:image"]').attr('content');

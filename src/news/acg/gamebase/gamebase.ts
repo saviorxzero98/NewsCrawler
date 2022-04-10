@@ -1,16 +1,13 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
+import { HttpClient, crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
-import * as utils from '../../../feeds/utils';
 
 const newsRootUrl = 'https://news.gamebase.com.tw';
 const apiRootUrl = 'https://api.gamebase.com.tw';
 const title = '遊戲基地';
 
-const httpClient = axios.default;
 
 const typeMap = {
     'game': '遊戲',
@@ -51,7 +48,8 @@ export class GamebaseNewsCrawler extends NewsCrawler {
 
             this.services.logger.logPostUrl(url);
 
-            let response = await httpClient.post(url, data, utils.crawlerOptions);
+            let httpClient = new HttpClient();
+            let response = await httpClient.post(url, data, crawlerHeaders);
 
             if (response.data.return_code === 0) {
                 let results = response.data.return_msg.list;

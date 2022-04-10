@@ -2,7 +2,6 @@ import * as moment from 'moment';
 
 import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
-import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://www.eracom.com.tw';
 const title = '年代新聞'

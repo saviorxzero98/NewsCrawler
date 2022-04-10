@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../services/httpclient';
 import { ServiceContext } from '../../services/service';
-import * as utils from '../../feeds/utils';
 import { NewsCrawler } from '../newsCrawler';
 
 
@@ -63,7 +63,7 @@ export class EBCNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });

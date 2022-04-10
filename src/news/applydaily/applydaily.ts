@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../services/httpclient';
 import { NewsCrawler } from '../newsCrawler';
 import { ServiceContext } from '../../services/service';
-import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://tw.appledaily.com';
 const title = '蘋果日報';
@@ -51,14 +51,14 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: (item, content) => {
                 let description = content('meta[property="og:description"]').attr('content');
                 let image = content('meta[property="og:image"]').attr('content');

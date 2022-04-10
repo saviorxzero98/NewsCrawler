@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../../services/httpclient';
 import { ServiceContext } from '../../../services/service';
 import { NewsCrawler } from '../../newsCrawler';
-import * as utils from '../../../feeds/utils';
 
 const rootUrl = 'https://healthmedia.com.tw';
 const title = 'NOW健康';
@@ -42,7 +42,7 @@ export class HealthMediaNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });

@@ -11,4 +11,10 @@ export class Logger {
     public logPostUrl(url: string) {
         console.log(`POST ${url}`);
     }
+
+    public logError(e: any) {
+        if (e) {
+            console.error(e);
+        }
+    }
 }

@@ -1,13 +1,10 @@
-import * as axios from 'axios';
 import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
+import { HttpClient, crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
-import * as utils from '../../../feeds/utils';
 import { Item } from 'feed';
-
-const httpClient = axios.default;
 
 const rootUrls = {
     gnn: 'https://gnn.gamer.com.tw',
@@ -84,14 +81,14 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
         let crawler = this.getNewsItemCrawler();
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: async (item, content, response) => {
                 let description = content('meta[property="og:description"]').attr('content');
                 let image = content('meta[property="og:image"]').attr('content');
@@ -172,7 +169,8 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
         item = await this.services
                          .cache
                          .tryGet<Item>(newUrl, async () => {
-                                let newResponse = await  httpClient.get(newUrl, utils.crawlerOptions);
+                                let httpClient = new HttpClient();
+                                let newResponse = await  httpClient.get(newUrl, crawlerHeaders);
                 
                                 const content = cheerio.load(newResponse.data);
                                 if (content('div.MSG-list8C').length > 0) {

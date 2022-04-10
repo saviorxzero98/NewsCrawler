@@ -1,8 +1,6 @@
-import * as moment from 'moment';
-
+import { crawlerHeaders } from '../../../../services/httpclient';
 import { ServiceContext } from '../../../../services/service';
 import { NewsCrawler } from '../../../newsCrawler';
-import * as utils from '../../../../feeds/utils';
 
 const languageMap = {
     'en-us': {
@@ -64,7 +62,7 @@ export class EpochTimesNewsCrawler extends NewsCrawler {
         if (language !== 'ja-jp') {
             let items = await this.getNewsDetials({
                 list,
-                options: utils.crawlerOptions,
+                options: crawlerHeaders,
                 callback: (item, content) => {
                     //let description = content('meta[property="og:description"]').attr('content');
                     let image = content('meta[property="og:image"]').attr('content');

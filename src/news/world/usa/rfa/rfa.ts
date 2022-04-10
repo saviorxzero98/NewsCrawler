@@ -1,13 +1,7 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
-import * as moment from 'moment';
-
+import { HttpClient, crawlerHeaders } from '../../../../services/httpclient';
 import { ServiceContext } from '../../../../services/service';
 import { NewsCrawler } from '../../../newsCrawler';
 import { Item } from 'feed';
-import * as utils from '../../../../feeds/utils';
-
-const httpClient = axios.default;
 
 const languageMap = {
     'en-us': {
@@ -73,7 +67,8 @@ export class RFANewsCrawler extends NewsCrawler {
                     .cache
                     .tryGet<Item>(item.link, async () => {
                         try {
-                            let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
+                            let httpClient = new HttpClient();
+                            let detailResponse = await httpClient.get(item.link, crawlerHeaders);
                             let data = detailResponse.data;
                             let image = data.image.download || '';
                             item.image = image

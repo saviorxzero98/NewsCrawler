@@ -1,8 +1,6 @@
-import * as moment from 'moment';
-
+import { crawlerHeaders } from '../../services/httpclient';
 import { NewsCrawler } from '../newsCrawler';
 import { ServiceContext } from '../../services/service';
-import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://gotv.ctitv.com.tw';
 const title = '中天快點TV';
@@ -34,7 +32,7 @@ export class CtiTVNewsCrawler extends NewsCrawler {
 
             let items = await this.getNewsDetials({
                 list,
-                options: utils.crawlerOptions,
+                options: crawlerHeaders,
                 callback: (item, content) => {
                     let description = content('meta[property="og:description"]').attr('content');
                     let image = content('meta[property="og:image"]').attr('content');

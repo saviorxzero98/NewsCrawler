@@ -1,12 +1,9 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../../../services/httpclient';
 import { ServiceContext } from '../../../../services/service';
 import { NewsCrawler } from '../../../newsCrawler';
-import * as utils from '../../../../feeds/utils';
 
-const httpClient = axios.default;
 
 const rootUrl = 'https://www.ntdtv.com.tw';
 const title = '新唐人亞太電視台';
@@ -25,7 +22,7 @@ export class NTDTVTwNewsCrawler extends NewsCrawler {
         ];
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: crawlers
         });

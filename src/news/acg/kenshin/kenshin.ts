@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
-import * as utils from '../../../feeds/utils';
 
 const rootUrl = 'http://kenshin.hk';
 const title = '劍心．回憶';
@@ -41,14 +41,14 @@ export class KenshinNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: (item, content) => {
                 let description = content('meta[property="og:description"]').attr('content');
                 let image = content('meta[property="og:image"]').attr('content');

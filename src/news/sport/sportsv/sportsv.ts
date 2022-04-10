@@ -1,19 +1,10 @@
-import * as axios from 'axios';
-import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
-import * as utils from '../../../feeds/utils';
 
 const rootUrl = 'https://www.sportsv.net';
 const title = '運動視界';
-
-const httpClient = axios.default;
-
-const categoryMap = {
-    
-}
-
 
 export class SportSVNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
@@ -40,7 +31,7 @@ export class SportSVNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: (item, content) => {
                 let image = content('meta[property="og:image"]').attr('content');
                 item.image = image;

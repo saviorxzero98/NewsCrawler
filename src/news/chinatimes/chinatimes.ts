@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../services/httpclient';
 import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
-import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://www.chinatimes.com';
 const title = '中時電子報';
@@ -65,7 +65,7 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         })

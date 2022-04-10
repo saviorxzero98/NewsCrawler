@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
+import { crawlerHeaders } from '../../services/httpclient';
 import { NewsCrawler } from '../newsCrawler';
 import { ServiceContext } from '../../services/service';
-import * as utils from '../../feeds/utils';
 
 const rootUrl = 'https://news.ltn.com.tw';
 const title = '自由時報';
@@ -37,7 +37,7 @@ export class LTNNewsCrawler extends NewsCrawler {
 
             let items = await this.getNewsDetials({
                 list,
-                options: utils.crawlerOptions,
+                options: crawlerHeaders,
                 callback: (item, content) => {
                     let description = content('meta[property="og:description"]').attr('content');
                     let image = content('meta[property="og:image"]').attr('content');
@@ -85,14 +85,14 @@ export class LTNNewsCrawler extends NewsCrawler {
         };
         let list = await this.getNewsList({
             url,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             count,
             crawlers: [ crawler ]
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: utils.crawlerOptions,
+            options: crawlerHeaders,
             callback: (item, content) => {
                 let description = content('meta[property="og:description"]').attr('content');
                 let image = content('meta[property="og:image"]').attr('content');
