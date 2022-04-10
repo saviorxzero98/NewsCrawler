@@ -4,6 +4,7 @@ import { VOANewsRouter } from "./voa/router";
 import { NYTimesNewsRouter } from "./nytimes/router";
 import { WSJNewsRouter } from "./wsj/router";
 import { EpochTimesNewsRouter } from "./epochtimes/router";
+import { RFANewsRouter } from "./rfa/router";
 
 export class USANewsRouter {
     public static router(services: ServiceContext) {
@@ -15,6 +16,9 @@ export class USANewsRouter {
 
         // 紐約時報
         NYTimesNewsRouter.router(services);
+
+        // 自由亞洲電台
+        RFANewsRouter.router(services);
 
         // 美國之音
         VOANewsRouter.router(services);

@@ -134,13 +134,16 @@ export class VOANewsCrawler extends NewsCrawler {
             }
             
             switch (language) {
-                case 'zh':
+                case 'cn':
                 case 'zh-cn':
                 case 'zh-sg':
                 case 'zh-my':
                 case 'zh-hans':
                     return 'zh-hans';
 
+                case 'zh':
+                case 'tw':
+                case 'hk':
                 case 'zh-tw':
                 case 'zh-hk':
                 case 'zh-mo':

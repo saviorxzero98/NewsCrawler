@@ -64,9 +64,14 @@ export abstract class NewsCrawler {
                 this.services
                     .cache
                     .tryGet<Item>(item.link, async () => {
-                        let detailResponse = await httpClient.get(item.link, options.options);
-                        let content = cheerio.load(detailResponse.data);
-                        return options.callback(item, content, detailResponse);
+                        try {
+                            let detailResponse = await httpClient.get(item.link, options.options);
+                            let content = cheerio.load(detailResponse.data);
+                            return options.callback(item, content, detailResponse);
+                        }
+                        catch {
+                            return item;
+                        }
                     })
             )
         );

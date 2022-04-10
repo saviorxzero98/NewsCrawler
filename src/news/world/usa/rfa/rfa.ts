@@ -1,34 +1,36 @@
+import * as axios from 'axios';
+import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
 import { ServiceContext } from '../../../../services/service';
 import { NewsCrawler } from '../../../newsCrawler';
+import { Item } from 'feed';
 import * as utils from '../../../../feeds/utils';
+
+const httpClient = axios.default;
 
 const languageMap = {
     'en-us': {
-        rootUrl: 'https://www.theepochtimes.com',
-        title: 'The Epoch Times'
+        rootUrl: 'https://www.rfa.org/english',
+        title: 'Radio Free Asia'
     },
     'zh-hans': {
-        rootUrl: 'https://www.epochtimes.com/gb',
-        title: '大纪元'
+        rootUrl: 'https://www.rfa.org/mandarin',
+        title: '自由亚洲电台'
     },
     'zh-hant': {
-        rootUrl: 'https://www.epochtimes.com/b5',
-        title: '大紀元'
-    },
-    'ja-jp': {
-        rootUrl: 'https://www.epochtimes.jp',
-        title: '大紀元'
+        rootUrl: 'https://www.rfa.org/cantonese',
+        title: '自由亞洲電台'
     }
 }
 
-export class EpochTimesNewsCrawler extends NewsCrawler {
+export class RFANewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
         super(services);
     }
 
-    public async getNews(category: string = '',  language: string = 'zh-hant', count: number = 15)  {
+    public async getNews(category: string = '', subcategory: string = '',  language: string = 'zh-hant', 
+                         count: number = 15)  {
         language = this.getLanguage(language);
         let mapInfo = languageMap[language];
         let title = mapInfo.title;
@@ -38,53 +40,56 @@ export class EpochTimesNewsCrawler extends NewsCrawler {
             case 'en-us':
                 if (category) {
                     url = `${url}/${category}`;
+
+                    if (subcategory) {
+                        url = `${url}/${subcategory}`
+                    }
                 }
-                url = `${url}/feed`;
+                url = `${url}/RSS`;
                 break;
 
             case 'zh-hans':
             case 'zh-hant':
                 if (category) {
-                    url = `${url}/${category}.htm`;
+                    url = `${url}/${category}`;
+                    
+                    if (subcategory) {
+                        url = `${url}/${subcategory}`
+                    }
                 }
-                url = `${url}/feed`;
-                break;
 
-            case 'ja-jp':
-                url = `${url}/category/${category || '170'}/feed`;
+                url = `${url}/RSS`;
                 break;
         }
-
 
         let list = await this.getRSSNewsList({
             url,
             count
         });
 
-        if (language !== 'ja-jp') {
-            let items = await this.getNewsDetials({
-                list,
-                options: utils.crawlerOptions,
-                callback: (item, content) => {
-                    //let description = content('meta[property="og:description"]').attr('content');
-                    let image = content('meta[property="og:image"]').attr('content');
-                    //item.description = description;
-                    item.image = image
-                    return item;
-                }
-            });
-    
-            return {
-                title: `${title}`,
-                link: url,
-                items: items,
-            };
-        }
+        let items = await Promise.all(
+            list.map(async (item) => 
+                this.services
+                    .cache
+                    .tryGet<Item>(item.link, async () => {
+                        try {
+                            let detailResponse = await httpClient.get(item.link, utils.crawlerOptions);
+                            let data = detailResponse.data;
+                            let image = data.image.download || '';
+                            item.image = image
+                            return item;
+                        }
+                        catch {
+                            return item;
+                        }
+                    })
+            )
+        );
 
         return {
             title: `${title}`,
             link: url,
-            items: list,
+            items: items,
         };
     }
 
@@ -112,11 +117,6 @@ export class EpochTimesNewsCrawler extends NewsCrawler {
                 case 'zh-mo':
                 case 'zh-hant':
                     return 'zh-hant';
-
-                case 'jp':
-                case 'ja':
-                case 'ja-jp':
-                    return 'ja-jp';
             }
         }
         return 'zh-hant';
