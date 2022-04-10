@@ -69,6 +69,7 @@ export abstract class NewsCrawler {
                             return options.callback(item, content, detailResponse);
                         }
                         catch (e) {
+                            //this.services.logger.logError(e);
                             this.services.logger.logError('Get News Detial Error.');
                             return item;
                         }
