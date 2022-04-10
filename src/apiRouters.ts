@@ -21,6 +21,7 @@ import { BCCNewsRouter } from './news/bccnews/router';
 import { StormNewsRouter } from './news/storm/router';
 import { GVMNewsRouter } from './news/gvm/router';
 import { SportNewsRouter } from './news/sport/router';
+import { WorldNewsRouter } from './news/world/router';
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -89,4 +90,7 @@ export const addRouters = (services: ServiceContext) => {
 
     // 聯合報 (聯合新聞、NBA台灣、世界新聞網)
     UDNNewsRouter.router(services);
+
+    // 外國媒體
+    WorldNewsRouter.router(services);
 }

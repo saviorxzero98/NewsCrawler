@@ -100,7 +100,7 @@ export class NTDTVUsNewsCrawler extends NewsCrawler {
                 let description = content('meta[property="og:description"]').attr('content');
                 let pubDate = content('meta[property="article:published_time"]').attr('content');
                 item.description += description;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
+                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
                 return item;
             }
         });
