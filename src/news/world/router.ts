@@ -3,15 +3,16 @@ import { ChinaNewsRouter } from "./china/router";
 import { EuropeNewsRouter } from "./europe/router";
 import { HongKongNewsRouter } from "./hongkong/router";
 import { JapanNewsRouter } from "./japan/router";
-import { KoreaNewsRouter } from "./korea/router";
-import { UKNewsRouter } from "./uk/router";
 import { USANewsRouter } from "./usa/router";
+import { AsiaPacificNewsRouter } from "./asia-pacific/router";
 
 
 
 export class WorldNewsRouter {
     public static router(services: ServiceContext) {
         
+        AsiaPacificNewsRouter.router(services);
+
         ChinaNewsRouter.router(services);
 
         EuropeNewsRouter.router(services);
@@ -19,10 +20,6 @@ export class WorldNewsRouter {
         HongKongNewsRouter.router(services);
 
         JapanNewsRouter.router(services);
-
-        KoreaNewsRouter.router(services);
-
-        UKNewsRouter.router(services);
 
         USANewsRouter.router(services);
     }

@@ -1,71 +1,54 @@
+import * as moment from 'moment';
+
 import { crawlerHeaders } from '../../../../services/httpclient';
 import { ServiceContext } from '../../../../services/service';
 import { NewsCrawler } from '../../../newsCrawler';
 
 const languageMap = {
     'zh-hans': {
-        rootUrl: 'https://www.ftchinese.com',
-        title: 'FT中文网',
-        rssMap: {
-            'feed': '每日更新',
-            'news': '今日焦点',
-            'hotstoryby7day': '十大热门文章',
-            'lifestyle': '生活时尚'
-        }
+        rootUrl: 'https://www.bbc.com/zhongwen/simp',
+        rssUrl: 'https://feeds.bbci.co.uk/zhongwen/simp/rss.xml',
+        title: 'BBC中文网'
     },
     'zh-hant': {
-        rootUrl: 'https://big5.ftchinese.com',
-        title: 'FT中文網',
-        rssMap: {
-            'feed': '每日更新',
-            'news': '今日焦點',
-            'hotstoryby7day': '十大熱門文章',
-            'lifestyle': '生活時尚'
-        }
+        rootUrl: 'https://www.bbc.com/zhongwen/trad',
+        rssUrl: 'https://feeds.bbci.co.uk/zhongwen/trad/rss.xml',
+        title: 'BBC中文網'
     }
 }
 
-export class FTNewsCrawler extends NewsCrawler {
+export class BBCZhNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
         super(services);
     }
 
-    public async getNews(category: string = 'news', language: string = 'zh-hant', count: number = 15)  {
+    public async getNews(language: string = 'zh-hant', count: number = 15)  {
         language = this.getLanguage(language);
         let mapInfo = languageMap[language];
         let title = mapInfo.title;
-        let url = mapInfo.rootUrl;
-        let categoryName = '';
-
-        if (category) {
-            category = category.toLowerCase().split('-').join('/');
-            url = `${url}/rss/${category}`;
-            categoryName = mapInfo.rssMap[category] ?? '';
-        }
+        let rootUrl = mapInfo.rootUrl;
+        let url = mapInfo.rssUrl;
 
         let list = await this.getRSSNewsList({
             url,
             count
         });
-        list.forEach(i => i.link.replace('http://', 'https://'))
 
         let items = await this.getNewsDetials({
             list,
             options: crawlerHeaders,
             callback: (item, content) => {
-                let title = content('meta[property="og:title"]').attr('content');
-                let description = content('meta[property="og:description"]').attr('content');
+                //let description = content('meta[property="og:description"]').attr('content');
                 let image = content('meta[property="og:image"]').attr('content');
-                item.title = title;
-                item.description = description;
+                //item.description = description;
                 item.image = image
                 return item;
             }
         });
 
         return {
-            title: `${title} ${categoryName}`,
-            link: url,
+            title: `${title}`,
+            link: rootUrl,
             items: items,
         };
     }
@@ -76,7 +59,7 @@ export class FTNewsCrawler extends NewsCrawler {
 
             switch (language) {
                 case 'cn':
-                case 'chinese':
+                case 'simp':
                 case 'zh-cn':
                 case 'zh-sg':
                 case 'zh-my':
@@ -84,9 +67,9 @@ export class FTNewsCrawler extends NewsCrawler {
                     return 'zh-hans';
 
                 case 'zh':
-                case 'big5':
                 case 'tw':
                 case 'hk':
+                case 'trad':
                 case 'zh-tw':
                 case 'zh-hk':
                 case 'zh-mo':

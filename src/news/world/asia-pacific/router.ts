@@ -2,7 +2,7 @@ import { ServiceContext } from "../../../services/service";
 
 
 
-export class KoreaNewsRouter {
+export class AsiaPacificNewsRouter {
     public static router(services: ServiceContext) {
 
     }
