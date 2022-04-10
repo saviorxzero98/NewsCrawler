@@ -26,7 +26,7 @@ export class EpochTimesNewsCrawler extends NewsCrawler {
         super(services);
     }
 
-    public async getNews(category: string = '',  language: string = 'zh-hant', count: number = 15)  {
+    public async getNews(category: string = '', language: string = 'zh-hant', count: number = 15)  {
         language = this.getLanguage(language);
         let mapInfo = languageMap[language];
         let title = mapInfo.title;
