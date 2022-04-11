@@ -1,8 +1,6 @@
 import { ServiceContext } from "../../../services/service";
 
-
-
-export class JapanNewsRouter {
+export class YahooTwNewsRouter {
     public static router(services: ServiceContext) {
 
     }

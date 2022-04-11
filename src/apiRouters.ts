@@ -1,3 +1,5 @@
+import { ServiceContext } from "./services/service";
+
 import { AppleDailyNewsRouter } from './news/applydaily/router';
 import { ChinaTimesNewsRouter } from './news/chinatimes/router';
 import { EBCNewsRouter } from './news/ebc/router';
@@ -11,17 +13,16 @@ import { NextEraNewsRouter } from './news/next_era/router';
 import { NownewsNewsRouter } from './news/nownews/router';
 import { NewtalkNewsRouter } from './news/newtalk/router';
 import { UDNNewsRouter } from './news/udn/router';
-import { ServiceContext } from "./services/service";
-import { MirrorMediaNewsNewsRouter } from './news/mirrormedia/router';
-import { NTDTVNewsRouter } from './news/world/usa/ntdtv/router';
 import { HeathNewsRouter } from './news/heath/router';
 import { LTNNewsRouter } from './news/ltn/router';
 import { ACGNewsRouter } from './news/acg/router';
 import { BCCNewsRouter } from './news/bccnews/router';
 import { StormNewsRouter } from './news/storm/router';
-import { GVMNewsRouter } from './news/gvm/router';
 import { SportNewsRouter } from './news/sport/router';
 import { WorldNewsRouter } from './news/world/router';
+import { MagazineNewsRouter } from './news/magazine/router';
+import { CollectionNewsRouter } from "./news/collection/router";
+import { NewMediaNewsRouter } from "./news/new_media/router";
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -37,14 +38,14 @@ export const addRouters = (services: ServiceContext) => {
     // 中國時報 (中時電子報、工商時報、CTWANT)
     ChinaTimesNewsRouter.router(services);
 
+    // 新聞彙集平台 (Yahoo新聞、Yam 新聞、PCHome 新聞、Hinet 新聞、新浪新聞)
+    CollectionNewsRouter.router(services);
+
     // 東森電視 (東森新聞、東森財經新聞、ETtoday)
     EBCNewsRouter.router(services);
 
     // 民視新聞
     FTVNewsNewsRouter.router(services);
-
-    // 遠見雜誌
-    GVMNewsRouter.router(services);
 
     // 健康相關新聞 (NOW健康)
     HeathNewsRouter.router(services);
@@ -52,8 +53,11 @@ export const addRouters = (services: ServiceContext) => {
     // 自由時報
     LTNNewsRouter.router(services);
 
-    // 鏡周刊
-    MirrorMediaNewsNewsRouter.router(services);
+    // 雜誌類 (遠見雜誌、天下雜誌)
+    MagazineNewsRouter.router(services);
+
+    // 其他新媒體
+    NewMediaNewsRouter.router(services);
 
     // 新頭殼
     NewtalkNewsRouter.router(services);

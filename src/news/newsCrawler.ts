@@ -70,7 +70,7 @@ export abstract class NewsCrawler {
                         }
                         catch (e) {
                             //this.services.logger.logError(e);
-                            this.services.logger.logError('Get News Detial Error.');
+                            this.services.logger.logError(`Get News Detial Error. ${item.link}`);
                             return item;
                         }
                     })

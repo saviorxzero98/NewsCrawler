@@ -1,6 +1,6 @@
-import { crawlerHeaders } from '../../services/httpclient';
-import { ServiceContext } from '../../services/service';
-import { NewsCrawler } from '../newsCrawler';
+import { crawlerHeaders } from '../../../services/httpclient';
+import { ServiceContext } from '../../../services/service';
+import { NewsCrawler } from '../../newsCrawler';
 
 
 const rootUrl = 'https://www.gvm.com.tw';

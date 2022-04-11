@@ -1,5 +1,5 @@
-import { FeedBuilder } from '../../feeds/feedBuilder';
-import { ServiceContext } from '../../services/service';
+import { FeedBuilder } from '../../../feeds/feedBuilder';
+import { ServiceContext } from '../../../services/service';
 import { GVMNewsCrawler } from './gvm';
 import { HealthGVMNewsCrawler } from './healthgvm';
 

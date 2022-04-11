@@ -1,8 +1,8 @@
 import * as moment from 'moment';
 
-import { crawlerHeaders } from '../../services/httpclient';
-import { ServiceContext } from '../../services/service';
-import { NewsCrawler } from '../newsCrawler';
+import { crawlerHeaders } from '../../../services/httpclient';
+import { ServiceContext } from '../../../services/service';
+import { NewsCrawler } from '../../newsCrawler';
 
 const rootUrl = 'https://health.gvm.com.tw';
 const title = '健康遠見';
