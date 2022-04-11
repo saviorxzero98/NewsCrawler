@@ -42,7 +42,7 @@ export abstract class NewsCrawler {
         let httpClient = new HttpClient();
         let response = await httpClient.get(options.url, options.options);
         let content = cheerio.load(response.data);
-
+        
         let list = [];
 
         for (let crawler of options.crawlers) {
@@ -94,11 +94,11 @@ export abstract class NewsCrawler {
         return list.slice(0, options.count);
     }
 
-    protected async getNewsWeb(url: string, options ?: any) {
-        this.services.logger.logGetUrl(options.url);
+    protected async getNewsWeb(url: string, headers ?: any) {
+        this.services.logger.logGetUrl(url);
         
         let httpClient = new HttpClient();
-        let response = await httpClient.get(options.url, options.options);
+        let response = await httpClient.get(url, headers);
         return response;
     }
 
