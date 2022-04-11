@@ -81,7 +81,7 @@ export abstract class NewsCrawler {
 
     protected async getRSSNewsList(options: RSSNewsListOptions): Promise<Item[]> {
         let data = await this.getRSSNewsData(options.url);
-
+        
         let list = [];
         for (let item of data.items) {
             list.push({

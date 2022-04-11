@@ -124,4 +124,41 @@ export class YahooNewsCrawler extends NewsCrawler {
             items: list
         };
     }
+
+    public async getRssNews(rss: string = '', count: number = 15) {
+        let url = `${rootUrl}/rss`;
+        if (rss) {
+            url = `${url}/${rss}`;
+        }
+
+        let rssData = await this.getRSSNewsData(url);
+        let list = [];
+        for (let item of rssData.items) {
+            list.push({
+                title: item.title,
+                link: item.link,
+                description: item.content,
+                date: moment(item.isoDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
+            })
+        }
+        list.slice(0, count);
+
+        let items = await this.getNewsDetials({
+            list,
+            options: crawlerHeaders,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
+                return item;
+            }
+        });
+            
+        return {
+            title: `${rssData.title}`,
+            link: rootUrl,
+            items: items
+        };
+    }
 }

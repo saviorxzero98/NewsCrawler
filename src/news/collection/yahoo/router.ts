@@ -20,5 +20,17 @@ export class YahooTwNewsRouter {
             feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
             res.send(feedBuilder.create());
         });
+
+        services.app.get(`/${path.yahoo}/news/rss/:category?`, async (req, res) => {
+            let category = req.params.category ?? '';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+            
+            let crawler = new YahooNewsCrawler(services);
+            let data = await crawler.getRssNews(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link);
+            feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
+            res.send(feedBuilder.create());
+        });
     }
 }
