@@ -1,45 +1,79 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-const httpClient = axios.default;
+import { crawlerHeaders } from '../../services/httpclient';
+import { ServiceContext } from '../../services/service';
+import { NewsCrawler } from '../newsCrawler';
 
 const rootUrl = 'https://fnc.ebc.net.tw';
 const title = '東森財經新聞';
-const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36';
 
+const categoryMap = {
+    headline: '焦點',
+    video: '影音',
+    business: '產業',
+    politics: '政治',
+    world: '全球',
+    stock: '台股',
+    house: '房產',
+    cars: '汽車',
+    money: '理財',
+    tech: '3C',
+    life: '生活',
+    jobs: '職場',
+    read: '正能量',
+    fashion: '流行時尚',
+    else: '其他'
+}
 
-export class EBCFncNewsCrawler {
-    public static async getNews(page: string = 'realtime', count: number = 25) {
-        let url = `${rootUrl}/fncnews/${page}`;
-        let option = {
-            headers: {
-                'User-Agent': userAgent
-            }
-        }
-        let response = await httpClient.get(url, option);
-        let $ = cheerio.load(response.data);
-        let list = $('div.fncnews-list-box div.white-box')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('div.text p').text();
-                let link = rootUrl + $(item).find('a').attr('href');
-                let image = $(item).find('div.pic div.target-img img').attr('src');
-                let pubDate = moment($(item).find('div.text span.small-gray-text').text(), '(yyyy/MM/DD HH:mm)').format('yyyy-MM-DD HH:mm');
+export class EBCFncNewsCrawler extends NewsCrawler {
+    constructor(services: ServiceContext) {
+        super(services);
+    }
+
+    public async getNews(category: string = '', count: number = 15) {
+        let url = `${rootUrl}/fncnews/${category}`;
+        let categoryName = categoryMap[category] ?? '最新';
+
+        let crawler = {
+            selector: 'div.fncnews-list-box div.white-box',
+            callback: ($, i) => {
+                let title = $(i).find('div.text p').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                //let image = $(i).find('div.pic div.target-img img').attr('src');
+                let pubDate = $(i).find('div.text span.small-gray-text').text();
                 
                 return {
                     title,
                     link,
-                    image,
-                    pubDate,
+                    image: '',
+                    description: '',
+                    date: moment(pubDate, '(yyyy/MM/DD HH:mm)').toDate(),
                 };
-            })
-            .get();
-            
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: crawlerHeaders,
+            count,
+            crawlers: [ crawler ]
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            options: crawlerHeaders,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
+                return item;
+            }
+        });
+
         return {
-            title: `${title}`,
+            title: `${title} ${categoryName}`,
             link: url,
-            item: list,
+            items: items,
         };
     }
 }

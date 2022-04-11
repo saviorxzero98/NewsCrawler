@@ -1,7 +1,22 @@
 import * as express from 'express';
+import * as rssRouters from './apiRouters';
+import NodeCache = require("node-cache");
 
-export const webServer = (app: express.Express, port: number) => {
+import { ServiceContext } from './services/service';
+import { Logger } from './services/logger';
+
+
+const app = express();
+const cache = new NodeCache();
+
+
+export const startWebServer = (port: number = 1200) => {
+    const services = new ServiceContext().registExpress(app)
+                                         .registCache(cache);
+    rssRouters.addRouters(services);
+
     app.listen(port, () => {
-        console.log(`Example app listening on port ${port}`)
+        console.info(`My RSS Server listening on port ${port}`)
     });
 }
+

@@ -1,42 +1,88 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-const httpClient = axios.default;
+import { crawlerHeaders } from '../../services/httpclient';
+import { ServiceContext } from '../../services/service';
+import { NewsCrawler } from '../newsCrawler';
 
 const rootUrl = 'https://www.setn.com';
 const title = '三立新聞';
 
-export class SETNewsCrawler {
-    public static async  getNews(page: string = '', count: number = 25) {
+const pageMap = {
+    '0': '熱門',
+    '2': '財經',
+    '4': '生活',
+    '5': '國際',
+    '6': '政治',
+    '7': '科技',
+    '9': '名家',
+    '12': '汽車',
+    '31': 'HOT焦點',
+    '34': '運動',
+    '41': '社會',
+    '42': '新奇',
+    '47': '寵物',
+    '65': '健康',
+    '97': '地方'
+}
+
+export class SETNewsCrawler extends NewsCrawler {
+    constructor(services: ServiceContext) {
+        super(services);
+    }
+    
+    public async getNews(page: string = '', count: number = 15) {
         let url = `${rootUrl}/ViewAll.aspx`;
+        let pageName = '即時';
         if (page && /^\d+$/.test(page)) {
             url = `${url}?PageGroupID=${page}`;
+            pageName = pageMap[page];
         }
-        let response = await httpClient.get(url);
-        let $ = cheerio.load(response.data);
-        let list = $('div.newsItems')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('a.gt').text();
-                let link = $(item).find('a.gt').attr('href');
+
+        let crawler = {
+            selector: 'div.newsItems',
+            callback: ($, i) => {
+                let title = $(i).find('a.gt').text();
+                let link = $(i).find('a.gt').attr('href');
                 if (!link.startsWith('https:')) {
                     link = rootUrl + link;
                 }
-                let pubDate = moment($(item).find('time').text(), 'MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
+                let pubDate = $(i).find('time').text();
 
                 return {
                     title,
                     link,
-                    pubDate,
+                    image: '',
+                    description: '',
+                    date: moment(pubDate, 'MM/DD HH:mm').toDate(),
                 };
-            })
-            .get();
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: crawlerHeaders,
+            count,
+            crawlers: [ crawler ]
+        });
+        
+        let items = await this.getNewsDetials({
+            list,
+            options: crawlerHeaders,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                item.description = description;
+                item.image = image;
+
+                //let description = content('article').html();
+
+                return item;
+            }
+        });
 
         return {
-            title: `${title}`,
+            title: `${title} ${pageName}`,
             link: url,
-            item: list,
+            items: items,
         };
     }
 }

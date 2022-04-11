@@ -1,68 +1,112 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-const httpClient = axios.default;
+import { crawlerHeaders } from '../../services/httpclient';
+import { ServiceContext } from '../../services/service';
+import { NewsCrawler } from '../newsCrawler';
 
-const rootUrl = 'https://www.ftvnews.com.tw/';
+
+const rootUrl = 'https://www.ftvnews.com.tw';
 const title = '民視新聞';
 
-export class FTVNewsCrawler {
-    public static async getNews(page: string = 'realtime', count: number = 25) {
-        let url = `${rootUrl}/${page}`;
-        let response = await httpClient.get(url);
-        let $ = cheerio.load(response.data);
-        let list = $('div.news-block')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('div.news-block div.content a h2').text();
-                let link = rootUrl + $(item).find('div.content a').attr('href');
-                let image = $(item).find('a.img-block img').attr('src');
-                let content = $(item).find('div.content div.desc').text();
-                let pubDate = $(item).find('div.time').text();
+const categoryMap = {
+    realtime: '最新',
+    popular: '熱門'
+}
+
+export class FTVNewsCrawler extends NewsCrawler {
+    constructor(services: ServiceContext) {
+        super(services);
+    }
+    public async getNews(tag: string = 'realtime', count: number = 15) {
+        if (tag !== 'realtime' && tag !== 'popular') {
+            return this.getNewsByTag(tag, count);
+        }
+        let url = `${rootUrl}/${tag}`;
+
+
+        let crawler = {
+            selector: 'div.news-block',
+            callback: ($, i) => {
+                let title = $(i).find('div.news-block div.content a h2').text();
+                let link = rootUrl + $(i).find('div.content a').attr('href');
+                let image = $(i).find('a.img-block img').attr('src');
+                let description = $(i).find('div.content div.desc').text();
+                let pubDate = $(i).find('div.time').text();
 
                 return {
                     title,
                     link,
                     image,
-                    content,
-                    pubDate,
+                    description,
+                    date: moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate()
                 };
-            })
-            .get();
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: crawlerHeaders,
+            count,
+            crawlers: [ crawler ]
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            options: crawlerHeaders,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                item.description = description;
+                return item;
+            }
+        });
 
         return {
-            title: `${title}`,
+            title: `${title} ${categoryMap[tag]}`,
             link: url,
-            item: list,
+            items: items,
         };
     }
 
-    public static async getNewsByTag(tag: string, count: number = 25) {
+    public async getNewsByTag(tag: string, count: number = 15) {
         let url = `${rootUrl}/tag/${encodeURIComponent(tag)}`;
-        let response = await httpClient.get(url);
-        let $ = cheerio.load(response.data);
-        let list = $('section.news-list ul li')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('a div.content h2').text();
-                let link = rootUrl + $(item).find('a').attr('href');
-                let image = $(item).find('div.img-block img').attr('src');
-                let pubDate = $(item).find('a div.content div.time').text();
+
+        let crawler = {
+            selector: 'section.news-list ul li',
+            callback: ($, i) => {
+                let title = $(i).find('a div.content h2').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                let image = $(i).find('div.img-block img').attr('src');
+                let pubDate = $(i).find('a div.content div.time').text();
 
                 return {
                     title,
                     link,
                     image,
-                    pubDate,
+                    description: '',
+                    date: moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate()
                 };
-            })
-            .get();
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: crawlerHeaders,
+            count,
+            crawlers: [ crawler ]
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            options: crawlerHeaders,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                item.description = description;
+                return item;
+            }
+        });
 
         return {
-            title: `${title}`,
+            title: `${title} ${tag}`,
             link: url,
-            item: list,
+            items: items,
         };
     }
 }

@@ -1,40 +1,68 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-const httpClient = axios.default;
+import { crawlerHeaders } from '../../services/httpclient';
+import { ServiceContext } from '../../services/service';
+import { NewsCrawler } from '../newsCrawler';
 
-const rootUrl = 'https://nba.udn.com/';
+const rootUrl = 'https://nba.udn.com';
 const title = 'NBA 台灣';
 
-export class NBATaiwanNewsCrawler {
-    public static async getNews(page: string = 'newest', count: number = 25) {
-        let url = `${rootUrl}/nba/cate/6754/-1//${page}`;
-        let response = await httpClient.get(url);
-        let $ = cheerio.load(response.data);
-        let list = $('div#news_list_body dt')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('h3').text();
-                let link = rootUrl + $(item).find('a').attr('href');
-                let image = $(item).find('img').attr('data-src');
-                let content = $(item).find('p').text();
-                let pubDate = $(item).find('b').text();
-                
+const categoryMap = {
+    newest: '最新',
+    hottest: '熱門'
+};
+
+export class NBATaiwanNewsCrawler extends NewsCrawler {
+    constructor(services: ServiceContext) {
+        super(services);
+    }
+    
+    public async getNews(category: string = 'newest', count: number = 15) {
+        let url = `${rootUrl}/nba/cate/6754/-1/${category}`;
+
+        let crawler = {
+            selector: 'div#news_list_body dt',
+            callback: ($, i) => {
+                let title = $(i).find('h3').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                //let image = $(i).find('img').attr('data-src');
+                //let description = $(i).find('p').text();
+                //let pubDate = $(i).find('b').text();
+
                 return {
                     title,
                     link,
-                    content,
-                    image,
-                    pubDate,
+                    image: '',
+                    description: '',
+                    date: new Date(),
                 };
-            })
-            .get();
-            
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: crawlerHeaders,
+            count,
+            crawlers: [ crawler ]
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            options: crawlerHeaders,
+            callback: (item, content) => {
+                let description = content('meta[property="og:description"]').attr('content');
+                let image = content('meta[property="og:image"]').attr('content');
+                let pubDate = content('meta[name="date.available"]').attr('content');
+                item.description = description;
+                item.image = image;
+                item.date = moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate();
+                return item;
+            }
+        });
+
         return {
-            title: `${title}`,
+            title: `${title} ${categoryMap[category]}`,
             link: url,
-            item: list,
+            items: items,
         };
     }
 }

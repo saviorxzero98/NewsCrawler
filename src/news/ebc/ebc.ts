@@ -1,55 +1,77 @@
-import * as axios from 'axios';
-import * as cheerio from 'cheerio';
 import * as moment from 'moment';
 
-const httpClient = axios.default;
+import { crawlerHeaders } from '../../services/httpclient';
+import { ServiceContext } from '../../services/service';
+import { NewsCrawler } from '../newsCrawler';
+
 
 const rootUrl = 'https://news.ebc.net.tw';
 const title = '東森新聞';
-const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36';
 
+const categoryMap = {
+    realtime: '即時',
+    hot: '熱門',
+    society: '社會',
+    politics: '政治',
+    business: '財經',
+    car: '汽車',
+    star: 'E娛樂',
+    world: '國際',
+    astrology: '星座',
+    comment: 'EBC森談',
+    fun: '新奇',
+    china: '兩岸',
+    house: '房產',
+    health: '健康',
+    story: '暖聞',
+    living: '生活',
+    sport: '體育',
+    travel: '旅遊'
+}
 
-export class EBCNewsCrawler {
-    public static async getNews(page: string = 'realtime', count: number = 25) {
-        let url: string;
+export class EBCNewsCrawler extends NewsCrawler {
+    constructor(services: ServiceContext) {
+        super(services);
+    }
 
-        if (page === 'realtime' || page === 'hot') {
-            url = `${rootUrl}/${page}`;
+    public async getNews(category: string = 'realtime', count: number = 15) {
+        let url = '';
+        if (category === 'realtime' || category === 'hot') {
+            url = `${rootUrl}/${category}`;
         }
         else {
-            url = `${rootUrl}/news/${page}`;
+            url = `${rootUrl}/news/${category}`;
         }
 
-        let option = {
-            headers: {
-                'User-Agent': userAgent
-            }
-        }
-        let response = await httpClient.get(url, option);
-        let $ = cheerio.load(response.data);
-        let list = $('div.news-list-box div.white-box')
-            .slice(0, count)
-            .map((_, item) => {
-                let title = $(item).find('div.text span.title').text();
-                let link = rootUrl + $(item).find('a').attr('href');
-                let image = $(item).find('div.pic div.target-img img').attr('src');
-                let content = $(item).find('div.text span.summary').text();
-                let pubDate = moment($(item).find('div.text span.small-gray-text').text(), 'MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
+        let crawler = {
+            selector: 'div.news-list-box div.white-box',
+            callback: ($, i) => {
+                let title = $(i).find('div.text span.title').text();
+                let link = rootUrl + $(i).find('a').attr('href');
+                let image = $(i).find('div.pic div.target-img img').attr('src');
+                let description = $(i).find('div.text span.summary').text();
+                let pubDate = $(i).find('div.text span.small-gray-text').text();
                 
                 return {
                     title,
                     link,
                     image,
-                    content,
-                    pubDate,
+                    description: description,
+                    date: moment(pubDate, 'MM/DD HH:mm').toDate()
                 };
-            })
-            .get();
-            
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: crawlerHeaders,
+            count,
+            crawlers: [ crawler ]
+        });
+ 
         return {
-            title: `${title}`,
+            title: `${title} ${categoryMap[category]}`,
             link: url,
-            item: list,
+            items: list,
         };
     }
 }
