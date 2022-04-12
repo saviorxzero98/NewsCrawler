@@ -179,11 +179,21 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
                                     item.link = newUrl;
                                 }
                                 else {
-                                    let pubInfo = content('div.article-intro').text().replace(/\n/g, '').split('│');
-                                    if (pubInfo.length > 1) {
-                                        let pubDate = pubInfo[1];
+                                    let pubInfoText = content('div.article-intro').text().replace(/\n/g, '');
+
+                                    let pubInfoA = pubInfoText.split('│');
+                                    if (pubInfoA.length > 1) {
+                                        let pubDate = pubInfoA[1];
                                         item.date = new Date(pubDate);
                                         item.link = newUrl;
+                                    }
+                                    else {
+                                        let pubInfoB = pubInfoText.split('|');
+                                        if (pubInfoB.length > 1) {
+                                            let pubDate = pubInfoB[1];
+                                            item.date = new Date(pubDate);
+                                            item.link = newUrl;
+                                        }
                                     }
                                 }
                                 return item;
