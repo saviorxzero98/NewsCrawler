@@ -71,7 +71,8 @@ export class FourGamersNewsCrawler extends NewsCrawler {
                 list,
                 headers: crawlerHeaders,
                 callback: (item, content, newsMeta) => {
-                    item.description = newsMeta.description;
+                    let description = content('meta[name="description"]').attr('content');
+                    item.description = description;
                     item.image = newsMeta.image || item.image;
                     return item;
                 }
@@ -104,13 +105,14 @@ export class FourGamersNewsCrawler extends NewsCrawler {
                 description: '',
                 pubDate: new Date(item.createPublishedAt * 1),
                 link: item.canonicalUrl,
-            }))
+            }));
 
             let items = await this.getNewsDetials({
                 list,
                 headers: crawlerHeaders,
                 callback: (item, content, newsMeta) => {
-                    item.description = newsMeta.description;
+                    let description = content('meta[name="description"]').attr('content');
+                    item.description = description;
                     item.image = newsMeta.image || item.image;
                     return item;
                 }
@@ -143,7 +145,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
                 description: '',
                 pubDate: new Date(item.createPublishedAt * 1),
                 link: item.canonicalUrl,
-            }))
+            }));
 
             let items = await this.getNewsDetials({
                 list,
