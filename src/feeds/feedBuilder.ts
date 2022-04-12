@@ -76,6 +76,9 @@ export class FeedBuilder {
         return this;
     }
     public create(format: FeedFormat = FeedFormat.rss2): string {
+        this.options.title = this.convertCC(this.options.title, this.openccType);
+        this.options.description = this.convertCC(this.options.description, this.openccType);
+        
         let feed = new Feed(this.options);
         
         for (let item of this.items) {
