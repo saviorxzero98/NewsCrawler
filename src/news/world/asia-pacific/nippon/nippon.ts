@@ -10,7 +10,7 @@ const titleMap = {
     'hk': '日本網'
 }
 
-export class NipponHKNewsCrawler extends NewsCrawler {
+export class NipponNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
         super(services);
     }
