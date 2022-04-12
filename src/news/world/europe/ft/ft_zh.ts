@@ -43,7 +43,7 @@ export class FTZhNewsCrawler extends NewsCrawler {
             categoryName = mapInfo.rssMap[category] ?? '';
         }
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

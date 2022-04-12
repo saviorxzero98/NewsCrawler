@@ -69,7 +69,7 @@ export class VOANewsCrawler extends NewsCrawler {
         let title = mapInfo.title;
         let url = mapInfo.rssMap[category] ?? Object.values(mapInfo.rssMap)[0];       
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -99,7 +99,7 @@ export class VOANewsCrawler extends NewsCrawler {
         let title =  languageMap[language].title;
         let url = `${rootUrl}/api/${rss}`;
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

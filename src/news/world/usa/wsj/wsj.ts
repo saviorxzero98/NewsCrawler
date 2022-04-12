@@ -115,7 +115,7 @@ export class WSJNewsCrawler extends NewsCrawler {
         let url = `${rootUrl}/${rssInfo.rss}`;
         let categoryName = rssInfo.name ?? '';
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

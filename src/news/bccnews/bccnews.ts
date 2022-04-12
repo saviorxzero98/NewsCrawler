@@ -36,7 +36,7 @@ export class BCCNewsCrawler extends NewsCrawler {
         if (rssMap[rss]) {
             let url = `${rootUrl}/archives/category/${rss}/feed`;
 
-            let list = await this.getRSSNewsList({
+            let list = await this.getNewsListFromRSS({
                 url,
                 count
             });

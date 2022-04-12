@@ -21,7 +21,7 @@ export class DWNewsCrawler extends NewsCrawler {
             url = `${rssRootUrl}/rdf/rss-${rssLanguage}-${category}`;
         }
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

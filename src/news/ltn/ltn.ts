@@ -30,7 +30,7 @@ export class LTNNewsCrawler extends NewsCrawler {
         if (rssMap[rss]) {
             let url = `${rootUrl}/rss/${rss}.xml`;
 
-            let list = await this.getRSSNewsList({
+            let list = await this.getNewsListFromRSS({
                 url,
                 count
             });

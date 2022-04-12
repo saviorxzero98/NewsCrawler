@@ -36,7 +36,8 @@ export abstract class NewsCrawler {
         this.services = services;
     }
 
-    protected async getNewsList(options: NewsListOptions): Promise<Item[]> {
+    /** 取得 News List */
+    public async getNewsList(options: NewsListOptions): Promise<Item[]> {
         this.services.logger.logGetUrl(options.url);
         
         let httpClient = new HttpClient();
@@ -56,7 +57,8 @@ export abstract class NewsCrawler {
                 .slice(0, options.count);
     }
 
-    protected async getNewsDetials(options: NewsDetialOptions): Promise<Item[]> {
+    /** 取得 News Detial */
+    public async getNewsDetials(options: NewsDetialOptions): Promise<Item[]> {
         let items = await Promise.all(
             options.list.map(async (item) => 
                 this.services
@@ -79,7 +81,8 @@ export abstract class NewsCrawler {
         return items;
     }
 
-    protected async getRSSNewsList(options: RSSNewsListOptions): Promise<Item[]> {
+    /** 取得 News List (透過 RSS) */
+    public async getNewsListFromRSS(options: RSSNewsListOptions): Promise<Item[]> {
         let data = await this.getRSSNewsData(options.url);
         
         let list = [];

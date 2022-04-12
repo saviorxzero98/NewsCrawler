@@ -54,7 +54,7 @@ export class EpochTimesNewsCrawler extends NewsCrawler {
         }
 
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

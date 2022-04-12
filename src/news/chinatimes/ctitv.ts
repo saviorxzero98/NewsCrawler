@@ -25,7 +25,7 @@ export class CtiTVNewsCrawler extends NewsCrawler {
         if (rssMap[rss]) {
             let url = `${rootUrl}/category/${rss}/feed`;
 
-            let list = await this.getRSSNewsList({
+            let list = await this.getNewsListFromRSS({
                 url,
                 count
             });

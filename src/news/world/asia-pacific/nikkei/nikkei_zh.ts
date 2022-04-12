@@ -1,3 +1,6 @@
+import * as parser from 'rss-parser';
+import * as moment from 'moment';
+
 import { crawlerHeaders } from '../../../../services/httpclient';
 import { ServiceContext } from '../../../../services/service';
 import { NewsCrawler } from '../../../newsCrawler';
@@ -29,30 +32,21 @@ export class NikkeiZhNewsCrawler extends NewsCrawler {
             url =`${mapInfo.rootUrl}/${category}/${subcategory}.feed?type=rss`;
         }
 
-        let crawler = {
-            selector: 'channel item',
-            callback: ($, i) => {
-                let title = $(i).find('title').html();
-                let link = $(i).find('guid').html();
-                let description = $(i).find('description').html();
-                let pubDate = $(i).find('pubDate').html();
-                
-                return {
-                    id: link,
-                    title,
-                    link,
-                    image: '',
-                    description: description,
-                    date: new Date(pubDate)
-                };
-            }
-        };
-        let list = await this.getNewsList({
-            url,
-            options: crawlerHeaders,
-            count,
-            crawlers: [ crawler ]
-        });
+        let response = await this.getNewsWeb(url, crawlerHeaders);
+
+        let feedParser = new parser();
+        let data = await feedParser.parseString(response.data);
+
+        let list = [];
+        for (let item of data.items) {
+            list.push({
+                title: item.title,
+                link: item.link,
+                description: item.content,
+                date: moment(item.isoDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
+            })
+        }
+        list.slice(0, count);
 
         if (category && subcategory) {
             return {

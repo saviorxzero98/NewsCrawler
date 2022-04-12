@@ -80,7 +80,7 @@ export class QooAppNewsCrawler extends NewsCrawler {
     }
 
     private async getDetialNews(url: string, count: number = 15) {
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

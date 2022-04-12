@@ -184,7 +184,7 @@ export class NYTimesNewsCrawler extends NewsCrawler {
         let rssInfo = mapInfo.rssMap[category] ?? Object.values(mapInfo.rssMap)[0];
         let url = `${rootUrl}/${rssInfo.rss}`;
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

@@ -24,7 +24,7 @@ export class SportSVNewsCrawler extends NewsCrawler {
         url = `${url}/feed`;
 
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

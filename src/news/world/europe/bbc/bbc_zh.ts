@@ -29,7 +29,7 @@ export class BBCZhNewsCrawler extends NewsCrawler {
         let rootUrl = mapInfo.rootUrl;
         let url = mapInfo.rssUrl;
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

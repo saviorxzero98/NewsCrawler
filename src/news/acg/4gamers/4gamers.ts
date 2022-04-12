@@ -30,7 +30,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
     public async getNews(count: number = 15) {
         let url = `${rootUrl}/rss/latest-news`;
 
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });

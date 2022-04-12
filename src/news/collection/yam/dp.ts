@@ -14,7 +14,7 @@ export class YamDQNewsCrawler extends NewsCrawler {
 
     public async getNews(count: number = 15) {
         let url = rssRootUrl;
-        let list = await this.getRSSNewsList({
+        let list = await this.getNewsListFromRSS({
             url,
             count
         });
