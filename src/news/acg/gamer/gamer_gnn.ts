@@ -169,36 +169,39 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
                          .tryGet<Item>(newUrl, async () => {
                                 let httpClient = new HttpClient();
                                 let newResponse = await  httpClient.get(newUrl, crawlerHeaders);
-                
+                                item.link = newUrl;
+
                                 const content = cheerio.load(newResponse.data);
                                 if (content('div.MSG-list8C').length > 0) {
-                                    let blogA = content('div.BH-lbox span.ST1').text();
-                                    let pubInfo = blogA.replace(/\n/g, '').split('│');
-                                    let pubDate = pubInfo[content('span.ST1').find('a').length > 0 ? 2 : 1];
-                                    item.date = new Date(pubDate);
-                                    item.link = newUrl;
+                                    let pubInfoText = content('div.BH-lbox span.ST1').text().replace(/\n/g, '');
+                                    let pubDate = this.parsePubDate(pubInfoText);
+                                    if (pubDate) {
+                                        item.date = new Date(pubDate);
+                                        
+                                    }
                                 }
                                 else {
                                     let pubInfoText = content('div.article-intro').text().replace(/\n/g, '');
-
-                                    let pubInfoA = pubInfoText.split('│');
-                                    if (pubInfoA.length > 1) {
-                                        let pubDate = pubInfoA[1];
+                                    let pubDate = this.parsePubDate(pubInfoText);
+                                    if (pubDate) {
                                         item.date = new Date(pubDate);
-                                        item.link = newUrl;
-                                    }
-                                    else {
-                                        let pubInfoB = pubInfoText.split('|');
-                                        if (pubInfoB.length > 1) {
-                                            let pubDate = pubInfoB[1];
-                                            item.date = new Date(pubDate);
-                                            item.link = newUrl;
-                                        }
+                                        
                                     }
                                 }
                                 return item;
                             });
 
         return true;
+    }
+
+    private parsePubDate(text: string): string {
+        // YYYY-MM-DD HH:mm:ss
+        const pattern = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})/g;
+        let matchList = text.match(pattern);
+
+        if (matchList.length != 0) {
+            return matchList[0];
+        }
+        return '';
     }
 }
