@@ -47,14 +47,13 @@ export class NBATaiwanNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.image = newsMeta.image;
+
                 let pubDate = content('meta[name="date.available"]').attr('content');
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate();
+                item.date = new Date(pubDate);
                 return item;
             }
         });

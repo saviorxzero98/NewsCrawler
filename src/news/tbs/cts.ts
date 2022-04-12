@@ -33,7 +33,7 @@ export class CTSNewsCrawler extends NewsCrawler {
         let crawler = {
             selector: 'div.newslist-container a',
             callback: ($, i) => {
-                let pubDate = moment($(i).find('p.newstitle span.newstime').text(), 'yyyy/MM/DD HH:mm').format('yyyy-MM-DD HH:mm');
+                let pubDate = moment($(i).find('p.newstitle span.newstime').text(), 'yyyy/MM/DD HH:mm').toDate();
                 $(i).find('p.newstitle span.newstime').remove();
                 let title = $(i).find('p.newstitle').text();
                 //let image = $(i).find('div.newsimg-thumb img').attr('src');
@@ -44,7 +44,7 @@ export class CTSNewsCrawler extends NewsCrawler {
                     link,
                     image: '',
                     description: '',
-                    date: moment(pubDate, 'YYYY/MM/DD HH:mm').toDate(),
+                    date: pubDate
                 };
             }
         };
@@ -57,12 +57,10 @@ export class CTSNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                item.description = description;
-                item.image = image;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.image = newsMeta.image ?? item.image;
 
                 //content('div.artical-content div.cts-tbfs').remove();
                 //content('div.artical-content p.news-src').remove();

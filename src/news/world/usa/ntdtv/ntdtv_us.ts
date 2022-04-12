@@ -95,12 +95,10 @@ export class NTDTVUsNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let pubDate = content('meta[property="article:published_time"]').attr('content');
-                item.description += description;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.date = newsMeta.pubDate;
                 return item;
             }
         });

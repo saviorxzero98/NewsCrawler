@@ -36,7 +36,7 @@ export class HealthMediaNewsCrawler extends NewsCrawler {
                     link,
                     description,
                     image,
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
+                    date: new Date(pubDate)
                 };
             }
         };

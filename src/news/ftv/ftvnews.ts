@@ -38,7 +38,7 @@ export class FTVNewsCrawler extends NewsCrawler {
                     link,
                     image,
                     description,
-                    date: moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate()
+                    date: new Date(pubDate)
                 };
             }
         };
@@ -51,10 +51,9 @@ export class FTVNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                item.description = description;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
                 return item;
             }
         });
@@ -82,7 +81,7 @@ export class FTVNewsCrawler extends NewsCrawler {
                     link,
                     image,
                     description: '',
-                    date: moment(pubDate, 'YYYY/MM/DD HH:mm:ss').toDate()
+                    date: new Date(pubDate)
                 };
             }
         };
@@ -95,10 +94,9 @@ export class FTVNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                item.description = description;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
                 return item;
             }
         });

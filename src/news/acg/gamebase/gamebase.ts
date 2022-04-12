@@ -57,7 +57,7 @@ export class GamebaseNewsCrawler extends NewsCrawler {
                     title: item.news_title,
                     image: item.news_img,
                     description: item.news_content,
-                    date: moment(item.post_time, 'YYYY-MM-DD HH:mm:ss').toDate(),
+                    date: new Date(item.post_time),
                     link: `${newsRootUrl}/news/detail/${item.news_no}`,
                 }));
 

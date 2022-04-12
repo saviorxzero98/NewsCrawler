@@ -49,7 +49,7 @@ export class NTDTVTwNewsCrawler extends NewsCrawler {
                     link,
                     image,
                     description,
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate()
+                    date: new Date(pubDate)
                 };
             }
         };
@@ -71,7 +71,7 @@ export class NTDTVTwNewsCrawler extends NewsCrawler {
                     link,
                     image,
                     description,
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate()
+                    date: new Date(pubDate)
                 };
             }
         };

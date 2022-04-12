@@ -59,12 +59,10 @@ export class PTSNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                item.description = description;
-                item.image = image;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.image = newsMeta.image;
                 return item;
             }
         });
@@ -90,7 +88,7 @@ export class PTSNewsCrawler extends NewsCrawler {
                     link,
                     image: image,
                     description: '',
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
+                    date: new Date(pubDate)
                 };
             }
         };
@@ -111,7 +109,7 @@ export class PTSNewsCrawler extends NewsCrawler {
                     link,
                     image: image,
                     description: '',
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
+                    date: new Date(pubDate)
                 };
             }
         };

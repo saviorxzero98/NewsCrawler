@@ -32,21 +32,11 @@ export class NikkeiZhNewsCrawler extends NewsCrawler {
             url =`${mapInfo.rootUrl}/${category}/${subcategory}.feed?type=rss`;
         }
 
-        let response = await this.getNewsWeb(url, crawlerHeaders);
-
-        let feedParser = new parser();
-        let data = await feedParser.parseString(response.data);
-
-        let list = [];
-        for (let item of data.items) {
-            list.push({
-                title: item.title,
-                link: item.link,
-                description: item.content,
-                date: moment(item.isoDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
-            })
-        }
-        list.slice(0, count);
+        let { list } = await this.getNewsListFromRSS({
+            url,
+            headers: crawlerHeaders,
+            count
+        });
 
         if (category && subcategory) {
             return {
@@ -58,13 +48,11 @@ export class NikkeiZhNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[name="twitter:description"]').attr('content');
-                let image = content('meta[name="twitter:image:src"]').attr('content');
-                item.description = description;
-                if (image && image !== `${mapInfo.rootUrl}/`) {
-                    item.image = image;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                if (newsMeta.image && newsMeta.image !== `${mapInfo.rootUrl}/`) {
+                    item.image = newsMeta.image;
                 }
                 return item;
             }

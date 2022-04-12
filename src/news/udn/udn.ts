@@ -110,7 +110,7 @@ export class UDNNewsCrawler extends NewsCrawler {
             }
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -132,7 +132,7 @@ export class UDNNewsCrawler extends NewsCrawler {
             }
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -156,7 +156,7 @@ export class UDNNewsCrawler extends NewsCrawler {
                 }
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -176,7 +176,7 @@ export class UDNNewsCrawler extends NewsCrawler {
             }
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -196,7 +196,7 @@ export class UDNNewsCrawler extends NewsCrawler {
             }
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -216,7 +216,7 @@ export class UDNNewsCrawler extends NewsCrawler {
             }
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -238,7 +238,7 @@ export class UDNNewsCrawler extends NewsCrawler {
             }
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });

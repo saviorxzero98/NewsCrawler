@@ -92,7 +92,7 @@ export class TTVNewsCrawler extends NewsCrawler {
             description,
             link,
             image,
-            date: moment(pubDate, 'YYYY.MM.DD HH:mm').toDate(),
+            date: new Date(pubDate)
         };
     }
 }

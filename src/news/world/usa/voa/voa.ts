@@ -69,19 +69,17 @@ export class VOANewsCrawler extends NewsCrawler {
         let title = mapInfo.title;
         let url = mapInfo.rssMap[category] ?? Object.values(mapInfo.rssMap)[0];       
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                //let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                //item.description = description;
-                item.image = image
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                //item.description = newsMeta.description;
+                item.image = newsMeta.image ?? item.image;
                 return item;
             }
         });
@@ -99,19 +97,17 @@ export class VOANewsCrawler extends NewsCrawler {
         let title =  languageMap[language].title;
         let url = `${rootUrl}/api/${rss}`;
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                //let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                //item.description = description;
-                item.image = image
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                //item.description = newsMeta.description;
+                item.image = newsMeta.image ?? item.image;
                 return item;
             }
         });

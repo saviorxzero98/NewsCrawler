@@ -46,7 +46,7 @@ export class ETtodayNewsCrawler extends NewsCrawler {
         if (rssMap[rss]) {
             let url = `${rssRootUrl}/${rss}`;
 
-            let list = await this.getNewsListFromRSS({
+            let { list } = await this.getNewsListFromRSS({
                 url,
                 count
             });

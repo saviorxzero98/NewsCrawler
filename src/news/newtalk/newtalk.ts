@@ -69,14 +69,11 @@ export class NewtalkNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                let pubDate = content('meta[property="article:published_time"]').attr('content');
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm:ss').toDate();
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.image = newsMeta.image ?? item.image;
+                item.date = newsMeta.pubDate;
 
                 //let description = content('div.news-content').html();
                 //let pubDate = content('div.content_date').text();

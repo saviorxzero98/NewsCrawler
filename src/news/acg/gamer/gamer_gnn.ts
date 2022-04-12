@@ -88,10 +88,8 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: async (item, content, response) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
+            headers: crawlerHeaders,
+            callback: async (item, content, newsMeta, response) => {
                 let pubDate = '';
 
                 let isBlog = await this.getNewsDetialFromBlog(item, response);
@@ -100,13 +98,13 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
                         let report = content('span.GN-lbox3C').text() || content('span.GN-lbox3CA').text();
                         if (report.length > 1) {
                             pubDate = report.split('）')[1];
-                            item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                            item.date = new Date(pubDate);
                         }
                     }
                 }
 
-                item.description = (description || item.description).replace('繼續閱讀', '');
-                item.image = image || item.image;
+                item.description = (newsMeta.description || item.description).replace('繼續閱讀', '');
+                item.image = newsMeta.image || item.image;
                 return item;
             }
         });
@@ -177,14 +175,14 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
                                     let blogA = content('div.BH-lbox span.ST1').text();
                                     let pubInfo = blogA.replace(/\n/g, '').split('│');
                                     let pubDate = pubInfo[content('span.ST1').find('a').length > 0 ? 2 : 1];
-                                    item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                                    item.date = new Date(pubDate);
                                     item.link = newUrl;
                                 }
                                 else {
                                     let pubInfo = content('div.article-intro').text().replace(/\n/g, '').split('│');
                                     if (pubInfo.length > 1) {
                                         let pubDate = pubInfo[1];
-                                        item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                                        item.date = new Date(pubDate);
                                         item.link = newUrl;
                                     }
                                 }

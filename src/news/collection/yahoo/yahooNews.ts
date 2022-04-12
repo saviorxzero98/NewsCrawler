@@ -110,8 +110,8 @@ export class YahooNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
                 let pubDate = content('div.caas-attr-time-style time').attr('datetime');
                 item.date = new Date(pubDate);
                 return item;
@@ -131,32 +131,23 @@ export class YahooNewsCrawler extends NewsCrawler {
             url = `${url}/${rss}`;
         }
 
-        let rssData = await this.getRSSNewsData(url);
-        let list = [];
-        for (let item of rssData.items) {
-            list.push({
-                title: item.title,
-                link: item.link,
-                description: item.content,
-                date: moment(item.isoDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
-            })
-        }
-        list.slice(0, count);
+        let { list, title } = await this.getNewsListFromRSS({
+            url,
+            count
+        });
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                item.description = description;
-                item.image = image;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.image = newsMeta.image;
                 return item;
             }
         });
             
         return {
-            title: `${rssData.title}`,
+            title: `${title}`,
             link: rootUrl,
             items: items
         };

@@ -56,7 +56,7 @@ export class RFANewsCrawler extends NewsCrawler {
                 break;
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });

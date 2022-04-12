@@ -43,7 +43,7 @@ export class FTZhNewsCrawler extends NewsCrawler {
             categoryName = mapInfo.rssMap[category] ?? '';
         }
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -51,14 +51,11 @@ export class FTZhNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let title = content('meta[property="og:title"]').attr('content');
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                item.title = title;
-                item.description = description;
-                item.image = image
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.title = newsMeta.title;
+                item.description = newsMeta.description;
+                item.image = newsMeta.image ?? item.image;
                 return item;
             }
         });

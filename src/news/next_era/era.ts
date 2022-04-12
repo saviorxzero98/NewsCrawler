@@ -42,7 +42,7 @@ export class ERANewsCrawler extends NewsCrawler {
                     link,
                     image,
                     description,
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate(),
+                    date: new Date(pubDate)
                 };
             }
         };

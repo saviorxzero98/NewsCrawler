@@ -49,16 +49,14 @@ export class ReutersZhNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let title = content('meta[property="og:title"]').attr('content');
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.title = newsMeta.title;
+                item.description = newsMeta.description;
+                item.image = newsMeta.image ?? item.image;
+
                 let pubDate = content('meta[property="og:article:published_time"]').attr('content');
-                item.title = title;
-                item.description = description;
-                item.image = image;
-                item.date = moment(pubDate, 'YYYY-MM-DDTHH:mm').toDate();
+                item.date = new Date(pubDate);
 
                 return item;
             }

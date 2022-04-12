@@ -59,7 +59,7 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
                     link,
                     description,
                     image,
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
+                    date: new Date(pubDate)
                 };
             }
         };

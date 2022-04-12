@@ -35,7 +35,7 @@ export class CtwantNewsCrawler extends NewsCrawler {
                     link,
                     description: '',
                     image: '',
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
+                    date: new Date(pubDate)
                 };
             }
         };
@@ -48,14 +48,12 @@ export class CtwantNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
                 let categoryName = content('div.e-category__main').text().trim();
                 item.title = `[${categoryName}] ${item.title}`;
-                item.description = description;
-                item.image = image;
+                item.description = newsMeta.description;
+                item.image = newsMeta.image;
                 return item;
             }
         });
@@ -87,7 +85,7 @@ export class CtwantNewsCrawler extends NewsCrawler {
                         link,
                         description: '',
                         image: '',
-                        date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
+                        date: new Date(pubDate)
                     };
                 }
             },
@@ -103,7 +101,7 @@ export class CtwantNewsCrawler extends NewsCrawler {
                         link,
                         description: '',
                         image: '',
-                        date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
+                        date: new Date(pubDate)
                     };
                 }
             },
@@ -119,7 +117,7 @@ export class CtwantNewsCrawler extends NewsCrawler {
                         link,
                         description: '',
                         image: '',
-                        date: moment(pubDate, 'YYYY-MM-DD HH:mm').toDate(),
+                        date: new Date(pubDate),
                     };
                 }
             }
@@ -133,12 +131,10 @@ export class CtwantNewsCrawler extends NewsCrawler {
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                item.description = description;
-                item.image = image;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.image = newsMeta.image;
                 return item;
             }
         });

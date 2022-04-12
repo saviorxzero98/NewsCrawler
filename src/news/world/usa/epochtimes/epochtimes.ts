@@ -54,7 +54,7 @@ export class EpochTimesNewsCrawler extends NewsCrawler {
         }
 
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -62,12 +62,10 @@ export class EpochTimesNewsCrawler extends NewsCrawler {
         if (language !== 'ja-jp') {
             let items = await this.getNewsDetials({
                 list,
-                options: crawlerHeaders,
-                callback: (item, content) => {
-                    //let description = content('meta[property="og:description"]').attr('content');
-                    let image = content('meta[property="og:image"]').attr('content');
-                    //item.description = description;
-                    item.image = image
+                headers: crawlerHeaders,
+                callback: (item, content, newsMeta) => {
+                    //item.description = newsMeta.description;
+                    item.image = newsMeta.image ?? item.image;
                     return item;
                 }
             });

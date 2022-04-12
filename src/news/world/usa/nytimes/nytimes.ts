@@ -184,7 +184,7 @@ export class NYTimesNewsCrawler extends NewsCrawler {
         let rssInfo = mapInfo.rssMap[category] ?? Object.values(mapInfo.rssMap)[0];
         let url = `${rootUrl}/${rssInfo.rss}`;
 
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
@@ -193,12 +193,10 @@ export class NYTimesNewsCrawler extends NewsCrawler {
             let categoryName = rssInfo.name ?? '';
             let items = await this.getNewsDetials({
                 list,
-                options: crawlerHeaders,
-                callback: (item, content) => {
-                    //let description = content('meta[property="og:description"]').attr('content');
-                    let image = content('meta[property="og:image"]').attr('content');
-                    //item.description = description;
-                    item.image = image
+                headers: crawlerHeaders,
+                callback: (item, content, newsMeta) => {
+                    //item.description = newsMeta.description;
+                    item.image = newsMeta.image ?? item.image;
                     return item;
                 }
             });

@@ -15,33 +15,28 @@ export class CTVNewsCrawler extends NewsCrawler {
     public async getNews( count: number = 15) {
         let url = `${rootUrl}/rss`;
 
-        let rssData = await this.getRSSNewsData(url);
+        let { list } = await this.getNewsListFromRSS({
+            url,
+            count,
+            callback: (item) => {
+                item.title = item.title.split('│')[0];
+                item.content = item.summary;
 
-        let list = [];
-        for (let item of rssData.items) {
-            let link: string = item.id;
-            link = link.replace(`${rootUrl}/Article`, '');
-            link = encodeURIComponent(link);
-            
-            let title = item.title.split('│')[0];
-
-            list.push({
-                title: title,
-                link: `${rootUrl}/Article/${link}` ,
-                description: item.summary,
-                date: moment(item.isoDate, 'YYYY-MM-DDTHH:mm:ss').toDate()
-            })
-        }
-        list = list.slice(0, count);
+                let link: string = item.id;
+                link = link.replace(`${rootUrl}/Article`, '');
+                link = encodeURIComponent(link);
+                item.link = `${rootUrl}/Article/${link}`;
+                
+                return item;
+            }
+        })
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let description = content('meta[property="og:description"]').attr('content');
-                let image = content('meta[property="og:image"]').attr('content');
-                item.description = description;
-                item.image = image;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.image = newsMeta.image;
                 return item;
             }
         });

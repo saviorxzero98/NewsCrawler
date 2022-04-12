@@ -41,7 +41,7 @@ export class NextTVNewsCrawler extends NewsCrawler {
                     link,
                     image,
                     description,
-                    date: moment(pubDate, 'YYYY-MM-DD HH:mms').toDate(),
+                    date: new Date(pubDate)
                 };
             }
         };

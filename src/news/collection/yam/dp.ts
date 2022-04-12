@@ -14,17 +14,16 @@ export class YamDQNewsCrawler extends NewsCrawler {
 
     public async getNews(count: number = 15) {
         let url = rssRootUrl;
-        let list = await this.getNewsListFromRSS({
+        let { list } = await this.getNewsListFromRSS({
             url,
             count
         });
 
         let items = await this.getNewsDetials({
             list,
-            options: crawlerHeaders,
-            callback: (item, content) => {
-                let image = content('meta[property="og:image"]').attr('content');
-                item.image = image;
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.image = newsMeta.image;
                 return item;
             }
         });
