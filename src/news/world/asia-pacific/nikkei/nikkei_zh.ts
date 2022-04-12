@@ -19,7 +19,7 @@ export class NikkeiZhNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(category: string = '', subcategory: string = '',  
-                         language: string = 'zh-hant', count: number = 15)  {
+                         language: string = 'zh-hant', count: number = 15) {
         language = this.getLanguage(language);
         let mapInfo = languageMap[language];
         let url = `${mapInfo.rootUrl}/rss.html`;
