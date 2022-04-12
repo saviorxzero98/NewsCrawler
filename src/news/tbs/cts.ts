@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 import { crawlerHeaders } from '../../services/httpclient';
 import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
@@ -33,7 +31,7 @@ export class CTSNewsCrawler extends NewsCrawler {
         let crawler = {
             selector: 'div.newslist-container a',
             callback: ($, i) => {
-                let pubDate = moment($(i).find('p.newstitle span.newstime').text(), 'yyyy/MM/DD HH:mm').toDate();
+                let pubDate = $(i).find('p.newstitle span.newstime').text();
                 $(i).find('p.newstitle span.newstime').remove();
                 let title = $(i).find('p.newstitle').text();
                 //let image = $(i).find('div.newsimg-thumb img').attr('src');
@@ -44,7 +42,7 @@ export class CTSNewsCrawler extends NewsCrawler {
                     link,
                     image: '',
                     description: '',
-                    date: pubDate
+                    date: new Date(pubDate)
                 };
             }
         };

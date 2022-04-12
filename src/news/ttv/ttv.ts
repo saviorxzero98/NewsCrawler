@@ -1,5 +1,4 @@
 import * as cheerio from 'cheerio';
-import * as moment from 'moment';
 
 import { crawlerHeaders } from '../../services/httpclient';
 import { ServiceContext } from '../../services/service';

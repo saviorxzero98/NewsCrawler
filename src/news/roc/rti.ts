@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 import { crawlerHeaders } from '../../services/httpclient';
 import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
@@ -60,7 +58,7 @@ export class RtiNewsCrawler extends NewsCrawler {
 
                 let pubDate = content('section.news-detail-box li.date').text();
                 pubDate = pubDate.replace('\n', '').replace('時間：', '').trim();
-                item.date = moment(pubDate, 'YYYY-MM-DD HH:mm').toDate();
+                item.date = new Date(pubDate);
 
                 //let description = content('article').html();
 

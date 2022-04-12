@@ -1,4 +1,3 @@
-
 import { HttpClient, crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
@@ -150,7 +149,8 @@ export class FourGamersNewsCrawler extends NewsCrawler {
                 list,
                 headers: crawlerHeaders,
                 callback: (item, content, newsMeta) => {
-                    item.description = newsMeta.description;
+                    let description = content('meta[name="description"]').attr('content');
+                    item.description = description;
                     item.image = newsMeta.image || item.image;
                     return item;
                 }

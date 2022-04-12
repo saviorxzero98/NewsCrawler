@@ -1,5 +1,4 @@
 import * as cheerio from 'cheerio';
-import * as moment from 'moment';
 
 import { HttpClient, crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';

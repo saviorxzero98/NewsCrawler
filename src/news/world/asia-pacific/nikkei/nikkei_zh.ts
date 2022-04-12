@@ -1,6 +1,3 @@
-import * as parser from 'rss-parser';
-import * as moment from 'moment';
-
 import { crawlerHeaders } from '../../../../services/httpclient';
 import { ServiceContext } from '../../../../services/service';
 import { NewsCrawler } from '../../../newsCrawler';

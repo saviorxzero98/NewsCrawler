@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
 

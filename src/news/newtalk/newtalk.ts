@@ -1,5 +1,3 @@
-import * as moment from 'moment';
-
 import { HttpClient, crawlerHeaders } from '../../services/httpclient';
 import { ServiceContext } from '../../services/service';
 import { NewsCrawler } from '../newsCrawler';
@@ -76,11 +74,6 @@ export class NewtalkNewsCrawler extends NewsCrawler {
                 item.date = newsMeta.pubDate;
 
                 //let description = content('div.news-content').html();
-                //let pubDate = content('div.content_date').text();
-                //pubDate = pubDate.replace('發布', '')
-                //                 .replace('|', '')
-                //                 .trim();
-                //pubDate = moment(pubDate, 'YYYY.MM.DD HH:mm').toDate();
 
                 return item;
             }
@@ -123,11 +116,6 @@ export class NewtalkNewsCrawler extends NewsCrawler {
                 let link = $(i).find('a').attr('href');
                 //let image = $(i).find('div.news_img img').attr('src');
                 //let description = $(i).find('div.news_text a').text();
-                //let pubDate = $(i).find('div.news_date').text();
-                //pubDate = pubDate.replace('發布', '')
-                //                 .replace('|', '')
-                //                 .trim();
-                //pubDate = moment(pubDate, 'yyyy.MM.DD HH:mm').format('yyyy-MM-DD HH:mm');
 
                 return {
                     title,
