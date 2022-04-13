@@ -32,7 +32,7 @@ export class NipponNewsCrawler extends NewsCrawler {
                 description: '',
                 image: `${rootUrl}/${item.pub_thumbnail_url}`,
                 link: `${rootUrl}/${item.pub_url}`,
-                data: new Date(item.pub_date)
+                date: new Date(item.pub_date)
             }
         });
         list = list.filter(i => i.title && i.link)
