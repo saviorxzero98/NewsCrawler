@@ -19,21 +19,14 @@ export enum OpenCCType {
 }
 
 export class FeedBuilder {
-    public options: FeedOptions;
+    public title: string;
+    public link: string;
     public items: Item[];
     public openccType: string = '';
 
     public constructor(title: string, link: string) {
-        this.options = {
-            id: link,
-            title,
-            link,
-            copyright,
-            description: title,
-            language: 'zh-tw',
-            generator: 'MyRSS',
-            updated: new Date()
-        }
+        this.title = title;
+        this.link = link;
         this.items = [];
     }
 
@@ -76,10 +69,9 @@ export class FeedBuilder {
         return this;
     }
     public create(format: FeedFormat = FeedFormat.rss2): string {
-        this.options.title = this.convertCC(this.options.title, this.openccType);
-        this.options.description = this.convertCC(this.options.description, this.openccType);
+        let options = this.createFeedOptions();
         
-        let feed = new Feed(this.options);
+        let feed = new Feed(options);
         
         for (let item of this.items) {
             feed.addItem(item);
@@ -98,8 +90,47 @@ export class FeedBuilder {
         }
     }
 
+    private createFeedOptions(): FeedOptions {
+        this.title = this.convertCC(this.title, this.openccType);
+        let language = 'zh-tw';
+
+        switch (this.openccType) {
+            case OpenCCType.hk2s:
+            case OpenCCType.t2s:
+                language = 'zh-cn';
+                break;
+
+            case OpenCCType.s2hk:
+                language = 'zh-hk';
+                break;
+
+            case OpenCCType.s2t:
+            case OpenCCType.s2tw:
+            case OpenCCType.s2twp:
+                language = 'zh-tw';
+                break;
+        }
+
+
+        let options = {
+            id: this.link,
+            title: this.title,
+            link: this.link,
+            copyright: '',
+            description: this.title,
+            language: language,
+            generator: 'MyRSS',
+            updated: new Date()
+        }
+        return options;
+    }
+
+
     private convertCC(text: string, type: string): string {
-        let outText = simplecc(text, type);
+        let outText = text;
+        if (type) {
+            outText = simplecc(text, type);
+        }
         return outText;
     }
 }

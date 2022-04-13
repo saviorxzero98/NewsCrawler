@@ -87,7 +87,7 @@ export abstract class NewsCrawler {
         }
 
         return list.filter(i => i.title && i.link)
-                .slice(0, options.count);
+                   .slice(0, options.count);
     }
 
     /** 取得 News Detial */
