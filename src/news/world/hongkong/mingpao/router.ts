@@ -10,7 +10,7 @@ const path = {
 export class MingPaoNewsRouter {
     public static router(services: ServiceContext) {
         services.app.get(`/${path.mingpao}/ins/:category?`, async (req, res) => {
-            let category = req.params.category ?? '';
+            let category = req.params.category ?? 'all';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let opencc = String(req.query.opencc ?? '');
 
@@ -22,7 +22,7 @@ export class MingPaoNewsRouter {
         });
 
         services.app.get(`/${path.mingpao}/pns/:category?`, async (req, res) => {
-            let category = req.params.category ?? '';
+            let category = req.params.category ?? 's00001';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let opencc = String(req.query.opencc ?? '');
 
