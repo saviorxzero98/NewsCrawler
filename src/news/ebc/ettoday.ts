@@ -54,7 +54,7 @@ export class ETtodayNewsCrawler extends NewsCrawler {
             return {
                 title: `${title} ${rssMap[rss]}`,
                 link: rootUrl,
-                items: list.slice(0, count),
+                items: list,
             };
         }
         
