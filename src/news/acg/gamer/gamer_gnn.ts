@@ -95,10 +95,8 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
                 if (!isBlog) {
                     if (content('span.GN-lbox3C').text() || content('span.GN-lbox3CA').text()) {
                         let report = content('span.GN-lbox3C').text() || content('span.GN-lbox3CA').text();
-                        if (report.length > 1) {
-                            pubDate = report.split('）')[1];
-                            item.date = new Date(pubDate);
-                        }
+                        let pubDate = this.parsePubDate(report);
+                        item.date = new Date(pubDate);
                     }
                 }
 
@@ -176,7 +174,6 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
                                     let pubDate = this.parsePubDate(pubInfoText);
                                     if (pubDate) {
                                         item.date = new Date(pubDate);
-                                        
                                     }
                                 }
                                 else {
