@@ -4,7 +4,7 @@ import { NewsCrawler } from '../newsCrawler';
 
 const rootUrl = 'https://www.ettoday.net/';
 const rssRootUrl = 'https://feeds.feedburner.com/ettoday';
-const title = 'ETtoday'
+const title = 'ETtoday';
 
 const rssMap = {
     realtime: '即時',

@@ -1,5 +1,4 @@
 import { ServiceContext } from "../../services/service";
-import { ChinaNewsRouter } from "./china/router";
 import { EuropeNewsRouter } from "./europe/router";
 import { HongKongNewsRouter } from "./hongkong/router";
 import { USANewsRouter } from "./usa/router";
@@ -10,8 +9,6 @@ export class WorldNewsRouter {
     public static router(services: ServiceContext) {
         
         AsiaPacificNewsRouter.router(services);
-
-        ChinaNewsRouter.router(services);
 
         EuropeNewsRouter.router(services);
 
