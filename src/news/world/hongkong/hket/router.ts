@@ -8,7 +8,7 @@ const path = {
     hket: 'hket',
 }
 
-export class HKETPaoNewsRouter {
+export class HKETNewsRouter {
     public static router(services: ServiceContext) {
         services.app.get(`/${path.hket}/:category?`, async (req, res) => {
             let category = req.params.category ?? 'hongkong';

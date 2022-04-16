@@ -4,17 +4,21 @@ import { RTHKNewsRouter } from "./rthk/router";
 import { InitiumNewsRouter } from "./initium/router";
 import { MingPaoNewsRouter } from "./mingpao/router";
 import { InmediahkNewsRouter } from "./inmediahk/router";
-import { HKETPaoNewsRouter } from "./hket/router";
+import { HKETNewsRouter } from "./hket/router";
 import { BastillePostNewsRouter } from "./bastillepost/router";
 import { OrientalDailyNewsRouter } from "./orientaldaily/router";
+import { HK01NewsRouter } from "./hk01/router";
 
 export class HongKongNewsRouter {
     public static router(services: ServiceContext) {
         // 巴士的報
         BastillePostNewsRouter.router(services);
         
+        // 香港01
+        HK01NewsRouter.router(services);
+
         // 香港經濟日報
-        HKETPaoNewsRouter.router(services);
+        HKETNewsRouter.router(services);
 
         // 端傳媒
         InitiumNewsRouter.router(services);
