@@ -5,6 +5,7 @@ import { KBSNewsRouter } from "./kbs/router";
 import { AljazeeraNewsRouter } from "./aljazeera/router";
 import { SBSNewsRouter } from "./sbs/router";
 import { VisionThaiNewsRouter } from "./visionthai/router";
+import { YNANewsRouter } from "./yna/router";
 
 export class AsiaPacificNewsRouter {
     public static router(services: ServiceContext) {
@@ -25,5 +26,8 @@ export class AsiaPacificNewsRouter {
 
         // Vision Thai 看見泰國
         VisionThaiNewsRouter.router(services);
+
+        // 韓聯社
+        YNANewsRouter.router(services);
     }
 }

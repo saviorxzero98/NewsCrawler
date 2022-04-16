@@ -177,12 +177,12 @@ export abstract class NewsCrawler {
         if (headers) {
             let httpClient = new HttpClient();
             let response = await httpClient.get(url, headers);
-            let data = await feedParser.parseString(response.data);
-            return data;
+            let rssData = await feedParser.parseString(response.data);
+            return rssData;
         }
         else {
-            let data = await feedParser.parseURL(url);
-            return data;
+            let rssData = await feedParser.parseURL(url);
+            return rssData;
         }
     }
 }
