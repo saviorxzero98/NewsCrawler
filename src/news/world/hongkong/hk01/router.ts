@@ -33,7 +33,7 @@ export class HK01NewsRouter {
         });
 
         services.app.get(`/${path.hk01}/channel/:category?`, async (req, res) => {
-            let category = req.params.category ?? '';
+            let category = req.params.category ?? '2';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let opencc = String(req.query.opencc ?? '');
 
