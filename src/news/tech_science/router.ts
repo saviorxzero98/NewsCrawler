@@ -1,6 +1,7 @@
 import { ServiceContext } from "../../services/service";
 import { TechNewsNewsRouter } from "./technews/router";
 import { IThomeNewsRouter } from "./ithome/router";
+import { TomorrowSciNewsRouter } from "./tomorrowsci/router";
 
 
 
@@ -11,5 +12,8 @@ export class TechAndScienceNewsRouter {
 
         // 科技新報
         TechNewsNewsRouter.router(services);
+
+        // 明日科學
+        TomorrowSciNewsRouter.router(services);
     }
 }
