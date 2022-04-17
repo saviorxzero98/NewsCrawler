@@ -41,13 +41,51 @@ export class EBCNewsRouter {
         });
 
         // ETToday
-        services.app.get(`/${path.ettoday}/:category?`, async (req, res) => {
+        services.app.get(`/${path.ettoday}/news/:category?`, async (req, res) => {
             let category = req.params.category ?? 'realtime';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let opencc = String(req.query.opencc ?? '');
 
             let crawler = new ETtodayNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.ettoday}/sports/:category?/:subcategory?`, async (req, res) => {
+            let category = req.params.category ?? '新聞';
+            let subcategory = req.params.subcategory ?? '最新新聞';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new ETtodayNewsCrawler(services);
+            let data = await crawler.getSportsNews(category, subcategory, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.ettoday}/game/:topic?`, async (req, res) => {
+            let topic = req.params.topic ?? '304';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new ETtodayNewsCrawler(services);
+            let data = await crawler.getGameNews(topic, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.ettoday}/health/:category?/:tag?`, async (req, res) => {
+            let category = req.params.category ?? 'lastnews';
+            let tag = req.params.tag ?? '';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new ETtodayNewsCrawler(services);
+            let data = await crawler.getHealthNews(category, tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
