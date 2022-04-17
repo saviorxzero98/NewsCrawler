@@ -8,7 +8,6 @@ const path = {
 
 export class TechNewsNewsRouter {
     public static router(services: ServiceContext) {
-        // ETToday
         services.app.get(`/${path.technews}/:category?/:subcategory?`, async (req, res) => {
             let category = req.params.category ?? '';
             let subcategory = req.params.subcategory ?? '';

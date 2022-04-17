@@ -23,7 +23,7 @@ import { WorldNewsRouter } from './news/world/router';
 import { MagazineNewsRouter } from './news/magazine/router';
 import { CollectionNewsRouter } from "./news/collection/router";
 import { NewMediaNewsRouter } from "./news/new_media/router";
-import { TechNewsRouter } from "./news/tech/router";
+import { TechAndScienceNewsRouter } from "./news/tech_science/router";
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -84,8 +84,8 @@ export const addRouters = (services: ServiceContext) => {
     // 公廣集團 (華視新聞、公視新聞)
     TBSNewsRouter.router(services);
     
-    // 科技3C新聞
-    TechNewsRouter.router(services);
+    // 科技3C、科學新聞
+    TechAndScienceNewsRouter.router(services);
 
     // 非凡集團 (台視新聞)
     TTVNewsRouter.router(services);
