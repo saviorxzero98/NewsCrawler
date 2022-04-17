@@ -22,8 +22,8 @@ import { SportNewsRouter } from './news/sport/router';
 import { WorldNewsRouter } from './news/world/router';
 import { MagazineNewsRouter } from './news/magazine/router';
 import { CollectionNewsRouter } from "./news/collection/router";
-import { NewMediaNewsRouter } from "./news/new_media/router";
 import { TechAndScienceNewsRouter } from "./news/tech_science/router";
+import { OthersNewsRouter } from "./news/others/router";
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -57,9 +57,6 @@ export const addRouters = (services: ServiceContext) => {
     // 雜誌類 (遠見雜誌、天下雜誌)
     MagazineNewsRouter.router(services);
 
-    // 其他新媒體
-    NewMediaNewsRouter.router(services);
-
     // 新頭殼
     NewtalkNewsRouter.router(services);
 
@@ -68,6 +65,9 @@ export const addRouters = (services: ServiceContext) => {
 
     // Nownews 今日新聞
     NownewsNewsRouter.router(services);
+
+    // 其他新聞
+    OthersNewsRouter.router(services);
 
     // 中華民國官方媒體 (中央通訊社CNA、Rti中央廣播電台)
     RocGovNewsRouter.router(services);
