@@ -54,6 +54,18 @@ const gameMap = {
     '468': '動漫ACG'
 }
 
+const dalemonCollectionMap = {
+    '2': '奇聞',
+    '5': '感情',
+    '7': '宅玩',
+    '8': '萌獸',
+    '10': '潮流',
+    '11': '運勢',
+    '13': '驚悚',
+    '14': '開酸',
+    '15': '長腦',
+    '16': '打卡'
+}
 
 export class ETtodayNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
@@ -216,5 +228,141 @@ export class ETtodayNewsCrawler extends NewsCrawler {
             link: url,
             items: list,
         };
+    }
+
+    public async getDalemonNews(count: number = 15) {
+        return await this.getNews('dalemon', count);
+    }
+
+    public async getDalemonNewsByCollection(collection: string, count: number = 15) {
+        if (collection && 
+            dalemonCollectionMap[collection]) {
+            let url = `${rootUrls.dalemon}/collection/${collection}`;
+
+            let crawler = {
+                selector: 'div.topic-page div.clearfix',
+                callback: ($, i) => {
+                    let title = $(i).find('h3 a').text();
+                    let link = $(i).find('h3 a').attr('href');
+                    let image = $(i).find('img').attr('data-original');
+                    let description = $(i).find('p.summary').text();
+                    let pubDate = $(i).find('span[itemprop="datePublished"]').attr('content');
+                    
+                    return {
+                        title,
+                        link,
+                        image,
+                        description: description,
+                        date: new Date(pubDate)
+                    };
+                }
+            };
+            let list = await this.getNewsList({
+                url,
+                options: crawlerHeaders,
+                count,
+                crawlers: [ crawler ]
+            });
+     
+            return {
+                title: `${title}鍵盤大檸檬 ${dalemonCollectionMap[collection]}`,
+                link: url,
+                items: list,
+            };
+        }
+        else {
+            return await this.getDalemonNews(count);
+        }
+    }
+
+    public async getDalemonNewsByTag(tag: string, count: number = 15) {
+        if (tag) {
+            let url = `${rootUrls.dalemon}/tag/${encodeURIComponent(tag)}`;
+            let crawler = {
+                selector: 'div.tag-page div.clearfix',
+                callback: ($, i) => {
+                    let title = $(i).find('h3 a').text();
+                    let link = $(i).find('h3 a').attr('href');
+                    let image = $(i).find('img').attr('data-original');
+                    let description = $(i).find('p.summary').text();
+                    let pubDate = $(i).find('span[itemprop="datePublished"]').attr('content');
+                    
+                    return {
+                        title,
+                        link,
+                        image,
+                        description: description,
+                        date: new Date(pubDate)
+                    };
+                }
+            };
+            let list = await this.getNewsList({
+                url,
+                options: crawlerHeaders,
+                count,
+                crawlers: [ crawler ]
+            });
+     
+            return {
+                title: `${title}鍵盤大檸檬 ${tag}`,
+                link: url,
+                items: list,
+            };
+        }
+        else {
+            return await this.getDalemonNews(count);
+        }
+    }
+
+    public async getDalemonNewsByEditor(editor: string, count: number = 15) {
+        if (editor && 
+            /^\d+$/.test(editor)) {
+            let url = `${rootUrls.dalemon}/editor-news/${editor}`;
+            let editorName = '';
+            
+            let crawler = {
+                selector: 'div.editor-news-page div.clearfix',
+                callback: ($, i) => {
+                    let title = $(i).find('h3 a').text();
+                    let link = $(i).find('h3 a').attr('href');
+                    let description = $(i).find('p.summary').text();
+                    editorName = $('div.subject_editor h4').text();
+
+                    return {
+                        title,
+                        link,
+                        image: '',
+                        description: description,
+                        date: new Date()
+                    };
+                }
+            };
+            let list = await this.getNewsList({
+                url,
+                options: crawlerHeaders,
+                count,
+                crawlers: [ crawler ]
+            });
+
+            let items = await this.getNewsDetials({
+                list,
+                headers: crawlerHeaders,
+                callback: (item, content, newsMeta) => {
+                    item.image = newsMeta.image ?? item.image;
+                    item.date = newsMeta.pubDate;
+   
+                    return item;
+                }
+            });
+     
+            return {
+                title: `${title}鍵盤大檸檬 ${editorName}`,
+                link: url,
+                items: items,
+            };
+        }
+        else {
+            return await this.getDalemonNews(count);
+        }
     }
 }

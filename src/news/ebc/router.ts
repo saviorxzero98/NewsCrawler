@@ -90,5 +90,41 @@ export class EBCNewsRouter {
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
         });
+
+        services.app.get(`/${path.ettoday}/dalemon/collection/:collection?`, async (req, res) => {
+            let collection = req.params.collection ?? '';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new ETtodayNewsCrawler(services);
+            let data = await crawler.getDalemonNewsByCollection(collection, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.ettoday}/dalemon/tag/:tag?`, async (req, res) => {
+            let tag = req.params.tag ?? '';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new ETtodayNewsCrawler(services);
+            let data = await crawler.getDalemonNewsByTag(tag, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.ettoday}/dalemon/editor/:editor?`, async (req, res) => {
+            let editor = req.params.editor ?? '';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new ETtodayNewsCrawler(services);
+            let data = await crawler.getDalemonNewsByEditor(editor, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
     }
 }
