@@ -6,7 +6,6 @@ import { EBCNewsRouter } from './news/ebc/router';
 import { FTVNewsNewsRouter } from './news/ftv/router';
 import { TBSNewsRouter } from './news/tbs/router';
 import { TTVNewsRouter } from './news/ttv/router';
-import { RocGovNewsRouter } from './news/roc/router';
 import { TVBSNewsRouter } from './news/tvbs/router';
 import { SETNewsRouter } from './news/setn/router';
 import { NextEraNewsRouter } from './news/next_era/router';
@@ -69,9 +68,6 @@ export const addRouters = (services: ServiceContext) => {
     // 其他新聞
     OthersNewsRouter.router(services);
 
-    // 中華民國官方媒體 (中央通訊社CNA、Rti中央廣播電台)
-    RocGovNewsRouter.router(services);
-
     // 三立新聞
     SETNewsRouter.router(services);
 
@@ -81,7 +77,7 @@ export const addRouters = (services: ServiceContext) => {
     // 風傳媒
     StormNewsRouter.router(services);
 
-    // 公廣集團 (華視新聞、公視新聞)
+    // 公廣集團 (華視新聞、公視新聞、中央通訊社CNA、Rti中央廣播電台)
     TBSNewsRouter.router(services);
     
     // 科技3C、科學新聞
