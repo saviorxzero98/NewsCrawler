@@ -1,9 +1,11 @@
 import { ServiceContext } from "../../../services/service";
 import { FeedBuilder } from "../../../feeds/feedBuilder";
-import { YahooNewsCrawler } from "./yahooNews";
+import { YahooNewsCrawler } from "./yahoo";
+import { YahooEDHNewsCrawler } from "./edh";
 
 const path = {
-    yahoo: 'yahoo.tw'
+    yahoo: 'yahoo.tw',
+    edh: 'edh'
 }
 
 export class YahooTwNewsRouter {
@@ -27,7 +29,42 @@ export class YahooTwNewsRouter {
             let opencc = String(req.query.opencc ?? '');
             
             let crawler = new YahooNewsCrawler(services);
-            let data = await crawler.getRssNews(category, limit);
+            let data = await crawler.getNewsFromRSS(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link);
+            feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.yahoo}/sports/:category?`, async (req, res) => {
+            let category = req.params.category ?? '';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+            
+            let crawler = new YahooNewsCrawler(services);
+            let data = await crawler.getSportNews(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link);
+            feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.yahoo}/stock/:category?`, async (req, res) => {
+            let category = req.params.category ?? 'news';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+            
+            let crawler = new YahooNewsCrawler(services);
+            let data = await crawler.getStockNews(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link);
+            feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.edh}`, async (req, res) => {
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+            
+            let crawler = new YahooEDHNewsCrawler(services);
+            let data = await crawler.getNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
             res.send(feedBuilder.create());

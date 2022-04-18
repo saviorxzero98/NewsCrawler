@@ -2,8 +2,16 @@ import { crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
 
-const rootUrl = 'https://tw.news.yahoo.com';
-const title = 'Yahoo奇摩新聞';
+const rootUrls = {
+    news: 'https://tw.news.yahoo.com',
+    sports: 'https://tw.sports.yahoo.com',
+    stock: 'https://tw.stock.yahoo.com'
+};
+const titles = {
+    news: 'Yahoo奇摩新聞',
+    sports: 'Yahoo!運動',
+    stock: 'Yahoo!股市'
+};
 
 const categoryMap = {
     all: '',
@@ -61,6 +69,25 @@ const sourceMap = {
     celebrity: 'celebrity.yahoo.tw',
     stock: 'tw.stock.yahoo.com'
 };
+const sportsMap = {
+    news: '',
+    nba: 'NBA',
+    mlb: 'MLB',
+    cpbl: '中華職棒',
+    npb: '日本職棒',
+    basketball: '籃球',
+    soccer: '足球',
+    golf: '高爾夫',
+    f1: 'F1賽車'
+}
+const stockMap = {
+    'news': '',
+    'intl-markets': '國際財經',
+    'personal-finance': '理財',
+    'funds-news': '基金',
+    'column': '專欄',
+    'research': '研究'
+}
 
 export class YahooNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
@@ -72,14 +99,14 @@ export class YahooNewsCrawler extends NewsCrawler {
             category = '所有類別';
         }
 
-        let url = `${rootUrl}/${encodeURIComponent(category)}/archive`;
+        let url = `${rootUrls.news}/${encodeURIComponent(category)}/archive`;
         
         if (source) {
             if (sourceMap[source]) {
                 source = sourceMap[source];
             }
 
-            url = `${rootUrl}/${source}--${encodeURIComponent(category)}/archive`;
+            url = `${rootUrls.news}/${source}--${encodeURIComponent(category)}/archive`;
         }
 
         let crawler = {
@@ -87,7 +114,7 @@ export class YahooNewsCrawler extends NewsCrawler {
             callback: ($, i) => {
                 let title = $(i).find('h3').text().trim();
                 let description = $(i).find('p').text();
-                let link = rootUrl + $(i).find('a').attr('href');
+                let link = rootUrls.news + $(i).find('a').attr('href');
                 let image =  $(i).find('img').attr('src') ?? '';
 
                 return {
@@ -117,14 +144,14 @@ export class YahooNewsCrawler extends NewsCrawler {
         });
          
         return {
-            title: `${title} ${categoryMap[category] ?? ''}`,
+            title: `${titles.news} ${categoryMap[category] ?? ''}`,
             link: url,
             items: list
         };
     }
 
-    public async getRssNews(rss: string = '', count: number = 15) {
-        let url = `${rootUrl}/rss`;
+    public async getNewsFromRSS(rss: string = '', count: number = 15) {
+        let url = `${rootUrls.news}/rss`;
         if (rss) {
             url = `${url}/${rss}`;
         }
@@ -146,8 +173,54 @@ export class YahooNewsCrawler extends NewsCrawler {
             
         return {
             title: `${title}`,
-            link: rootUrl,
+            link: rootUrls.news,
             items: items
+        };
+    }
+
+    public async getSportNews(category: string = '', count: number = 15) {
+        let url = `${rootUrls.sports}`;
+        if (category && sportsMap[category]) {
+            url = `${url}/${category}`;
+        }
+        url = `${url}/rss`;
+
+        let { list } = await this.getNewsListFromRSS({
+            url,
+            count
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.image = newsMeta.image;
+                return item;
+            }
+        });
+
+        return {
+            title: `${titles.sports} ${sportsMap[category]}`,
+            link: rootUrls.sports,
+            items: items
+        };
+    }
+
+    public async getStockNews(category: string = 'news', count: number = 15) {
+        let url = `${rootUrls.stock}/rss?category=news`;
+        if (category && stockMap[category]) {
+            url = `${rootUrls.stock}/rss?category=${category}`;
+        }
+
+        let { list } = await this.getNewsListFromRSS({
+            url,
+            count
+        });
+
+        return {
+            title: `${titles.stock} ${stockMap[category]}`,
+            link: rootUrls.sports,
+            items: list
         };
     }
 }
