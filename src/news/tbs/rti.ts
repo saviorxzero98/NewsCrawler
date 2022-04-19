@@ -27,6 +27,35 @@ export class RtiNewsCrawler extends NewsCrawler {
             categoryName = categoryMap[category];
         }
 
+        let items = await this.getNewsItems(url, count);
+
+        return {
+            title: `${title} ${categoryName}`,
+            link: url,
+            items: items,
+        };
+    }
+
+    public async getNewsByTag(tag: string = '', count: number = 15) {
+        if (tag) {
+            let url = `${rootUrl}/news/list/tag/${encodeURIComponent(tag)}`;
+
+            let items = await this.getNewsItems(url, count);
+
+            return {
+                title: `${title} ${tag}`,
+                link: url,
+                items: items,
+            };
+        }
+        else {
+            return await this.getNews('', count);
+        }
+    }
+
+
+
+    private async getNewsItems(url: string, count: number = 15) {
         let crawler = {
             selector: 'section.newslist-box ul li',
             callback: ($, i) => {
@@ -66,10 +95,6 @@ export class RtiNewsCrawler extends NewsCrawler {
             }
         });
 
-        return {
-            title: `${title} ${categoryName}`,
-            link: url,
-            items: items,
-        };
+        return items;
     }
 }

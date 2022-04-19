@@ -54,13 +54,36 @@ export class TBSNewsRouter {
         });
 
         // Rti 中央廣播電台
-        services.app.get(`/${path.rti}/:category?`, async (req, res) => {
+        services.app.get(`/${path.rti}`, async (req, res) => {
+             let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+            
+            let crawler = new RtiNewsCrawler(services);
+            let data = await crawler.getNews('', limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.rti}/category/:category?`, async (req, res) => {
             let category = req.params.category ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let opencc = String(req.query.opencc ?? '');
             
             let crawler = new RtiNewsCrawler(services);
             let data = await crawler.getNews(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.rti}/tag/:tag?`, async (req, res) => {
+            let tag = req.params.tag ?? '';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+            
+            let crawler = new RtiNewsCrawler(services);
+            let data = await crawler.getNewsByTag(tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());
