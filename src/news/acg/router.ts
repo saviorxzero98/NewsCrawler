@@ -6,6 +6,7 @@ import { QooAppNewsRouter } from './qooapp/router';
 import { GamebaseNewsRouter } from './gamebase/router';
 import { KenshinNewsRouter } from './kenshin/router';
 import { GammeNewsRouter } from './gamme/router';
+import { MoelongNewsRouter } from './moelong/router';
 
 
 export class ACGNewsRouter {
@@ -24,6 +25,9 @@ export class ACGNewsRouter {
 
         // 劍心．回憶
         KenshinNewsRouter.router(services);
+
+        // 萌朧動漫情報網 
+        MoelongNewsRouter.router(services);
 
         // QooApp
         QooAppNewsRouter.router(services);
