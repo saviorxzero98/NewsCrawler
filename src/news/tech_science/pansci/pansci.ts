@@ -4,18 +4,6 @@ import { NewsCrawler } from '../../newsCrawler';
 
 
 const rootUrl = 'https://pansci.asia';
-//const title = '泛科學';
-
-const categoryMap = {
-    'news': '',
-    'science': '科學',
-    'technology': '科技',
-    'environment': '環境',
-    'medicine': '醫學',
-    'investment': '投資',
-    'healthy': '健康',
-    'master': '明日專欄'
-}
 
 export class PansciNewsCrawler extends NewsCrawler {
     constructor(services: ServiceContext) {
@@ -25,7 +13,7 @@ export class PansciNewsCrawler extends NewsCrawler {
     public async getNews(category: string = '', count: number = 15) {      
         let url = `${rootUrl}`;
         if (category) {
-            url = `${rootUrl}/archives/category/type/${category}`;
+            url = `${rootUrl}/archives/category/type/${encodeURIComponent(category)}`;
         }
         url = `${url}/feed`;
 
