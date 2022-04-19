@@ -35,7 +35,7 @@ export class NownewsNewsCrawler extends NewsCrawler {
        
         category = this.tryGetMapKey(categoryMap, category);
         if (category && categoryMap[category]) {
-            let url = `${rootUrl}/cat/${category}`;
+            url = `${rootUrl}/cat/${category}`;
             categoryName= categoryMap[category];
 
             if (subCategory) {
