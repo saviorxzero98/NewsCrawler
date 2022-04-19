@@ -25,7 +25,7 @@ export class NextEraNewsRouter {
         });
 
         services.app.get(`/${path.nexttv}/:category?`, async (req, res) => {
-            let category = req.params.category ?? '';
+            let category = req.params.category ?? 'OnlineLatestNews';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let opencc = String(req.query.opencc ?? '');
 

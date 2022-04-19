@@ -23,9 +23,48 @@ export class ERANewsCrawler extends NewsCrawler {
         super(services);
     }
 
-    public async getNews(category: string = 'political', count: number = 15) {
-        let url = `${rootUrl}/EraNews/Home/${category}`;
+    public async getNews(category: string = '', count: number = 15) {
+        if (categoryMap && categoryMap[category]) {
+            return await this.getNewsByCategory(category, count);
+        }
         
+        
+        let url = `${rootUrl}/EraNews/UpToDate`;
+        
+        let crawler = {
+            selector: 'div.jsnews_info ul.clearfix li',
+            callback: ($, i) => {
+                let title = $(i).find('div.tib-desc p.tib-title a').text();
+                let link = $(i).find('div.tib-txt a').attr('href');
+                let image = $(i).find('img').attr('src');
+                let description = $(i).find('p.cutbrief a').text();
+                let pubDate = $(i).find('div.tib-date p').attr('data-id');
+
+                return {
+                    title,
+                    link,
+                    image,
+                    description,
+                    date: new Date(pubDate)
+                };
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            count,
+            crawlers: [ crawler ]
+        });
+
+        return {
+            title: `${title} 最新`,
+            link: url,
+            items: list,
+        };
+    }
+ 
+    public async getNewsByCategory(category: string = 'political', count: number = 15) {
+        let url = `${rootUrl}/EraNews/Home/${category}`;
+
         let crawler = {
             selector: 'div.newslist ul.clearfix li',
             callback: ($, i) => {

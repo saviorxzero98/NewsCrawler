@@ -5,6 +5,7 @@ const rootUrl = 'https://www.nexttv.com.tw';
 const title = '壹電視新聞';
 
 const categoryMap = {
+    OnlineLatestNews: '最新',
     Politics: '政治',
     LocalNews: '地方',
     Society: '社會',
@@ -23,8 +24,13 @@ export class NextTVNewsCrawler extends NewsCrawler {
     }
     
     public async getNews(category: string = 'OnlineLatestNews', count: number = 15) {
-        let url = `${rootUrl}/NextTV/News/Home/${category}`;
-        
+        let url = `${rootUrl}/NextTV/News/Home/OnlineLatestNews`;
+        let categoryName = '最新';
+        if (category && categoryMap[category])  {
+            url = `${rootUrl}/NextTV/News/Home/${categoryMap}`;
+            categoryName = categoryMap[category];
+        }
+
         let crawler = {
             selector: 'ul.yxw_list li',
             callback: ($, i) => {
@@ -50,7 +56,7 @@ export class NextTVNewsCrawler extends NewsCrawler {
         });
             
         return {
-            title: `${title} ${categoryMap[category]}`,
+            title: `${title} ${categoryName}`,
             link: url,
             items: list,
         };
