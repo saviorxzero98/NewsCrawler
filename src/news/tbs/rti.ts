@@ -53,8 +53,6 @@ export class RtiNewsCrawler extends NewsCrawler {
         }
     }
 
-
-
     private async getNewsItems(url: string, count: number = 15) {
         let crawler = {
             selector: 'section.newslist-box ul li',
@@ -86,7 +84,7 @@ export class RtiNewsCrawler extends NewsCrawler {
                 item.image = newsMeta.image ?? item.image;
 
                 let pubDate = content('section.news-detail-box li.date').text();
-                pubDate = pubDate.replace('\n', '').replace('時間：', '').trim();
+                pubDate = this.parsePubDate(pubDate);
                 item.date = new Date(pubDate);
 
                 //let description = content('article').html();
@@ -96,5 +94,16 @@ export class RtiNewsCrawler extends NewsCrawler {
         });
 
         return items;
+    }
+
+    private parsePubDate(text: string): string {
+        // YYYY-MM-DD HH:mm:ss
+        const pattern = /(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2})/g;
+        let matchList = text.match(pattern);
+
+        if (matchList.length != 0) {
+            return matchList[0];
+        }
+        return '';
     }
 }
