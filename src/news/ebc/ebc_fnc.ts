@@ -31,8 +31,14 @@ export class EBCFncNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(category: string = '', count: number = 15) {
-        let url = `${rootUrl}/fncnews/${category}`;
-        let categoryName = categoryMap[category] ?? '最新';
+        let url = `${rootUrl}/fncnews`;
+        let categoryName = '最新';
+
+        category = this.tryGetMapKey(categoryMap, category);
+        if (category && categoryMap[category]) {
+            url = `${rootUrl}/fncnews/${category}`;
+            categoryName = categoryMap[category];
+        }
 
         let crawler = {
             selector: 'div.fncnews-list-box div.white-box',

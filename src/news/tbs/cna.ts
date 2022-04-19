@@ -28,14 +28,18 @@ export class CNANewsCrawler extends NewsCrawler {
 
     
     public async getNews(category: string = 'aall', count: number = 15) {
-        let url = '';
-        let categoryName = '';
+        let url = `${rootUrl}/list/aall.aspx`;
+        let categoryName = categoryMap['aall'];
         if (/^\d+$/.test(category)) {
             url = `${rootUrl}/topic/newstopic/${category}.aspx`;
         } 
         else {
-            categoryName = ` ${categoryMap[category]}`;
-            url = `${rootUrl}/list/${category}.aspx`;
+            category = this.tryGetMapKey(categoryMap, category);
+
+            if (category && categoryMap[category]) {
+                categoryName = ` ${categoryMap[category]}`;
+                url = `${rootUrl}/list/${category}.aspx`;
+            }
         }
 
         let crawler = {

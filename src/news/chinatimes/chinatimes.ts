@@ -33,7 +33,9 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
     public async getNews(category: string = 'realtimenews', subcategory: string = '', count: number = 15) {
         let url = `${rootUrl}/realtimenews/?chdtv`;
         let categoryName = '';
-        if (category) {
+        
+        category = this.tryGetMapKey(categoryMap, category);
+        if (category && categoryMap[category]) {
             categoryName = categoryMap[category];
 
             if (subcategory) {

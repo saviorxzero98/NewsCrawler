@@ -30,10 +30,19 @@ export class NownewsNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(category: string = 'breaking', subCategory: string = '', count: number = 15) {
-        let url = `${rootUrl}/cat/${category}`;
-        if (subCategory) {
-            url = `${url}/${subCategory}`;
+        let url = `${rootUrl}/cat/breaking`;
+        let categoryName = categoryMap['breaking'];
+       
+        category = this.tryGetMapKey(categoryMap, category);
+        if (category && categoryMap[category]) {
+            let url = `${rootUrl}/cat/${category}`;
+            categoryName= categoryMap[category];
+
+            if (subCategory) {
+                url = `${url}/${subCategory}`;
+            }
         }
+        
 
         let crawlers = [
             this.getTopNewsCrawler(),
@@ -62,7 +71,7 @@ export class NownewsNewsCrawler extends NewsCrawler {
         });
     
         return {
-            title: `${title} ${categoryMap[category] ?? ''}`,
+            title: `${title} ${categoryName}`,
             link: url,
             items: items
         };

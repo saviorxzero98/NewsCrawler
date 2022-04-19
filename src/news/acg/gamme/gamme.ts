@@ -39,8 +39,10 @@ export class GammeNewsCrawler extends NewsCrawler {
     public async getNews(category: string = '', count: number = 15) {
         let url = newsRootUrl;
         let categoryName = '';
+
         if (category) {
             url = `${url}/category/${category}`;
+            category = this.tryGetMapKey(newsCategoryMap, category) || category;
             categoryName = newsCategoryMap[category] ?? '';
         }
         url = `${url}/feed`;

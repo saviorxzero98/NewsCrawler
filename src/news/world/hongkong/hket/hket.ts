@@ -22,6 +22,8 @@ export class HKETNewsCrawler extends NewsCrawler {
 
     public async getNews(category: string = 'hongkong', count: number = 15) {
         let categoryName = '香港';
+
+        category = this.tryGetMapKey(rssMap, category);
         if (category && rssMap[category]) {
             categoryName = rssMap[category];
         }

@@ -5,7 +5,7 @@ import { NewsCrawler } from '../newsCrawler';
 const rootUrl = 'https://news.cts.com.tw';
 const title = '華視新聞';
 
-const channelMap = {
+const pageMap = {
     real: '即時',
     weather: '氣象',
     politics: '政治',
@@ -26,7 +26,14 @@ export class CTSNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(page: string = 'real', count: number = 15) {
-        let url = `${rootUrl}/${page}/index.html`;
+        let url = `${rootUrl}/real/index.html`;
+        let pageName = pageMap['real'];
+
+        page = this.tryGetMapKey(pageMap, page);
+        if (page && pageMap[page]) {
+            url = `${rootUrl}/${page}/index.html`;
+            pageName = pageMap[page];
+        }
         
         let crawler = {
             selector: 'div.newslist-container a',
@@ -69,7 +76,7 @@ export class CTSNewsCrawler extends NewsCrawler {
         });
         
         return {
-            title: `${title} ${channelMap[page]}`,
+            title: `${title} ${pageName}`,
             link: url,
             items: items,
         };

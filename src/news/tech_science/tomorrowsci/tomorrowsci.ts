@@ -24,8 +24,9 @@ export class TomorrowSciNewsCrawler extends NewsCrawler {
     
     public async getNews(category: string = 'news', count: number = 15) {      
         let url = `${rootUrl}/news`;
-        let categoryName = '';
+        let categoryName = categoryMap['news'];
 
+        category = this.tryGetMapKey(categoryMap, category);
         if (category &&  categoryMap[category]) {
             url = `${rootUrl}/${category}`;
             categoryName = categoryMap[category];

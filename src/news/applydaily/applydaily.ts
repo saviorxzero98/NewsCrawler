@@ -30,6 +30,13 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
 
     public async getNews(category: string = 'new', count: number = 15) {
         let url = `${rootUrl}/realtime/${category}`;
+        let categoryName = '最新';
+
+        category = this.tryGetMapKey(categoryMap, category);
+        if (category && categoryMap[category]) {
+            url = `${rootUrl}/realtime/${category}`;
+            categoryName = categoryMap[category];
+        }
 
         let crawler = {
             selector: 'div#section-body div.flex-feature',
@@ -65,7 +72,7 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
         });
          
         return {
-            title: `${title} ${categoryMap[category]}`,
+            title: `${title} ${categoryName}`,
             link: url,
             items: items
         };

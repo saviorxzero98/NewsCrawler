@@ -32,7 +32,8 @@ export class BCCNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(rss: string = 'z2', count: number = 15) {
-        if (rssMap[rss]) {
+        rss = this.tryGetMapKey(rssMap, rss);
+        if (rss && rssMap[rss]) {
             let url = `${rootUrl}/archives/category/${rss}/feed`;
 
             let { list } = await this.getNewsListFromRSS({

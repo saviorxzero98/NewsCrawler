@@ -62,13 +62,22 @@ export class GVMNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(category: string = 'newest', count: number = 15) {
-        let url = `${rootUrl}/${category}`;
-        let categoryName = categoryMap[category];
-        if (category !== 'newest' && category !== 'recommend') {
-            url = `${rootUrl}/category/${category}`;
-        }
+        let url = `${rootUrl}/newest`;
+        let categoryName= categoryMap['newest'];
 
+        category = this.tryGetMapKey(categoryMap, category);
+        if (category && categoryMap[category]) {
+            categoryName = categoryMap[category];
+
+            if (category !== 'newest' && category !== 'recommend') {   
+                url = `${rootUrl}/category/${category}`;
+            }
+            else {
+                url = `${rootUrl}/${category}`;
+            }
+        }
         
+
         let crawler = {
             selector: 'div#article_list div.article-list-item',
             callback: ($, i) => {

@@ -13,8 +13,8 @@ export class ReutersZhNewsCrawler extends NewsCrawler {
     public async getNews(category: string = '', count: number = 15)  {
         let url = `${rootUrl}/news`;
         if (category) {
-            if (category === 'investing' || category === 'life') {
-                url =  `${rootUrl}/${category}`;
+            if (category.toLowerCase() === 'investing' || category.toLowerCase() === 'life') {
+                url =  `${rootUrl}/${category.toLowerCase()}`;
             }
             else {
                 url = `${url}/${category}`;

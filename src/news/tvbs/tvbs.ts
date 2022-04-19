@@ -28,15 +28,13 @@ export class TVBSNewsCrawler extends NewsCrawler {
     }
     
     public async getNews(category: string = '', count: number = 15) {
-        let url = '';
-        let categoryName = '';
+        let url = `${rootUrl}/realtime/`;
+        let categoryName = categoryMap['realtime'];
+
+        category = this.tryGetMapKey(categoryMap, category);
         if (category !== 'realtime') {
             url = `${rootUrl}/realtime/${category}`;
-            categoryName = categoryMap[category] || '';
-        }
-        else {
-            url = `${rootUrl}/realtime/`;
-            categoryName = categoryMap['realtime'];
+            categoryName = categoryMap[category];
         }
 
         let crawler = {

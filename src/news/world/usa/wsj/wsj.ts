@@ -111,7 +111,16 @@ export class WSJNewsCrawler extends NewsCrawler {
         let mapInfo = languageMap[language];
         let title = mapInfo.title;
         let rootUrl = mapInfo.rootUrl;
-        let rssInfo = mapInfo.rssMap[category] ?? Object.values(mapInfo.rssMap)[0];
+        let rssInfo: any;
+
+        category = this.tryGetMapKey(mapInfo.rssMap, category);
+        if (category && mapInfo.rssMap[category]) {
+            rssInfo = mapInfo.rssMap[category];
+        }
+        else {
+            rssInfo = Object.values(mapInfo.rssMap)[0];
+        }
+        
         let url = `${rootUrl}/${rssInfo.rss}`;
         let categoryName = rssInfo.name ?? '';
 

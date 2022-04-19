@@ -16,7 +16,14 @@ export class NBATaiwanNewsCrawler extends NewsCrawler {
     }
     
     public async getNews(category: string = 'newest', count: number = 15) {
-        let url = `${rootUrl}/nba/cate/6754/-1/${category}`;
+        let url = `${rootUrl}/nba/cate/6754/-1/newest`;
+        let categoryName = categoryMap['newest'];
+
+        category = this.tryGetMapKey(categoryMap, category);
+        if (category && categoryMap[category]) {
+            url = `${rootUrl}/nba/cate/6754/-1/${category}`;
+            categoryName = categoryMap[category];
+        }
 
         let crawler = {
             selector: 'div#news_list_body dt',
@@ -57,7 +64,7 @@ export class NBATaiwanNewsCrawler extends NewsCrawler {
         });
 
         return {
-            title: `${title} ${categoryMap[category]}`,
+            title: `${title} ${categoryName}`,
             link: url,
             items: items,
         };

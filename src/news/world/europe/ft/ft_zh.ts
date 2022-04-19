@@ -39,8 +39,16 @@ export class FTZhNewsCrawler extends NewsCrawler {
 
         if (category) {
             category = category.toLowerCase().split('-').join('/');
-            url = `${url}/rss/${category}`;
-            categoryName = mapInfo.rssMap[category] ?? '';
+
+            category = this.tryGetMapKey(mapInfo.rssMap, category);
+            if (category && mapInfo.rssMap[category]) {
+                url = `${url}/rss/${category}`;
+                categoryName = mapInfo.rssMap[category];
+            }
+            else {
+                url = `${url}/rss/news`;
+                categoryName = mapInfo.rssMap['news'];
+            }
         }
 
         let { list } = await this.getNewsListFromRSS({

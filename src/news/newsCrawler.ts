@@ -185,4 +185,24 @@ export abstract class NewsCrawler {
             return rssData;
         }
     }
+
+
+    /** 取得 Map Value */
+    protected tryGetMapValue(map: any, key: string) {
+        if (map && key) {
+            let keyname = key.toLowerCase();
+            let value = map[Object.keys(map).find(k => k.toLowerCase() === keyname)];
+            return value;
+        }
+        return null;
+    }
+
+    /** 取得 Map Value */
+    protected tryGetMapKey(map: any, key: string) {
+        if (map && key) {
+            let keyname = key.toLowerCase();
+            return Object.keys(map).find(k => k.toLowerCase() === keyname);
+        }
+        return '';
+    }
 }

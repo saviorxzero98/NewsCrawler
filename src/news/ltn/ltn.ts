@@ -25,7 +25,8 @@ export class LTNNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(rss: string = 'all', count: number = 15) {
-        if (rssMap[rss]) {
+        rss = this.tryGetMapKey(rssMap, rss);
+        if (rss && rssMap[rss]) {
             let url = `${rootUrl}/rss/${rss}.xml`;
 
             let { list } = await this.getNewsListFromRSS({

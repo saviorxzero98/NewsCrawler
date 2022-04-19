@@ -19,8 +19,9 @@ export class NowNewsCrawler extends NewsCrawler {
     public async getNews(category: string = '', id: string = '', count: number = 15) {
         let url = `${rootUrl}/home`;
 
-        if (categoryMap[category]) {
-            url = `${rootUrl}/home/${category}/detail?catCode=${categoryMap[category]}&topicId=${id}`;
+        let cate = this.tryGetMapKey(categoryMap, category);
+        if (cate && categoryMap[cate]) {
+            url = `${rootUrl}/home/${cate}/detail?catCode=${categoryMap[cate]}&topicId=${id}`;
         }
         else {
             if (category) {

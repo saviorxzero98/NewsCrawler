@@ -18,11 +18,17 @@ export class FTVNewsCrawler extends NewsCrawler {
         super(services);
     }
     public async getNews(tag: string = 'realtime', count: number = 15) {
-        if (tag !== 'realtime' && tag !== 'popular') {
+        if (tag && tag.toLowerCase() !== 'realtime' && tag.toLowerCase() !== 'popular') {
             return this.getNewsByTag(tag, count);
         }
-        let url = `${rootUrl}/${tag}`;
 
+        let url = `${rootUrl}/realtime`;
+        let tagName = categoryMap['realtime'];
+        tag = this.tryGetMapKey(categoryMap, tag);
+        if (tag) {
+            url = `${rootUrl}/${tag}`;
+            tagName = categoryMap[tag];
+        }
 
         let crawler = {
             selector: 'div.news-block',
@@ -59,7 +65,7 @@ export class FTVNewsCrawler extends NewsCrawler {
         });
 
         return {
-            title: `${title} ${categoryMap[tag]}`,
+            title: `${title} ${tagName}`,
             link: url,
             items: items,
         };

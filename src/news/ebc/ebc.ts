@@ -35,14 +35,21 @@ export class EBCNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(category: string = 'realtime', count: number = 15) {
-        let url = '';
-        if (category === 'realtime' || category === 'hot') {
-            url = `${rootUrl}/${category}`;
-        }
-        else {
-            url = `${rootUrl}/news/${category}`;
-        }
+        let url = `${rootUrl}/realtime`;
+        let categoryName = categoryMap['realtime'];
 
+        category = this.tryGetMapKey(categoryMap, category);
+        if (category) {
+            categoryName = categoryMap[category];
+
+            if (category === 'realtime' || category === 'hot') {
+                url = `${rootUrl}/${category}`;
+            }
+            else {
+                url = `${rootUrl}/news/${category}`;
+            }
+        }
+        
         let crawler = {
             selector: 'div.news-list-box div.white-box',
             callback: ($, i) => {

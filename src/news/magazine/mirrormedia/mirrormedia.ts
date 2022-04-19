@@ -63,6 +63,7 @@ export class MirrorMediaNewsCrawler  extends NewsCrawler {
         let url = `${rootUrl}/section/news`;
         let sectionName = sectionMap['news'];
 
+        section = this.tryGetMapKey(sectionMap, section);
         if (section && sectionMap[section]) {
             url = `${rootUrl}/section/${section}`;
             sectionName = sectionMap[section];
@@ -75,6 +76,7 @@ export class MirrorMediaNewsCrawler  extends NewsCrawler {
         let url = `${rootUrl}/category/news`;
         let categoryName = categoryMap['news'];
 
+        category = this.tryGetMapKey(categoryMap, category);
         if (category && categoryMap[category]) {
             url = `${rootUrl}/category/${category}`;
             categoryName = categoryMap[category];

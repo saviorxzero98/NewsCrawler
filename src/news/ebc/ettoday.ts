@@ -75,7 +75,8 @@ export class ETtodayNewsCrawler extends NewsCrawler {
     public async getNews(rss: string = 'realtime', count: number = 15) {      
         let list = [];
 
-        if (rssMap[rss]) {
+        rss = this.tryGetMapKey(rssMap, rss);
+        if (rss && rssMap[rss]) {
             let url = `${rssRootUrl}/${rss}`;
 
             let { list } = await this.getNewsListFromRSS({

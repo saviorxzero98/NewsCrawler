@@ -22,7 +22,8 @@ export class CtiTVNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(rss: string = 'instant-overview', count: number = 15) {
-        if (rssMap[rss]) {
+        rss = this.tryGetMapKey(rssMap, rss);
+        if (rss && rssMap[rss]) {
             let url = `${rootUrl}/category/${rss}/feed`;
 
             let { list } = await this.getNewsListFromRSS({

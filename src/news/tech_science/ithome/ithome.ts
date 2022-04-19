@@ -22,7 +22,7 @@ export class IThomeNewsCrawler extends NewsCrawler {
         super(services);
     }
     
-    public async getNews(count: number = 15) {      
+    public async getNews(count: number = 15) {
         let url = `${rootUrl}/rss`;
 
         let { list, title } = await this.getNewsListFromRSS({
@@ -47,9 +47,12 @@ export class IThomeNewsCrawler extends NewsCrawler {
     }
 
     public async getNewsByCategory(category: string = 'news', count: number = 15) {      
-        let url = `${rootUrl}/${category}`;
-        let categoryName = '';
+        let url = `${rootUrl}/news`;
+        let categoryName = categoryMap['news'];
+        
+        category = this.tryGetMapKey(categoryMap, category);
         if (category && categoryMap[category]) {
+            url = `${rootUrl}/${category}`;
             categoryName = categoryMap[category];
         }
         else {

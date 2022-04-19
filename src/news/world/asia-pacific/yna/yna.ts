@@ -74,8 +74,15 @@ export class YNANewsCrawler extends NewsCrawler {
         let lang = this.getLanguage(language);
         let mapInfo = languageMap[lang];
         let title = mapInfo.title;
-        let url = `${mapInfo.rssUrl}/RSS/${category}.xml`;
-        let categoryName = mapInfo.rssMap[category];
+
+        let url = `${mapInfo.rssUrl}/RSS/news.xml`;
+        let categoryName = mapInfo.rssMap['news'];
+
+        category = this.tryGetMapKey(mapInfo.rssMap, category);
+        if (category && mapInfo.rssMap[category]) {
+            url = `${mapInfo.rssUrl}/RSS/${category}.xml`;
+            categoryName = mapInfo.rssMap[category];
+        }
 
         if (categoryName) {
             let { list } = await this.getNewsListFromRSS({

@@ -66,14 +66,15 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
         let url = rootUrls.gnn;
         let categoryName = '';
 
+        category = this.tryGetMapKey(categoryMap, category) || this.tryGetMapKey(subcategoryMap, category)
         if (category) {
-            if (categoryMap[category.toLowerCase()]) {
+            if (categoryMap[category]) {
                 url = `${rootUrls.gnn}/index.php?k=${category}`;
-                categoryName = categoryMap[category.toLowerCase()];
+                categoryName = categoryMap[category];
             }
-            else if (subcategoryMap[category.toLowerCase()]) {
+            else if (subcategoryMap[category]) {
                 url = `${rootUrls.acg}/news.php?p=${category}`;
-                categoryName = subcategoryMap[category.toLowerCase()];
+                categoryName = subcategoryMap[category];
             }
         }
 

@@ -41,7 +41,7 @@ export class NewtalkNewsCrawler extends NewsCrawler {
         let url = `${rootUrl}/news/summary/today`;
         let categoryName = '總覽';
         if (category) {
-            if (category === 'topics' &&
+            if (category.toLowerCase() === 'topics' &&
                 topic &&
                 /^\d+$/.test(topic)) {
                 categoryName = categoryMap['topics'] || '';

@@ -42,6 +42,7 @@ export class MingPaoNewsCrawler extends NewsCrawler {
 
     public async getInsNews(category: string = 'all', count: number = 15) {
         let categoryName = '';
+        category = this.tryGetMapKey(rssMap.ins, category);
         if (category && rssMap.ins[category]) {
             categoryName = rssMap.ins[category];
         }
@@ -75,12 +76,13 @@ export class MingPaoNewsCrawler extends NewsCrawler {
 
     public async getPnsNews(category: string = 's00001', count: number = 15) {
         let categoryName = '';
-        if (category && rssMap.ins[category]) {
-            categoryName = rssMap.ins[category];
+        category = this.tryGetMapKey(rssMap.pns, category);
+        if (category && rssMap.pns[category]) {
+            categoryName = rssMap.pns[category];
         }
         else {
             category = 's00001';
-            categoryName = rssMap.ins[category];
+            categoryName = rssMap.pns[category];
         }
 
         let url = `${rootUrl}/rss/pns/${category}.xml`;

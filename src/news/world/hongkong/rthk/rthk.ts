@@ -23,6 +23,7 @@ export class RTHKNewsCrawler extends NewsCrawler {
     public async getNews(category: string = 'local', language: string = '', count: number = 15) {
         let lang = this.getLanguage(language);
 
+        category = this.tryGetMapKey(rssMap, category);
         if (category && rssMap[category]) {
             let categoryName = rssMap[category];
             if (lang !== 'c' || category !== 'greaterchina') {

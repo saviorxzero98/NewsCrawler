@@ -30,6 +30,7 @@ export class GamebaseNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(type: string = 'game', count: number = 15) {
+        type = this.tryGetMapKey(typeMap, type);
         if (typeMap[type]) {
             let typeName = typeMap[type];
             let url = `${apiRootUrl}/api/news/getNewsList`;

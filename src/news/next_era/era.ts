@@ -24,6 +24,7 @@ export class ERANewsCrawler extends NewsCrawler {
     }
 
     public async getNews(category: string = '', count: number = 15) {
+        category = this.tryGetMapKey(categoryMap, category);
         if (categoryMap && categoryMap[category]) {
             return await this.getNewsByCategory(category, count);
         }

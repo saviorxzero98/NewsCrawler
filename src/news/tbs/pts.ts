@@ -38,8 +38,11 @@ export class PTSNewsCrawler extends NewsCrawler {
                 categoryName = categoryMap[category];
             }
             else {
-                url = `${rootUrl}/${category}`;
-                categoryName = categoryMap[category];
+                category = this.tryGetMapKey(categoryMap, category);
+                if (category && categoryMap[category]) {
+                    url = `${rootUrl}/${category}`;
+                    categoryName = categoryMap[category];
+                }
             }
         }
 

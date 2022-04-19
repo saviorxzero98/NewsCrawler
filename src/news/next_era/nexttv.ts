@@ -26,8 +26,10 @@ export class NextTVNewsCrawler extends NewsCrawler {
     public async getNews(category: string = 'OnlineLatestNews', count: number = 15) {
         let url = `${rootUrl}/NextTV/News/Home/OnlineLatestNews`;
         let categoryName = '最新';
+
+        category = this.tryGetMapKey(categoryMap, category);
         if (category && categoryMap[category])  {
-            url = `${rootUrl}/NextTV/News/Home/${categoryMap}`;
+            url = `${rootUrl}/NextTV/News/Home/${category}`;
             categoryName = categoryMap[category];
         }
 
