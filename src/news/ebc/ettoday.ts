@@ -231,6 +231,54 @@ export class ETtodayNewsCrawler extends NewsCrawler {
         };
     }
 
+    public async getPetNews(category: string = '新聞總覽', count: number = 15) {
+        let url = `${rootUrls.pet}/focus/${encodeURIComponent(category)}`;
+
+        let crawler = {
+            selector: 'div.c1 div.clearfix',
+            callback: ($, i) => {
+                let title = $(i).find('h3 a').text();
+                let link = $(i).find('h3 a').attr('href');
+                let image = $(i).find('img').attr('data-original');
+                let description = $(i).find('p.summary').text();
+                
+                return {
+                    title,
+                    link,
+                    image,
+                    description: description,
+                    date: new Date()
+                };
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: crawlerHeaders,
+            count,
+            crawlers: [ crawler ]
+        });
+
+        let items = await this.getNewsDetials({
+            list,
+            headers: crawlerHeaders,
+            callback: (item, content, newsMeta) => {
+                item.description = newsMeta.description;
+                item.image = newsMeta.image;
+                if (newsMeta.pubDate) {
+                    item.date = new Date(newsMeta.pubDate);
+                }
+                return item;
+            }
+        });
+ 
+        return {
+            title: `${title}寵物雲 ${category}`,
+            link: url,
+            items: items,
+        };
+    }
+
+
     public async getDalemonNews(count: number = 15) {
         return await this.getNews('dalemon', count);
     }

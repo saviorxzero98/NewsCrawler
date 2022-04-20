@@ -91,6 +91,18 @@ export class EBCNewsRouter {
             res.send(feedBuilder.create());
         });
 
+        services.app.get(`/${path.ettoday}/pet/:category?`, async (req, res) => {
+            let category = req.params.category ?? '新聞總覽';
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+
+            let crawler = new ETtodayNewsCrawler(services);
+            let data = await crawler.getPetNews(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
         services.app.get(`/${path.ettoday}/dalemon/collection/:collection?`, async (req, res) => {
             let collection = req.params.collection ?? '';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
