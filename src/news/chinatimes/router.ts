@@ -39,12 +39,24 @@ export class ChinaTimesNewsRouter {
             res.send(feedBuilder.create());
         });
 
-        services.app.get(`/${path.ctv}`, async (req, res) => {
+        services.app.get(`/${path.ctv}/news/:category?`, async (req, res) => {
+            let category = req.params.category ?? '生活';
             let limit = Number(req.query.limit ?? services.config.maxRssCount);
             let opencc = String(req.query.opencc ?? '');
             
             let crawler = new CTVNewsCrawler(services);
-            let data = await crawler.getNews(limit);
+            let data = await crawler.getNews(category, limit);
+            let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
+            feedBuilder = feedBuilder.addItems(data.items);
+            res.send(feedBuilder.create());
+        });
+
+        services.app.get(`/${path.ctv}/rss`, async (req, res) => {
+            let limit = Number(req.query.limit ?? services.config.maxRssCount);
+            let opencc = String(req.query.opencc ?? '');
+            
+            let crawler = new CTVNewsCrawler(services);
+            let data = await crawler.getRSSNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
             res.send(feedBuilder.create());

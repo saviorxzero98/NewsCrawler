@@ -69,8 +69,6 @@ export class ChinaTimesNewsCrawler extends NewsCrawler {
             count,
             crawlers: [ crawler ]
         })
-        
-        
 
         return {
             title: `${title} ${categoryName}`,
