@@ -51,7 +51,8 @@ export class GamebaseNewsCrawler extends NewsCrawler {
             let response = await httpClient.post(url, data, crawlerHeaders);
 
             if (response.data.return_code === 0) {
-                let results = response.data.return_msg.list;
+                let results = response.data
+                                      .return_msg.list;
                 let list = results.map((item) => ({
                     title: item.news_title,
                     image: item.news_img,
@@ -63,7 +64,7 @@ export class GamebaseNewsCrawler extends NewsCrawler {
                 return {
                     title: `${title} ${typeName}`,
                     link: newsRootUrl,
-                    items: list
+                    items: list.slice(0, count)
                 };
             }
         }
