@@ -45,7 +45,7 @@ export enum NewsMetaTag {
     twitterImage = 'meta[name="twitter:image"]',
     twitterImageSrc = 'meta[name="twitter:image:src"]',
 
-    pubDate = 'meta[property="article:published_time"] '
+    pubDate = 'meta[property="article:published_time"]'
 }
 
 export type RSSNewsListOptions = {
