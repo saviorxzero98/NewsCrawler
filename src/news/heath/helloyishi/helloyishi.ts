@@ -36,7 +36,7 @@ export class HelloYishiNewsCrawler extends NewsCrawler {
                     return {
                         title,
                         link,
-                        image: image,
+                        image,
                         description: '',
                         date: new Date(),
                     };
