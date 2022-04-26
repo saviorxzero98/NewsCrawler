@@ -6,6 +6,7 @@ import { AljazeeraNewsRouter } from "./aljazeera/router";
 import { SBSNewsRouter } from "./sbs/router";
 import { VisionThaiNewsRouter } from "./visionthai/router";
 import { YNANewsRouter } from "./yna/router";
+import { KyodoNewsZhRouter } from "./kyodonews/router";
 
 export class AsiaPacificNewsRouter {
     public static router(services: ServiceContext) {
@@ -14,6 +15,9 @@ export class AsiaPacificNewsRouter {
 
         // KBS World
         KBSNewsRouter.router(services);
+
+        // 日本共同網
+        KyodoNewsZhRouter.router(services);
 
         // 日本經濟新聞
         NikkeiNewsRouter.router(services);
