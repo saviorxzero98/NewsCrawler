@@ -1,6 +1,6 @@
-import { crawlerHeaders } from '../../../services/httpclient';
-import { NewsCrawler } from '../../newsCrawler';
-import { ServiceContext } from '../../../services/service';
+import { crawlerHeaders } from '../../services/httpclient';
+import { NewsCrawler } from '../newsCrawler';
+import { ServiceContext } from '../../services/service';
 
 
 const rootUrl = 'https://www.mirrormedia.mg';
@@ -120,7 +120,7 @@ export class MirrorMediaNewsCrawler  extends NewsCrawler {
                 item.date =  newsMeta.pubDate;
                 return item;
             }
-        })
+        });
             
         return {
             title: `${title} ${pageName}`,

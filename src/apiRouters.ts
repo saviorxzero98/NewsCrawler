@@ -23,6 +23,7 @@ import { MagazineNewsRouter } from './news/magazine/router';
 import { CollectionNewsRouter } from "./news/collection/router";
 import { TechAndScienceNewsRouter } from "./news/tech_science/router";
 import { OthersNewsRouter } from "./news/others/router";
+import { MirrorMediaNewsNewsRouter } from "./news/mirrormedia/router";
 
 export const addRouters = (services: ServiceContext) => {
 
@@ -55,6 +56,9 @@ export const addRouters = (services: ServiceContext) => {
 
     // 雜誌類 (遠見雜誌、天下雜誌)
     MagazineNewsRouter.router(services);
+
+    // 鏡傳媒 (鏡周刊、鏡新聞)
+    MirrorMediaNewsNewsRouter.router(services);
 
     // 新頭殼
     NewtalkNewsRouter.router(services);
