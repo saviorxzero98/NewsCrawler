@@ -25,6 +25,10 @@ export class LTNNewsCrawler extends NewsCrawler {
     }
 
     public async getNews(rss: string = 'all', count: number = 15) {
+        if (rss === 'health') {
+            return await this.getHealthNews(count);
+        }
+        
         rss = this.tryGetMapKey(rssMap, rss);
         if (rss && rssMap[rss]) {
             let url = `${rootUrl}/rss/${rss}.xml`;
@@ -50,9 +54,6 @@ export class LTNNewsCrawler extends NewsCrawler {
                 link: url,
                 items: items
             };
-        }
-        else if (rss === 'health') {
-            return await this.getHealthNews(count);
         }
 
         return {

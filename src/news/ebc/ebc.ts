@@ -15,6 +15,7 @@ const categoryMap = {
     politics: '政治',
     business: '財經',
     car: '汽車',
+    entertainment: '娛樂',
     star: 'E娛樂',
     world: '國際',
     astrology: '星座',

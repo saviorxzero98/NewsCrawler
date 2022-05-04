@@ -17,7 +17,8 @@ const pageMap = {
     local: '地方',
     general: '綜合',
     arts: '藝文',
-    entertain: '娛樂'
+    entertain: '娛樂',
+    pr: '產業'
 };
 
 export class CTSNewsCrawler extends NewsCrawler {
