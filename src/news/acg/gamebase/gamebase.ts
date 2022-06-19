@@ -61,10 +61,21 @@ export class GamebaseNewsCrawler extends NewsCrawler {
                     link: `${newsRootUrl}/news/detail/${item.news_no}`,
                 }));
 
+                list = list.slice(0, count)
+
+                let items = await this.getNewsDetials({
+                    list,
+                    headers: crawlerHeaders,
+                    callback: (item, content, newsMeta) => {
+                        item.description = newsMeta.description;
+                        return item;
+                    }
+                });
+
                 return {
                     title: `${title} ${typeName}`,
                     link: newsRootUrl,
-                    items: list.slice(0, count)
+                    items: items
                 };
             }
         }
