@@ -90,7 +90,7 @@ export abstract class NewsCrawler {
                    .slice(0, options.count);
     }
 
-    /** 取得 News Detial */
+    /** 取得 News Detial (Parallel) */
     public async getNewsDetials(options: NewsDetialOptions): Promise<Item[]> {
         let items = await Promise.all(
             options.list.map(async (item) => 
@@ -113,6 +113,32 @@ export abstract class NewsCrawler {
             )
         );
         return items;
+    }
+
+    /** 取得 News Detial (Sequence) */
+    public async getNewsDetialsBySequence(options: NewsDetialOptions): Promise<Item[]> {
+        let outList = [];
+        
+        for (let item of options.list) {
+            let outItem = await this.services
+                                    .cache
+                                    .tryGet<Item>(item.link, async () => {
+                                        try {
+                                            let httpClient = new HttpClient();
+                                            let detailResponse = await httpClient.get(item.link, options.headers);
+                                            let content = cheerio.load(detailResponse.data);
+                                            let metaInfo = this.getNewsMetaInfo(content);
+                                            return options.callback(item, content, metaInfo, detailResponse);
+                                        }
+                                        catch (e) {
+                                            //this.services.logger.logError(e);
+                                            this.services.logger.logError(`Get News Detial Error. ${item.link}`);
+                                            return item;
+                                        }
+                                    });
+            outList.push(outItem);
+        }
+        return outList;
     }
 
     private getNewsMetaInfo(content: cheerio.CheerioAPI) {
