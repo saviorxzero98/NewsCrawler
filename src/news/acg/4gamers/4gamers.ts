@@ -34,7 +34,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
             count
         });
 
-        let items = await this.getNewsDetials({
+        let items = await this.getNewsDetialsBySequence({
             list,
             headers: crawlerHeaders,
             callback: (item, content, newsMeta) => {
@@ -67,7 +67,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
                 link: item.canonicalUrl,
             }));
 
-            let items = await this.getNewsDetials({
+            let items = await this.getNewsDetialsBySequence({
                 list,
                 headers: crawlerHeaders,
                 callback: (item, content, newsMeta) => {
@@ -107,7 +107,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
                 link: item.canonicalUrl,
             }));
 
-            let items = await this.getNewsDetials({
+            let items = await this.getNewsDetialsBySequence({
                 list,
                 headers: crawlerHeaders,
                 callback: (item, content, newsMeta) => {
@@ -147,7 +147,7 @@ export class FourGamersNewsCrawler extends NewsCrawler {
                 link: item.canonicalUrl,
             }));
 
-            let items = await this.getNewsDetials({
+            let items = await this.getNewsDetialsBySequence({
                 list,
                 headers: crawlerHeaders,
                 callback: (item, content, newsMeta) => {
