@@ -37,6 +37,7 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
             url = `${rootUrl}/realtime/${category}`;
             categoryName = categoryMap[category];
         }
+        url = `${url}/`;
 
         let crawler = {
             selector: 'div#section-body div.flex-feature',
