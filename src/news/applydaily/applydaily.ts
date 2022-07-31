@@ -43,7 +43,7 @@ export class AppleDailyNewsCrawler extends NewsCrawler {
             selector: 'div#section-body div.flex-feature',
             callback: ($, i) => {
                 let title = $(i).find('span.headline').text();
-                let link = rootUrl + $(i).find('a').attr('href');
+                let link = $(i).find('a').attr('href');
                 let pubDate = $(i).find('div.timestamp').text();
 
                 return {
