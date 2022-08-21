@@ -20,7 +20,7 @@ export class GVMNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 健康遠見
@@ -32,7 +32,7 @@ export class GVMNewsRouter {
             let data = await crawler.getNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.health}/category/:category?`, async (req, res) => {
@@ -44,7 +44,7 @@ export class GVMNewsRouter {
             let data = await crawler.getNewsByCategory(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.health}/tag/:tag?`, async (req, res) => {
@@ -56,7 +56,7 @@ export class GVMNewsRouter {
             let data = await crawler.getNewsByTag(tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

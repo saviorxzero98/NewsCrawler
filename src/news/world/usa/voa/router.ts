@@ -19,7 +19,7 @@ export class VOANewsRouter {
             let data = await crawler.getNews(category, language, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
         services.app.get(`/${path.voa}/:language/rss/:rss?`, async (req, res) => {
             let rss = req.params.rss ?? '';
@@ -31,7 +31,7 @@ export class VOANewsRouter {
             let data = await crawler.getNewsByRss(rss, language, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

@@ -3,7 +3,6 @@ import { FeedBuilder } from "../../../../feeds/feedBuilder";
 import { HKETNewsCrawler } from "./hket";
 
 
-
 const path = {
     hket: 'hket',
 }
@@ -19,7 +18,7 @@ export class HKETNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

@@ -18,7 +18,7 @@ export class FourGamersNewsRouter {
             let data = await crawler.getNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.fourGamers}/category/:category?`, async (req, res) => {
@@ -29,7 +29,7 @@ export class FourGamersNewsRouter {
             let data = await crawler.getNewsByCategory(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.fourGamers}/tag/:tag?`, async (req, res) => {
@@ -40,7 +40,7 @@ export class FourGamersNewsRouter {
             let data = await crawler.getNewsByTag(tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.fourGamers}/topic/:topic?`, async (req, res) => {
@@ -51,7 +51,7 @@ export class FourGamersNewsRouter {
             let data = await crawler.getNewsByTopic(topic, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

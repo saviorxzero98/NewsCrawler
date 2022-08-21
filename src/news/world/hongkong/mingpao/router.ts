@@ -2,7 +2,6 @@ import { ServiceContext } from "../../../../services/service";
 import { FeedBuilder } from "../../../../feeds/feedBuilder";
 import { MingPaoNewsCrawler } from "./mingpao";
 
-
 const path = {
     mingpao: 'mingpao',
 }
@@ -18,7 +17,7 @@ export class MingPaoNewsRouter {
             let data = await crawler.getInsNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.mingpao}/pns/:category?`, async (req, res) => {
@@ -30,7 +29,7 @@ export class MingPaoNewsRouter {
             let data = await crawler.getPnsNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.mingpao}/weather`, async (req, res) => {
@@ -41,7 +40,7 @@ export class MingPaoNewsRouter {
             let data = await crawler.getWeatherNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

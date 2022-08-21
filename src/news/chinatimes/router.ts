@@ -23,7 +23,7 @@ export class ChinaTimesNewsRouter {
             let data = await crawler.getNews(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ctwant}/:category?/:subcategory?`, async (req, res) => {
@@ -36,7 +36,7 @@ export class ChinaTimesNewsRouter {
             let data = await crawler.getNews(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ctv}/news/:category?`, async (req, res) => {
@@ -48,7 +48,7 @@ export class ChinaTimesNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ctv}/rss`, async (req, res) => {
@@ -59,7 +59,7 @@ export class ChinaTimesNewsRouter {
             let data = await crawler.getRSSNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ctitv}/:category?`, async (req, res) => {
@@ -71,7 +71,7 @@ export class ChinaTimesNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

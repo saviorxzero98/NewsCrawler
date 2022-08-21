@@ -30,7 +30,7 @@ export class UDNNewsRouter {
             let data = await crawler.getNews(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 經濟日報
@@ -43,7 +43,7 @@ export class UDNNewsRouter {
             let data = await crawler.getMoneyNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 噓！星聞
@@ -56,7 +56,7 @@ export class UDNNewsRouter {
             let data = await crawler.getStarNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 元氣網
@@ -70,7 +70,7 @@ export class UDNNewsRouter {
             let data = await crawler.getHealthNews(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 轉角國際
@@ -83,7 +83,7 @@ export class UDNNewsRouter {
             let data = await crawler.getGlobalNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 遊戲角落
@@ -96,7 +96,7 @@ export class UDNNewsRouter {
             let data = await crawler.getGameNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 名人堂
@@ -109,7 +109,7 @@ export class UDNNewsRouter {
             let data = await crawler.getOpinionNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // NBA 台灣
@@ -122,7 +122,7 @@ export class UDNNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 世界新聞網
@@ -136,7 +136,7 @@ export class UDNNewsRouter {
             let data = await crawler.getNews(category, language, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

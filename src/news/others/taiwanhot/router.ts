@@ -17,7 +17,7 @@ export class TaiwanHotNewsRouter {
             let data = await crawler.getNewsByCategory(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

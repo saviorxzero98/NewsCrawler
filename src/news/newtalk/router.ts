@@ -19,7 +19,7 @@ export class NewtalkNewsRouter {
             let data = await crawler.getNews(category, topic, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

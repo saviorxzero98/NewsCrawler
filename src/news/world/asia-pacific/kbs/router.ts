@@ -18,7 +18,7 @@ export class KBSNewsRouter {
             let data = await crawler.getNews(category, language, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.kbs}/today/:language?`, async (req, res) => {
@@ -30,7 +30,7 @@ export class KBSNewsRouter {
             let data = await crawler.getTodayNews(language, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

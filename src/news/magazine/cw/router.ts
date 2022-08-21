@@ -17,7 +17,7 @@ export class CWNewsRouter {
             let data = await crawler.getTodayNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.cw}/channel/:channel?`, async (req, res) => {
@@ -29,7 +29,7 @@ export class CWNewsRouter {
             let data = await crawler.getNewsByChannel(channel, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.cw}/subchannel/:subchannel?`, async (req, res) => {
@@ -41,7 +41,7 @@ export class CWNewsRouter {
             let data = await crawler.getNewsBySubChannel(subchannel, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

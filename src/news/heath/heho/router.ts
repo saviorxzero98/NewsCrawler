@@ -19,7 +19,7 @@ export class HehoNewsRouter {
             let data = await crawler.getNews(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.cancer}/:category?/:subcategory?`, async (req, res) => {
@@ -32,7 +32,7 @@ export class HehoNewsRouter {
             let data = await crawler.getCancerNews(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

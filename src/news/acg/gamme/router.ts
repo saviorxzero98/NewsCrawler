@@ -17,7 +17,7 @@ export class GammeNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.gamme}/news/tag/:tag?`, async (req, res) => {
@@ -28,7 +28,7 @@ export class GammeNewsRouter {
             let data = await crawler.getNewsByTag(tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.gamme}/sexynews/category/:category?`, async (req, res) => {
@@ -39,7 +39,7 @@ export class GammeNewsRouter {
             let data = await crawler.getSexNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.gamme}/sexynews/tag/:tag?`, async (req, res) => {
@@ -50,7 +50,7 @@ export class GammeNewsRouter {
             let data = await crawler.getSexNewsByTag(tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

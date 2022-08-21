@@ -2,7 +2,6 @@ import { FeedBuilder } from '../../feeds/feedBuilder';
 import { TVBSNewsCrawler } from './tvbs';
 import { ServiceContext } from '../../services/service';
 
-
 const path = {
     tvbs: 'tvbs'
 }
@@ -19,7 +18,7 @@ export class TVBSNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

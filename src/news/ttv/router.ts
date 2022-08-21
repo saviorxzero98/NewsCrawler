@@ -19,7 +19,7 @@ export class TTVNewsRouter {
             let data = await crawler.getNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ttv}/category/:category?`, async (req, res) => {
@@ -30,7 +30,7 @@ export class TTVNewsRouter {
             let data = await crawler.getNewsByCategory(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ttv}/tag/:tag?`, async (req, res) => {
@@ -41,7 +41,7 @@ export class TTVNewsRouter {
             let data = await crawler.getNewsByTag(tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

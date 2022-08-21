@@ -19,7 +19,7 @@ export class RfiNewsRouter {
             let data = await crawler.getNews(category, 'tw', limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.cn}/:category?`, async (req, res) => {
@@ -31,7 +31,7 @@ export class RfiNewsRouter {
             let data = await crawler.getNews(category, 'cn', limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

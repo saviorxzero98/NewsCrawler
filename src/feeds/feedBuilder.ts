@@ -90,6 +90,30 @@ export class FeedBuilder {
         }
     }
 
+    public sendFeedResponse(res: any, format: FeedFormat = FeedFormat.rss2) {
+        if (res) {
+            let content = this.create(format);
+
+            switch (format) {
+                case FeedFormat.atom1:
+                    res.set('Content-Type', 'application/atom+xml');
+                    break;
+
+                case FeedFormat.json:
+                    res.set('Content-Type', 'application/json');
+                    break;
+
+                case FeedFormat.rss2:
+                default:
+                    res.set('Content-Type', 'application/rss+xml');
+                    break;
+            }
+            
+            res.send(content);
+        }
+    }
+
+
     private createFeedOptions(): FeedOptions {
         this.title = this.convertCC(this.title, this.openccType);
         let language = 'zh-tw';

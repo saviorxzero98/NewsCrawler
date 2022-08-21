@@ -20,7 +20,7 @@ export class NikkeiNewsRouter {
             let data = await crawler.getNews(category, subcategory, 'zh-hant', limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.chs}/:category?/:subcategory?`, async (req, res) => {
@@ -33,7 +33,7 @@ export class NikkeiNewsRouter {
             let data = await crawler.getNews(category, subcategory, 'zh-hans', limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

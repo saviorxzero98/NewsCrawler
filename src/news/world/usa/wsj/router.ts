@@ -2,7 +2,6 @@ import { ServiceContext } from "../../../../services/service";
 import { FeedBuilder } from "../../../../feeds/feedBuilder";
 import { WSJNewsCrawler } from "./wsj";
 
-
 const path = {
     wsj: 'wsj'
 }
@@ -19,7 +18,7 @@ export class WSJNewsRouter {
             let data = await crawler.getNews(category, language, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

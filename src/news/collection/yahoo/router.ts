@@ -20,7 +20,7 @@ export class YahooTwNewsRouter {
             let data = await crawler.getNews(category, source, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.yahoo}/news/rss/:category?`, async (req, res) => {
@@ -32,7 +32,7 @@ export class YahooTwNewsRouter {
             let data = await crawler.getNewsFromRSS(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.yahoo}/sports/:category?`, async (req, res) => {
@@ -44,7 +44,7 @@ export class YahooTwNewsRouter {
             let data = await crawler.getSportNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.yahoo}/stock/:category?`, async (req, res) => {
@@ -56,7 +56,7 @@ export class YahooTwNewsRouter {
             let data = await crawler.getStockNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.edh}`, async (req, res) => {
@@ -67,7 +67,7 @@ export class YahooTwNewsRouter {
             let data = await crawler.getNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link);
             feedBuilder = feedBuilder.addItems(data.items).setOpenCC(opencc);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

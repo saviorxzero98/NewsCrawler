@@ -24,7 +24,7 @@ export class EBCNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // 東森財經新聞
@@ -37,7 +37,7 @@ export class EBCNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         // ETToday
@@ -50,7 +50,7 @@ export class EBCNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ettoday}/sports/:category?/:subcategory?`, async (req, res) => {
@@ -63,7 +63,7 @@ export class EBCNewsRouter {
             let data = await crawler.getSportsNews(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ettoday}/game/:topic?`, async (req, res) => {
@@ -75,7 +75,7 @@ export class EBCNewsRouter {
             let data = await crawler.getGameNews(topic, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ettoday}/health/:category?/:tag?`, async (req, res) => {
@@ -88,7 +88,7 @@ export class EBCNewsRouter {
             let data = await crawler.getHealthNews(category, tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ettoday}/pet/:category?`, async (req, res) => {
@@ -100,7 +100,7 @@ export class EBCNewsRouter {
             let data = await crawler.getPetNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ettoday}/dalemon/collection/:collection?`, async (req, res) => {
@@ -112,7 +112,7 @@ export class EBCNewsRouter {
             let data = await crawler.getDalemonNewsByCollection(collection, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ettoday}/dalemon/tag/:tag?`, async (req, res) => {
@@ -124,7 +124,7 @@ export class EBCNewsRouter {
             let data = await crawler.getDalemonNewsByTag(tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.ettoday}/dalemon/editor/:editor?`, async (req, res) => {
@@ -136,7 +136,7 @@ export class EBCNewsRouter {
             let data = await crawler.getDalemonNewsByEditor(editor, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

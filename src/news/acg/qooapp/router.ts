@@ -15,7 +15,7 @@ export class QooAppNewsRouter {
             let data = await crawler.getNews('', limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.qooapp}/news/:category?`, async (req, res) => {
@@ -27,7 +27,7 @@ export class QooAppNewsRouter {
             let data = await crawler.getNews(category, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.qooapp}/category/:category?/:subcategory?`, async (req, res) => {
@@ -40,7 +40,7 @@ export class QooAppNewsRouter {
             let data = await crawler.getNewsByCategory(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.qooapp}/topic/:topic?`, async (req, res) => {
@@ -52,7 +52,7 @@ export class QooAppNewsRouter {
             let data = await crawler.getNewsByTopic(topic, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.qooapp}/tag/:tag?`, async (req, res) => {
@@ -64,7 +64,7 @@ export class QooAppNewsRouter {
             let data = await crawler.getNewsByTag(tag, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }

@@ -19,7 +19,7 @@ export class YamNewsRouter {
             let data = await crawler.getNews(limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
 
         services.app.get(`/${path.tnntoday}/:section?/:category?/:subcategory?`, async (req, res) => {
@@ -34,7 +34,7 @@ export class YamNewsRouter {
             let data = await crawler.getNews(section, category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
-            res.send(feedBuilder.create());
+            feedBuilder.sendFeedResponse(res);
         });
     }
 }
