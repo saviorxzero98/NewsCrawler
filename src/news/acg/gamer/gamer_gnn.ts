@@ -165,27 +165,33 @@ export class GamerGNNNewsCrawler extends NewsCrawler {
         item = await this.services
                          .cache
                          .tryGet<Item>(newUrl, async () => {
-                                let httpClient = new HttpClient();
-                                let newResponse = await  httpClient.get(newUrl, crawlerHeaders);
-                                item.link = newUrl;
+                                try {
+                                    let httpClient = new HttpClient();
+                                    let newResponse = await  httpClient.get(newUrl, crawlerHeaders);
+                                    item.link = newUrl;
 
-                                const content = cheerio.load(newResponse.data);
-                                if (content('div.MSG-list8C').length > 0) {
-                                    let pubInfoText = content('div.BH-lbox span.ST1').text().replace(/\n/g, '');
-                                    let pubDate = this.parsePubDate(pubInfoText);
-                                    if (pubDate) {
-                                        item.date = new Date(pubDate);
+                                    const content = cheerio.load(newResponse.data);
+                                    if (content('div.MSG-list8C').length > 0) {
+                                        let pubInfoText = content('div.BH-lbox span.ST1').text().replace(/\n/g, '');
+                                        let pubDate = this.parsePubDate(pubInfoText);
+                                        if (pubDate) {
+                                            item.date = new Date(pubDate);
+                                        }
                                     }
-                                }
-                                else {
-                                    let pubInfoText = content('div.article-intro').text().replace(/\n/g, '');
-                                    let pubDate = this.parsePubDate(pubInfoText);
-                                    if (pubDate) {
-                                        item.date = new Date(pubDate);
-                                        
+                                    else {
+                                        let pubInfoText = content('div.article-intro').text().replace(/\n/g, '');
+                                        let pubDate = this.parsePubDate(pubInfoText);
+                                        if (pubDate) {
+                                            item.date = new Date(pubDate);
+                                            
+                                        }
                                     }
+                                    return item;
                                 }
-                                return item;
+                                catch {
+                                    this.services.logger.logError(`Get News Detial Error.`);
+                                    return item;
+                                }
                             });
 
         return true;

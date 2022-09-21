@@ -1,7 +1,7 @@
 import * as rax from 'retry-axios';
 import axios from 'axios';
 
-export const userAgent = 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36'; 
+export const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.149 Safari/537.36'; 
 
 export const crawlerHeaders = {
     'User-Agent': userAgent

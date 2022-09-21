@@ -47,36 +47,41 @@ export class GamebaseNewsCrawler extends NewsCrawler {
 
             this.services.logger.logPostUrl(url);
 
-            let httpClient = new HttpClient();
-            let response = await httpClient.post(url, data, crawlerHeaders);
-
-            if (response.data.return_code === 0) {
-                let results = response.data
-                                      .return_msg.list;
-                let list = results.map((item) => ({
-                    title: item.news_title,
-                    image: item.news_img,
-                    description: item.news_content,
-                    date: new Date(item.post_time),
-                    link: `${newsRootUrl}/news/detail/${item.news_no}`,
-                }));
-
-                list = list.slice(0, count)
-
-                let items = await this.getNewsDetials({
-                    list,
-                    headers: crawlerHeaders,
-                    callback: (item, content, newsMeta) => {
-                        item.description = newsMeta.description;
-                        return item;
-                    }
-                });
-
-                return {
-                    title: `${title} ${typeName}`,
-                    link: newsRootUrl,
-                    items: items
-                };
+            try {
+                let httpClient = new HttpClient();
+                let response = await httpClient.post(url, data, crawlerHeaders);
+    
+                if (response.data.return_code === 0) {
+                    let results = response.data
+                                          .return_msg.list;
+                    let list = results.map((item) => ({
+                        title: item.news_title,
+                        image: item.news_img,
+                        description: item.news_content,
+                        date: new Date(item.post_time),
+                        link: `${newsRootUrl}/news/detail/${item.news_no}`,
+                    }));
+    
+                    list = list.slice(0, count)
+    
+                    let items = await this.getNewsDetials({
+                        list,
+                        headers: crawlerHeaders,
+                        callback: (item, content, newsMeta) => {
+                            item.description = newsMeta.description;
+                            return item;
+                        }
+                    });
+    
+                    return {
+                        title: `${title} ${typeName}`,
+                        link: newsRootUrl,
+                        items: items
+                    };
+                }
+            }
+            catch {
+                this.services.logger.logError(`Get News '${url}' Error.`);
             }
         }
 

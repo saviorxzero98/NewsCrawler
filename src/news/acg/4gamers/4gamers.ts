@@ -56,27 +56,34 @@ export class FourGamersNewsCrawler extends NewsCrawler {
 
             this.services.logger.logGetUrl(url);
 
-            let httpClient = new HttpClient();
-            let response = await httpClient.get(url);
-            let results = response.data.data.results;
-            let list = results.map((item) => ({
-                title: item.title,
-                image: item.smallBannerUrl,
-                description: '',
-                pubDate: new Date(item.createPublishedAt * 1),
-                link: item.canonicalUrl,
-            }));
+            let items = [];
 
-            let items = await this.getNewsDetialsBySequence({
-                list,
-                headers: crawlerHeaders,
-                callback: (item, content, newsMeta) => {
-                    let description = content('meta[name="description"]').attr('content');
-                    item.description = description;
-                    item.image = newsMeta.image || item.image;
-                    return item;
-                }
-            });
+            try {
+                let httpClient = new HttpClient();
+                let response = await httpClient.get(url);
+                let results = response.data.data.results;
+                let list = results.map((item) => ({
+                    title: item.title,
+                    image: item.smallBannerUrl,
+                    description: '',
+                    pubDate: new Date(item.createPublishedAt * 1),
+                    link: item.canonicalUrl,
+                }));
+
+                items = await this.getNewsDetialsBySequence({
+                    list,
+                    headers: crawlerHeaders,
+                    callback: (item, content, newsMeta) => {
+                        let description = content('meta[name="description"]').attr('content');
+                        item.description = description;
+                        item.image = newsMeta.image || item.image;
+                        return item;
+                    }
+                });
+            }
+            catch {
+                this.services.logger.logError(`Get News '${url}' Error`);
+            }
             
             return {
                 title: `${title} ${categoryMap[category]}`,
@@ -96,28 +103,36 @@ export class FourGamersNewsCrawler extends NewsCrawler {
         if (tag) {
             let url = `${rootUrl}/site/api/news/by-tag?tag=${encodeURIComponent(tag)}&pageSize=${count}`;
 
-            let httpClient = new HttpClient();
-            let response = await httpClient.get(url);
-            let results = response.data.data.results;
-            let list = results.map((item) => ({
-                title: item.title,
-                image: item.smallBannerUrl,
-                description: '',
-                pubDate: new Date(item.createPublishedAt * 1),
-                link: item.canonicalUrl,
-            }));
+            let items = [];
 
-            let items = await this.getNewsDetialsBySequence({
-                list,
-                headers: crawlerHeaders,
-                callback: (item, content, newsMeta) => {
-                    let description = content('meta[name="description"]').attr('content');
-                    item.description = description;
-                    item.image = newsMeta.image || item.image;
-                    return item;
-                }
-            });
-            
+            try {
+                let httpClient = new HttpClient();
+                let response = await httpClient.get(url);
+                let results = response.data.data.results;
+                let list = results.map((item) => ({
+                    title: item.title,
+                    image: item.smallBannerUrl,
+                    description: '',
+                    pubDate: new Date(item.createPublishedAt * 1),
+                    link: item.canonicalUrl,
+                }));
+
+                items = await this.getNewsDetialsBySequence({
+                    list,
+                    headers: crawlerHeaders,
+                    callback: (item, content, newsMeta) => {
+                        let description = content('meta[name="description"]').attr('content');
+                        item.description = description;
+                        item.image = newsMeta.image || item.image;
+                        return item;
+                    }
+                });
+                
+            }
+            catch {
+                this.services.logger.logError(`Get News '${url}' Error`);
+            }
+
             return {
                 title: `${title} ${tag}`,
                 link: url,
@@ -136,28 +151,35 @@ export class FourGamersNewsCrawler extends NewsCrawler {
         if (topic) {
             let url = `${rootUrl}/site/api/news/option-cfg/${topic}?pageSize=${count}`;
 
-            let httpClient = new HttpClient();
-            let response = await httpClient.get(url);
-            let results = response.data.data.results;
-            let list = results.map((item) => ({
-                title: item.title,
-                image: item.smallBannerUrl,
-                description: '',
-                pubDate: new Date(item.createPublishedAt * 1),
-                link: item.canonicalUrl,
-            }));
+            let items = [];
 
-            let items = await this.getNewsDetialsBySequence({
-                list,
-                headers: crawlerHeaders,
-                callback: (item, content, newsMeta) => {
-                    let description = content('meta[name="description"]').attr('content');
-                    item.description = description;
-                    item.image = newsMeta.image || item.image;
-                    return item;
-                }
-            });
-            
+            try {
+                let httpClient = new HttpClient();
+                let response = await httpClient.get(url);
+                let results = response.data.data.results;
+                let list = results.map((item) => ({
+                    title: item.title,
+                    image: item.smallBannerUrl,
+                    description: '',
+                    pubDate: new Date(item.createPublishedAt * 1),
+                    link: item.canonicalUrl,
+                }));
+
+                items = await this.getNewsDetialsBySequence({
+                    list,
+                    headers: crawlerHeaders,
+                    callback: (item, content, newsMeta) => {
+                        let description = content('meta[name="description"]').attr('content');
+                        item.description = description;
+                        item.image = newsMeta.image || item.image;
+                        return item;
+                    }
+                });
+            }
+            catch {
+                this.services.logger.logError(`Get News '${url}' Error`);
+            }
+
             return {
                 title: `${title} ${topic}`,
                 link: url,

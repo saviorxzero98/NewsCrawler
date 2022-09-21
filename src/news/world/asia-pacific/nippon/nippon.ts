@@ -23,32 +23,39 @@ export class NipponNewsCrawler extends NewsCrawler {
 
         this.services.logger.logGetUrl(url);
 
-        let httpClient = new HttpClient();
-        let response = await httpClient.get(url, crawlerHeaders);
+        let items = [];
 
-        let list = response.data.body.dataList.map((item) => {
-            return {
-                title: item.title,
-                description: '',
-                image: `${rootUrl}/${item.pub_thumbnail_url}`,
-                link: `${rootUrl}/${item.pub_url}`,
-                date: new Date(item.pub_date)
-            }
-        });
-        list = list.filter(i => i.title && i.link)
-                   .slice(0, count);
+        try {
+            let httpClient = new HttpClient();
+            let response = await httpClient.get(url, crawlerHeaders);
 
-        let items = await this.getNewsDetials({
-            list,
-            headers: crawlerHeaders,
-            callback: (item, content, newsMeta) => {
-                item.description = newsMeta.description;
-                if (newsMeta.image) {
-                    item.image = newsMeta.image;
+            let list = response.data.body.dataList.map((item) => {
+                return {
+                    title: item.title,
+                    description: '',
+                    image: `${rootUrl}/${item.pub_thumbnail_url}`,
+                    link: `${rootUrl}/${item.pub_url}`,
+                    date: new Date(item.pub_date)
                 }
-                return item;
-            }
-        });
+            });
+            list = list.filter(i => i.title && i.link)
+                    .slice(0, count);
+
+            items = await this.getNewsDetials({
+                list,
+                headers: crawlerHeaders,
+                callback: (item, content, newsMeta) => {
+                    item.description = newsMeta.description;
+                    if (newsMeta.image) {
+                        item.image = newsMeta.image;
+                    }
+                    return item;
+                }
+            });
+        }
+        catch {
+            this.services.logger.logError(`Get News '${url}' Error`);
+        }
 
         return {
             title: `${titleMap[locale]}`,

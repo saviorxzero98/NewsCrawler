@@ -73,21 +73,27 @@ export abstract class NewsCrawler {
     public async getNewsList(options: NewsListOptions): Promise<Item[]> {
         this.services.logger.logGetUrl(options.url);
         
-        let httpClient = new HttpClient();
-        let response = await httpClient.get(options.url, options.options);
-        let content = cheerio.load(response.data);
-        
-        let list = [];
-
-        for (let crawler of options.crawlers) {
-            let partList = content(crawler.selector)
-                            .map((_, item) => crawler.callback(content, item))
-                            .get()
-            list.push(...partList);
+        try {
+            let httpClient = new HttpClient();
+            let response = await httpClient.get(options.url, options.options);
+            let content = cheerio.load(response.data);
+            
+            let list = [];
+    
+            for (let crawler of options.crawlers) {
+                let partList = content(crawler.selector)
+                                .map((_, item) => crawler.callback(content, item))
+                                .get()
+                list.push(...partList);
+            }
+    
+            return list.filter(i => i.title && i.link)
+                       .slice(0, options.count);
         }
-
-        return list.filter(i => i.title && i.link)
-                   .slice(0, options.count);
+        catch (e) {
+            this.services.logger.logError(`Get News Error. ${options.url}\n`);
+            return [];
+        }
     }
 
     /** 取得 News Detial (Parallel) */
@@ -201,10 +207,16 @@ export abstract class NewsCrawler {
 
         let feedParser = new parser();
         if (headers) {
-            let httpClient = new HttpClient();
-            let response = await httpClient.get(url, headers);
-            let rssData = await feedParser.parseString(response.data);
-            return rssData;
+            try {
+                let httpClient = new HttpClient();
+                let response = await httpClient.get(url, headers);
+                let rssData = await feedParser.parseString(response.data);
+                return rssData;
+            }
+            catch {
+                let rssData = await feedParser.parseURL(url);
+                return rssData;
+            }
         }
         else {
             let rssData = await feedParser.parseURL(url);

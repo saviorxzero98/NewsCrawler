@@ -16,11 +16,18 @@ export class HK01NewsCrawler extends NewsCrawler {
         let url = `${apiRootUrl}/v2/page/hot/`;
         this.services.logger.logGetUrl(url);
 
-        let httpClient = new HttpClient();
-        let response = await httpClient.get(url, crawlerHeaders);
-        let data = response.data;
+        let items = [];
 
-        let items = await this.getNewsItems(data, data.items, count);
+        try {
+            let httpClient = new HttpClient();
+            let response = await httpClient.get(url, crawlerHeaders);
+            let data = response.data;
+    
+            items = await this.getNewsItems(data, data.items, count);
+        }
+        catch {
+            this.services.logger.logError(`Get News '${url}' Error`);
+        }
 
         return {
             title: `${title} 熱門`,
@@ -33,14 +40,23 @@ export class HK01NewsCrawler extends NewsCrawler {
         let url = `${apiRootUrl}/v2/page/zone/${zone}`;
         this.services.logger.logGetUrl(url);
 
-        let httpClient = new HttpClient();
-        let response = await httpClient.get(url, crawlerHeaders);
-        let data = response.data;
+        let items = [];
+        let publishName = '';
 
-        let items = await this.getNewsItems(data, data.sections[0].items, count);
+        try {
+            let httpClient = new HttpClient();
+            let response = await httpClient.get(url, crawlerHeaders);
+            let data = response.data;
+            
+            publishName = data.zone.publishName;
+            items = await this.getNewsItems(data, data.sections[0].items, count);
+        }
+        catch {
+            this.services.logger.logError(`Get News '${url}' Error`);
+        }
 
         return {
-            title: `${title} ${data.zone.publishName}`,
+            title: `${title} ${publishName}`,
             link: rootUrl,
             items: items
         };
@@ -50,14 +66,23 @@ export class HK01NewsCrawler extends NewsCrawler {
         let url = `${apiRootUrl}/v2/page/category/${category}`;
         this.services.logger.logGetUrl(url);
 
-        let httpClient = new HttpClient();
-        let response = await httpClient.get(url, crawlerHeaders);
-        let data = response.data;
+        let items = [];
+        let publishName = '';
 
-        let items = await this.getNewsItems(data, data.sections[0].items, count);
+        try {
+            let httpClient = new HttpClient();
+            let response = await httpClient.get(url, crawlerHeaders);
+            let data = response.data;
+    
+            publishName = data.category.publishName;
+            items = await this.getNewsItems(data, data.sections[0].items, count);
+        }
+        catch {
+            this.services.logger.logError(`Get News '${url}' Error`);
+        }
 
         return {
-            title: `${title} ${data.category.publishName}`,
+            title: `${title} ${publishName}`,
             link: rootUrl,
             items: items
         };
@@ -67,14 +92,23 @@ export class HK01NewsCrawler extends NewsCrawler {
         let url = `${apiRootUrl}/v2/page/tag/${tag}`;
         this.services.logger.logGetUrl(url);
 
-        let httpClient = new HttpClient();
-        let response = await httpClient.get(url, crawlerHeaders);
-        let data = response.data;
+        let items = [];
+        let publishName = '';
 
-        let items = await this.getNewsItems(data, data.articles, count);
+        try {
+            let httpClient = new HttpClient();
+            let response = await httpClient.get(url, crawlerHeaders);
+            let data = response.data;
+    
+            publishName = data.tag.publishName;
+            items = await this.getNewsItems(data, data.articles, count);
+        }
+        catch {
+            this.services.logger.logError(`Get News '${url}' Error`);
+        }
 
         return {
-            title: `${title} ${data.tag.tagName}`,
+            title: `${title} ${publishName}`,
             link: rootUrl,
             items: items
         };
@@ -84,14 +118,23 @@ export class HK01NewsCrawler extends NewsCrawler {
         let url = `${apiRootUrl}/v2/page/issue/${tag}`;
         this.services.logger.logGetUrl(url);
 
-        let httpClient = new HttpClient();
-        let response = await httpClient.get(url, crawlerHeaders);
-        let data = response.data;
+        let items = [];
+        let publishName = '';
 
-        let items = await this.getNewsItems(data, data.issue.blocks[0].articles, count);
+        try {
+            let httpClient = new HttpClient();
+            let response = await httpClient.get(url, crawlerHeaders);
+            let data = response.data;
+    
+            publishName = data.issue.publishName;
+            items = await this.getNewsItems(data, data.issue.blocks[0].articles, count);
+        }
+        catch {
+            this.services.logger.logError(`Get News '${url}' Error`);
+        }
 
         return {
-            title: `${title} ${data.tag.tagName}`,
+            title: `${title} ${publishName}`,
             link: rootUrl,
             items: items
         };

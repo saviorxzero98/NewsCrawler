@@ -16,34 +16,39 @@ export class TAMNewsCrawler extends NewsCrawler {
 
         this.services.logger.logGetUrl(url);
 
-        let httpClient = new HttpClient();
-        let response = await httpClient.get(url, crawlerHeaders);
-        let results = response.data;
+        try {
+            let httpClient = new HttpClient();
+            let response = await httpClient.get(url, crawlerHeaders);
+            let results = response.data;
 
-        if (results && Array.isArray(results)) {
-            let list = results.map((item) => {
-                let image = '';
+            if (results && Array.isArray(results)) {
+                let list = results.map((item) => {
+                    let image = '';
 
-                if (item['相關圖片'] && 
-                    Array.isArray(item['相關圖片']) &&
-                    item['相關圖片'].length !== 0) {
-                    image = item['相關圖片'][0].url;
-                }
-                
+                    if (item['相關圖片'] && 
+                        Array.isArray(item['相關圖片']) &&
+                        item['相關圖片'].length !== 0) {
+                        image = item['相關圖片'][0].url;
+                    }
+                    
+                    return {
+                        title: item['title'],
+                        image: image,
+                        description: item['內容'],
+                        date: new Date(item['上版日期']),
+                        link: item['Source'],
+                    }
+                });
+
                 return {
-                    title: item['title'],
-                    image: image,
-                    description: item['內容'],
-                    date: new Date(item['上版日期']),
-                    link: item['Source'],
-                }
-            });
-
-            return {
-                title: `${title}`,
-                link: rootUrl,
-                items: list.slice(0, count)
-            };
+                    title: `${title}`,
+                    link: rootUrl,
+                    items: list.slice(0, count)
+                };
+            }
+        }
+        catch {
+            this.services.logger.logError(`Get News '${url}' Error`);
         }
 
         return {
