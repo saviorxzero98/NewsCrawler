@@ -1,5 +1,7 @@
+import { crawlerHeaders } from '../../services/httpclient';
 import { NewsCrawler } from '../newsCrawler';
 import { ServiceContext } from '../../services/service';
+import moment = require('moment');
 
 const rootUrl = 'https://udn.com';
 const starRootUrl = 'https://stars.udn.com';
@@ -144,7 +146,7 @@ export class UDNNewsCrawler extends NewsCrawler {
         };
     }
 
-    public async getHealthNews(category: string = '5681', subCategory = '', count: number = 15) {
+    public async getHealthRssNews(category: string = '5681', subCategory = '', count: number = 15) {
         let url = '';
         let categoryName = '';
         if (category && /^\d+$/.test(category)) {
@@ -163,6 +165,51 @@ export class UDNNewsCrawler extends NewsCrawler {
 
         return {
             title: `${healthTitle} ${categoryName}`,
+            link: url,
+            items: list
+        };
+    }
+
+    public async getHealthNews(category: string = '5681', subCategory = '', count: number = 15) {
+        let url = '';
+        let categoryName = '';
+        if (category && /^\d+$/.test(category)) {
+            url =  `${healthRootUrl}/health/cate/${category}`;
+                categoryName = healthNewsRssMap[category] || '';
+
+                if (subCategory && /^\d+$/.test(subCategory)) {
+                    url = `${url}/${subCategory}`;
+                }
+        }
+
+        let crawler = {
+            selector: 'ul.lineup__group li.item-listing__photo-8to5',
+            callback: ($, i) => {
+                let title = $(i).find('article h3').text();
+                let link = $(i).find('a').attr('href');
+                let image = $(i).find('picture source').attr('data-srcset');
+                let description = $(i).find('article p.pic-8to5-item__description').text();
+                let pubDate = $(i).find('article p.pic-8to5-item__note').text();
+                pubDate = moment(pubDate, 'YYYY-MM-DD HH:mm:ss').toDate().toISOString();
+
+                return {
+                    title,
+                    link: `${healthRootUrl}${link}`,
+                    image,
+                    description,
+                    date: new Date(pubDate)
+                };
+            }
+        };
+        let list = await this.getNewsList({
+            url,
+            options: crawlerHeaders,
+            count,
+            crawlers: [ crawler ]
+        });
+
+        return {
+            title: `${title} ${categoryName}`,
             link: url,
             items: list
         };

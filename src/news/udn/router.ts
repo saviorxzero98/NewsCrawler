@@ -67,6 +67,7 @@ export class UDNNewsRouter {
             let opencc = String(req.query.opencc ?? '');
 
             let crawler = new UDNNewsCrawler(services);
+            //let data = await crawler.getHealthRssNews(category, subcategory, limit);
             let data = await crawler.getHealthNews(category, subcategory, limit);
             let feedBuilder = new FeedBuilder(data.title, data.link).setOpenCC(opencc);
             feedBuilder = feedBuilder.addItems(data.items);
