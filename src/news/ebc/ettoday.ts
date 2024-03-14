@@ -155,7 +155,8 @@ export class ETtodayNewsCrawler extends NewsCrawler {
             selector: 'div.c1 div.clearfix',
             callback: ($, i) => {
                 let title = $(i).find('h3 a').text();
-                let link = rootUrls.game + $(i).find('h3 a').attr('href');
+                //let link = rootUrls.game + $(i).find('h3 a').attr('href');
+                let link = $(i).find('h3 a').attr('href');
                 let image = $(i).find('img').attr('data-original');
                 let pubDate = $(i).find('span.date').text();
                 $(i).find('span.date').remove();
