@@ -2,8 +2,8 @@ import { HttpClient, crawlerHeaders } from '../../../services/httpclient';
 import { NewsCrawler } from '../../newsCrawler';
 import { ServiceContext } from '../../../services/service';
 
-const rootUrl = 'https://www.tam.gov.taipei';
-const apiRootUrl = 'https://www.tam.gov.taipei/OpenData.aspx?SN=9B70FA1EEE3AED84';
+const rootUrl = 'https://tam.gov.taipei';
+const apiRootUrl = 'https://tam.gov.taipei/OpenData.aspx?SN=9B70FA1EEE3AED84';
 const title = '臺北市天文科學教育館';
 
 export class TAMNewsCrawler extends NewsCrawler {
